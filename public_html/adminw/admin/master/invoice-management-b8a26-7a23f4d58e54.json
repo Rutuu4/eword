@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "invoice-management-b8a26",
+  "private_key_id": "7a23f4d58e5404138cf6e8d148e6036b1aa849a2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCV0zONFL66jj9G\n5hzKCHq8o/Aug7FnRVHE3WFKVI1TQCrnGtOgU2rDHFHZUqu8myvgFSWDcYqHaL2E\n5euwQzeJ9BqkI6y9t4elKU4UXNIeEOxr1++lkdEH4PU8pK909V4/jPSVwUsAmFd3\njmHMkJR1gcdoPJV9VML/dOeWpOGkP3GV3KqZraLkIoZl0nbHOnRKTxPv4QOlvQIj\nPRsVvWl3s5yJkDxvO/KxXk8Ql61bpDjLvenJU3+Xi00WH3xvfiuQD5UcaF+SyhZL\nh8EpRgCiW4UsGA3BitxB+B38SKwSodJgPwa4T858CTiryu1utXNFLclywZRTaN38\nKH9QRYudAgMBAAECggEAN184FTMOjmoWDsDq8OwTWHaKRNadERq4braWx17aYGM9\nt+3dOsq5kWR9B4GbQPhkTcvi8mJbHVJjgKNs6Nbexth1pCYfKHqU4kCSv8nSShRd\nHDpRMnLiuzOzzvbadbJdY8VXe6VVb+Hdqazwjib9BzSwmuCRKyHRc5IkKTPExOuw\nnlD6ISXGLk7g3sIf6rWYV4/66bDywhLyMGSuASBBpEkjFgAQcG9JX+Wyqnr5ce+b\n49oSmy/iOqFOeRVhFyPVLqoF80ItJJwhigCeZszfbkXvgEPfFwRhdJMocZ6MVA7Y\nknRVi+7byygJ3yu8GYfCsgqUM0bSsHp02OahFxn8zQKBgQDRMohAGkgfE9+bZznS\nPJCjMYryoliNFPbHz51wE5e1421rjzERuitsj0bQyr61jhCpqd9ze4EWcB3Q17yJ\nv0rHqjdhEl8CyuuvYhzGmJNz79gx3p4i5rmihuSGNAb6zDF4An2RxE0RKcM8FliE\njtxKXZaQIGT9dxxyk6240CqbvwKBgQC3WDRav31zc4kzwfh3wtg0f+4Yjg9zNEj/\n3+bA0KNB04NMoD7R62eIZKAAO0gwn+/6sQ1f5O010DQtYbiskNeiZlANmHUEeeVV\ne0XrG8FgPbp9OqX3dxR72mBeTvvswMQ+6hthe0tCOFk7rjcMpL76JeIt2wMvAMWS\njZ1+6sffowKBgQCQRwifJUEeZedu11eSfoDGfHG2+26VBqNYlQCg/nJAWLTrXJtb\n/YjbW0lc0KeMsYkeanEYxVH3NqXplhCK8+pQID4HbdMnKuo3UDRGZ44yhHUXl9B6\ng6P9yoirYhB6Qf/QI++Ua803DBWBSGwOKDUX+MnRZvYftVliUCWc87yfIwKBgBNp\nkGmHWuYNdpp3UDKF+9RbMz+AUxx0jcIh19HUhWSj24QSd3RMg3LKjLJZlIQpewRF\nGNBtcbw/5jZj4WTMFTjJsnIuET2/FkwduEJzdt8UyhkWS5pPDmkqrwdtP3lK07yB\nlxKUNly1kKUkBgodq2ba+f628LhaUZD505Irk6wXAoGBAICkBny7pg3iO+Iu+mNb\nl8afd/sHyxt48jsGUBMZiHzRrwCJ7VkCIwQLuKWqokVbAh8CKmthVkYnZPD7eWuo\niaqsR7aFH/3g3KqinkUREkfLA1BO6vmGJNJ8yuhbRXHrbjtpJ22A7/5yAYllhIZs\nm4khm5WYu2vGY8xj+dkEEieq\n-----END PRIVATE KEY-----\n",
+  "client_email": "invoice-management-b8a26@appspot.gserviceaccount.com",
+  "client_id": "107045174767086829285",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/invoice-management-b8a26%40appspot.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

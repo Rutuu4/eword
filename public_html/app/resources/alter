@@ -1,0 +1,2 @@
+////// 25-jan-2020 //////
+ALTER TABLE `cart` ADD `product_image_id` INT UNSIGNED NOT NULL COMMENT 'From product_img -> id' AFTER `product_id`;

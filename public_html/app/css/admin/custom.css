@@ -1,0 +1,67 @@
+.login-page, .register-page {
+    background: #d2d6de url(../../images/bg.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.parsley-error {
+    border-color: #d9534f;
+    background-color: rgba(221,75,57, 0.2);
+}
+
+.parsley-errors-list {
+    color: #d9534f;
+    list-style-type: none;
+    padding: 0;
+    font-weight: 600;
+}
+
+.form-inline select {
+	width: auto;
+    display: inline-block;
+}
+
+.form-inline input {
+    margin-left: 0.5em;
+    display: inline-block;
+    width: auto;
+}
+
+.box {
+    border-top:3px solid #2662b1 !important
+}
+
+.video-gallery img {
+    padding:0.5em;
+    width: 100%;
+}
+
+.image_upload_btn input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    -ms-filter: 'alpha(opacity=0)';
+    font-size: 200px !important;
+    direction: ltr;
+    cursor: pointer;
+
+}
+
+.banner_upload_btn input {
+    position: absolute;
+    top: 110px;
+    left: 0px;
+    padding: 10px;
+    opacity: 0;
+    -ms-filter: 'alpha(opacity=0)';
+    font-size: 8px !important;
+    direction: ltr;
+    cursor: pointer;
+}
+.nav-tabs-custom>.nav-tabs>li.active {
+    border-top-color: #2662b1;
+}

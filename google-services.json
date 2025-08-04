@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "153875842078",
+    "project_id": "e-world-education-b737a",
+    "storage_bucket": "e-world-education-b737a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:153875842078:android:38f32a3622c5580be85a0f",
+        "android_client_info": {
+          "package_name": "com.app.eworldapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-8iifxSGSYoSCp1c30NfP2riHzQVOLyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
