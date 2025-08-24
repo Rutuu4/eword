@@ -274,6 +274,7 @@ class Login_control extends REST_Controller
                 $iData['device_token']             = !empty($data['device_token']) ? $data['device_token'] : '';
                 $iData['datee']             = date('Y-m-d H:i:s');
                 $iData['status'] = 1;
+                $iData['isTermAndConditionApplied'] = 1;
 
                 $inserted_data = $this->General_model->insert(TBL_REGISTRATION, $iData);
                 if (!empty($inserted_data)) {
@@ -543,9 +544,21 @@ class Login_control extends REST_Controller
 
                 $cmobile = $data['username'];
 
+                $params = array(
+                    'table' => TBL_REGISTRATION,
+                    'where' => array('id' => $insert_id),
+                    'compare_type' => '=',
+                );
+                $tc_get = $this->General_model->get_query_data($params);
+                $tc_data = !empty($tc_get) ? $tc_get[0] : [];
+
                 $response['message']        = $this->lang->line('success');
                 $response['code']           = REST_Controller::HTTP_OK;
-                $response['data']           = $inquiry_status[0];
+                // $response['data']           = $inquiry_status[0];
+                $response['data']           = array(
+                    'id' => $inquiry_status[0]['id'],
+                    'isFirstTimeUserLogin' => ($tc_data['isTermAndConditionApplied'] == 1 ? true : false),
+                );
             }
         }
         $this->response($response, 200);
@@ -678,80 +691,61 @@ class Login_control extends REST_Controller
     {
         $data = $this->post();
 
+        // Validation
         $this->form_validation->set_rules('username', 'Username', 'trim|required');
+        $this->form_validation->set_rules('user_id', 'User Id', 'trim|required|integer');
         $this->form_validation->set_rules('email', 'Email Address', 'trim|required|valid_email');
 
         if ($this->form_validation->run() == false) {
             $response['message'] = strip_tags(validation_errors());
             $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
-        } else {
-            // Check if username exists
-            $params = array(
-                'table' => TBL_REGISTRATION,
-                'where' => array(
-                    'username' => "'" . trim($data['username']) . "'",
-                ),
-                'compare_type' => '=',
-            );
-            $username_check = $this->General_model->get_query_data($params);
-
-            if (count($username_check) > 0) {
-                $response['message'] = "Username already exists";
-                $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
-                $this->response($response, 200);
-                return;
-            }
-
-            // Check if email exists
-            $params = array(
-                'table' => TBL_REGISTRATION,
-                'where' => array(
-                    'email' => "'" . trim($data['email']) . "'",
-                ),
-                'compare_type' => '=',
-            );
-            $email_check = $this->General_model->get_query_data($params);
-
-            if (count($email_check) > 0) {
-                $response['message'] = "Email already exists";
-                $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
-                $this->response($response, 200);
-                return;
-            }
-
-            // Proceed with insertion
-            $iData = array(
-                'username' => $data['username'],
-                'email' => $data['email'],
-                'datee' => date('Y-m-d H:i:s'),
-                'status' => 1,
-                'isTermAndConditionApplied' => 1, // or get from $data if needed
-            );
-
-            $inserted_id = $this->General_model->insert(TBL_REGISTRATION, $iData);
-
-            if ($inserted_id) {
-                // Fetch the inserted row to return isTermAndConditionApplied
-                $params = array(
-                    'table' => TBL_REGISTRATION,
-                    'where' => array('id' => $inserted_id),
-                    'compare_type' => '=',
-                );
-                $inserted_row = $this->General_model->get_query_data($params);
-                $tc_data = !empty($inserted_row) ? $inserted_row[0] : [];
-
-                $response['message'] = $this->lang->line('success');
-                $response['code'] = REST_Controller::HTTP_OK;
-                $response['data'] = array(
-                    'register_id' => $inserted_id,
-                    'isTermAndConditionApplied' => (int) ($tc_data['isTermAndConditionApplied'] ?? 0),
-                );
-            } else {
-                $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
-                $response['message'] = $this->lang->line('warning');
-            }
+            return $this->response($response, 200);
         }
 
-        $this->response($response, 200);
+        $userId   = (int) $data['user_id'];
+        $username = trim($data['username']);
+        $email    = trim($data['email']);
+
+        // Check if email already exists for another user
+        $params = [
+            'table' => TBL_REGISTRATION,
+            'where' => ["email" => "'$email'"],
+            'compare_type' => '='
+        ];
+        $email_check = $this->General_model->get_query_data($params);
+
+        if (!empty($email_check) && $email_check[0]['id'] != $userId) {
+            // Email is already taken by someone else
+            $response['message'] = "Email already exists";
+            $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
+            return $this->response($response, 200);
+        }
+
+        // Get user by ID
+        $params['where'] = ["id" => $userId];
+        $chkUser = $this->General_model->get_query_data($params);
+
+        if (!empty($chkUser)) {
+            // Safe to update now
+            $udata = [
+                'fullname' => !empty($data['username']) ? $data['username'] : '',
+                'email'    => $email,
+                'isTermAndConditionApplied' => 1
+            ];
+
+            $this->General_model->update(TBL_REGISTRATION, $udata, ['id' => $userId]);
+
+            $response['message'] = $this->lang->line('success');
+            $response['code']    = REST_Controller::HTTP_OK;
+            $response['data']    = [
+                'register_id' => $userId,
+                'isFirstTimeUserLogin' => true
+            ];
+        } else {
+            $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
+            $response['message'] = $this->lang->line('warning');
+        }
+
+        return $this->response($response, 200);
     }
 }
