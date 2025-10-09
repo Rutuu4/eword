@@ -1084,5 +1084,7 @@ $config['image_path']                   = $config['base_path']."images/";
 
 $config['admin_base_url']              	= $config['base_url']."admin/";
 $config['text_base_url']           		= "https://www.demanddeal.in/";
-putenv("TWILIO_ACCOUNT_SID=ACf78bbc77d2cf15a84e0d547207265974");
-putenv("TWILIO_AUTH_TOKEN=ae695fcbb40523824261ae3a659ae2b6");
+$config['twilio_sid'] = getenv('TWILIO_SID');
+$config['twilio_token'] = getenv('TWILIO_TOKEN');
+// putenv("TWILIO_ACCOUNT_SID=ACf78bbc77d2cf15a84e0d547207265974");
+// putenv("TWILIO_AUTH_TOKEN=ae695fcbb40523824261ae3a659ae2b6");
