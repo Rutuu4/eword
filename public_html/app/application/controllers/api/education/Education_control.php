@@ -255,6 +255,96 @@ class Education_control extends REST_Controller {
 
     $this->response($response, 200);
 }
+public function course_list_get()
+    {
+
+        $params = [
+            'table' => 'f_courses',
+            'fields' => ['id', 'name'],
+            'wherestring' => 'status=1',
+            'orderby' => 'name',
+            'orderdirection' => 'ASC'
+        ];
+
+        $course_list = $this->General_model->get_query_data($params);
+
+        if (!empty($course_list)) {
+            $response['message'] = $this->lang->line('success');
+            $response['code'] = REST_Controller::HTTP_OK;
+            $response['data'] = $course_list;
+        } else {
+            $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
+            $response['message'] = $this->lang->line('no_record_found');
+        }
+
+        $this->response($response, 200);
+    }
+    public function f_student_application_post()
+    {
+        $data = $this->post();
+
+        // Validate required fields
+        if (
+            empty($data['name']) ||
+            empty($data['email']) ||
+            empty($data['phoneNumber']) ||
+            empty($data['courseForApplying']) ||
+            empty($data['foreignEducationId'])
+        ) {
+            $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
+            $response['message'] = "Required fields are missing.";
+            return $this->response($response, 200);
+        }
+
+        // Prepare insert data
+        $insertData = [
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phone_number' => $data['phoneNumber'],
+            'course_for_applying' => $data['courseForApplying'],
+            'exam_preference' => $data['examPreference'] ?? null,
+            'preferred_country' => $data['preferredCountry'] ?? null,
+            'visa_type' => $data['visaType'] ?? null,
+            'foreign_education_id' => $data['foreignEducationId'],
+            'whatsapp_number' => $data['whatsAppNumber'] ?? null,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+
+        // Insert into database using General_model->insert
+        $insert_id = $this->General_model->insert('f_student_application', $insertData);
+
+        if ($insert_id) {
+            // If WhatsApp number exists, send message
+            if (!empty($data['phone_number'])) {
+                $msg = "Hello *{$data['name']}* 👋,\n\n"
+                    . "Your application for *{$data['courseForApplying']}* has been successfully received.\n"
+                    . "Our team will contact you shortly. ✅\n\n"
+                    . "Thank you for choosing *Eword Education* 🌍";
+
+                $this->twilio_lib->send_project_message(
+                    $data['phone_number'],
+                    $data['name'],
+                    'Student Application',
+                    $msg
+                );
+            }
+
+            $response = [
+                'code' => REST_Controller::HTTP_OK,
+                'message' => "Application submitted successfully.",
+                'data' => ['application_id' => $insert_id]
+            ];
+        } else {
+            $response = [
+                'code' => REST_Controller::HTTP_INTERNAL_ERROR,
+                'message' => "Failed to submit application."
+            ];
+        }
+
+        return $this->response($response, 200);
+    }
+}
 
     
     

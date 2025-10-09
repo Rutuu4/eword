@@ -155,6 +155,70 @@
 
 	                </ul>
 	            </li>
+	            <li class="treeview">
+	                <a href="#">
+	                    <i class="fa fa-graduation-cap"></i>
+	                    <span>Manage Foreign Education </span>
+	                    <span class="pull-right-container">
+	                        <i class="fa fa-angle-left pull-right"></i>
+	                    </span>
+	                </a>
+	                <ul class="treeview-menu">
+
+	                    <li><a href="manage-foreign-education.php"><i class="fa fa-circle-o"></i> Foreign Education</a>
+	                    </li>
+
+
+
+
+	                    <li><a href="manage-foreign-education-course.php"><i class="fa fa-circle-o"></i> Foreign Education
+	                            Course</a></li>
+
+
+	                </ul>
+	            </li>
+	            <li class="treeview">
+	                <a href="#">
+	                    <i class="fa fa-graduation-cap"></i>
+	                    <span>Tuition Trainning </span>
+	                    <span class="pull-right-container">
+	                        <i class="fa fa-angle-left pull-right"></i>
+	                    </span>
+	                </a>
+	                <ul class="treeview-menu">
+
+	                    <li><a href="manage-tuition-and-trainning.php"><i class="fa fa-circle-o"></i> Tuition Trainning</a>
+	                    </li>
+
+
+
+	                    <li><a href="manage-tuition-and-trainning-course.php"><i class="fa fa-circle-o"></i> Tuition
+	                            Trainning Course</a></li>
+
+
+	                </ul>
+	            </li>
+	            <li class="treeview">
+	                <a href="#">
+	                    <i class="fa fa-graduation-cap"></i>
+	                    <span> Project Internship </span>
+	                    <span class="pull-right-container">
+	                        <i class="fa fa-angle-left pull-right"></i>
+	                    </span>
+	                </a>
+	                <ul class="treeview-menu">
+
+	                    <li><a href="manage-tuition-and-trainning.php"><i class="fa fa-circle-o"></i> Project
+	                            Internship</a></li>
+
+
+
+	                    <li><a href="manage-project-and-internship-course.php"><i class="fa fa-circle-o"></i> Project
+	                            Internship Course</a></li>
+
+
+	                </ul>
+	            </li>
 
 	            <li class="treeview">
 	                <a href="#">
@@ -241,14 +305,14 @@
 	            <li class="treeview">
 	                <a href="#">
 	                    <i class="fa fa-comment-o"></i>
-	                    <span>Manage Chat </span>
+	                    <span>Manage Whatsapp Links </span>
 	                    <span class="pull-right-container">
 	                        <i class="fa fa-angle-left pull-right"></i>
 	                    </span>
 	                </a>
 	                <ul class="treeview-menu">
-	                    <li><a href="manage-chat-course.php"><i class="fa fa-circle-o"></i> Chat Course</a></li>
-	                    <li><a href="manage-chat-room-group.php"><i class="fa fa-circle-o"></i> Chat Room Group</a></li>
+	                    <li><a href="manage-wp-links.php"><i class="fa fa-circle-o"></i> Whatsapp Links</a></li>
+	                    <!-- <li><a href="manage-chat-room-group.php"><i class="fa fa-circle-o"></i> Chat Room Group</a></li> -->
 
 	                </ul>
 	            </li>
