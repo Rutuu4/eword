@@ -26,6 +26,11 @@ class Tuition_control extends REST_Controller {
     {
         $data = $this->post();
     
+        // ✅ Pagination parameters
+        $page  = isset($data['page']) ? (int)$data['page'] : 1;
+        $limit = isset($data['limit']) ? (int)$data['limit'] : 10;
+        $offset = ($page - 1) * $limit;
+    
         $wherestring = "tuition_and_training.status=1";
     
         $fields = [
@@ -41,7 +46,6 @@ class Tuition_control extends REST_Controller {
             't_courses.name AS course_name',
             'tuition_and_training.class_type'
         ];
-        
     
         $params = [
             'table'         => 'tuition_and_training',
@@ -52,19 +56,26 @@ class Tuition_control extends REST_Controller {
             'join_tables'   => [
                 'tuition_and_training_courses' => 'tuition_and_training_courses.tuition_and_training_id = tuition_and_training.id',
                 't_courses' => 't_courses.id = tuition_and_training_courses.course_id',
-                
                 'city' => 'city.id = tuition_and_training.city',
-            ]
+            ],
+            'groupby'       => 'tuition_and_training.id',
+            'limit'         => $limit,
+            'offset'        => $offset
         ];
     
+        // ✅ Get paginated data
         $raw_list = $this->General_model->get_query_data($params);
     
-        $formatted_list = [];
+        // ✅ Get total count
+        $countParams = $params;
+        unset($countParams['limit'], $countParams['offset']);
+        $total_records = $this->General_model->get_query_data_count($countParams);
     
+        // Format
+        $formatted_list = [];
         foreach ($raw_list as $row) {
             $id = $row['id'];
     
-            // Initialize if not exists
             if (!isset($formatted_list[$id])) {
                 $formatted_list[$id] = [
                     'id' => $id,
@@ -78,33 +89,30 @@ class Tuition_control extends REST_Controller {
                     'Course Details' => []
                 ];
             }
-            
-           
     
-            // Append courses
             if (!empty($row['course_id'])) {
                 $formatted_list[$id]['Course Details'][$row['course_id']] = [
                     'id' => $row['course_id'],
                     'name' => $row['course_name']
                 ];
             }
-    
-          
         }
     
-        // Reset array keys (to make it a clean array, not an associative map)
         $result = array_values(array_map(function($institute) {
-            
             $institute['Course Details'] = array_values($institute['Course Details']);
-           
             return $institute;
         }, $formatted_list));
     
-        // Final response
         if (!empty($result)) {
             $response['message'] = $this->lang->line('success');
             $response['code'] = REST_Controller::HTTP_OK;
             $response['data'] = $result;
+            $response['pagination'] = [
+                'total_records' => $total_records,
+                'current_page'  => $page,
+                'per_page'      => $limit,
+                'total_pages'   => ceil($total_records / $limit)
+            ];
         } else {
             $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
             $response['message'] = $this->lang->line('no_record_found');
@@ -112,6 +120,7 @@ class Tuition_control extends REST_Controller {
     
         $this->response($response, 200);
     }
+    
     
     
     public function tuition_filter_post()
@@ -314,6 +323,3 @@ class Tuition_control extends REST_Controller {
     
 
     
-
-
-}

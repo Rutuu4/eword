@@ -19,12 +19,17 @@ class Project_control extends REST_Controller {
                 $final[$value] = ${$value};
             }
         }
-        $this->globalVars         = $final;
+        $this->globalVars= $final;
     }
  
     public function project_list_post()
     {
         $data = $this->post();
+    
+        // ✅ Read pagination params (default page = 1, limit = 10)
+        $page  = isset($data['page']) ? (int)$data['page'] : 1;
+        $limit = isset($data['limit']) ? (int)$data['limit'] : 10;
+        $offset = ($page - 1) * $limit;
     
         $wherestring = "project_and_internship.status=1";
     
@@ -41,7 +46,6 @@ class Project_control extends REST_Controller {
             'p_courses.name AS course_name',
             'project_and_internship.job_type'
         ];
-        
     
         $params = [
             'table'         => 'project_and_internship',
@@ -52,19 +56,26 @@ class Project_control extends REST_Controller {
             'join_tables'   => [
                 'project_and_internship_courses' => 'project_and_internship_courses.project_and_internship_id = project_and_internship.id',
                 'p_courses' => 'p_courses.id = project_and_internship_courses.course_id',
-                
                 'city' => 'city.id = project_and_internship.city_id',
-            ]
+            ],
+            'groupby'       => 'project_and_internship.id',
+            'limit'         => $limit,
+            'offset'        => $offset
         ];
     
+        // ✅ Get paginated data
         $raw_list = $this->General_model->get_query_data($params);
     
-        $formatted_list = [];
+        // ✅ Get total count (without limit/offset)
+        $countParams = $params;
+        unset($countParams['limit'], $countParams['offset']);
+        $total_records = $this->General_model->get_query_data_count($countParams);
     
+        // Format
+        $formatted_list = [];
         foreach ($raw_list as $row) {
             $id = $row['id'];
     
-            // Initialize if not exists
             if (!isset($formatted_list[$id])) {
                 $formatted_list[$id] = [
                     'id' => $id,
@@ -74,7 +85,7 @@ class Project_control extends REST_Controller {
                     'MOU' => (bool)$row['mou_is_present'],
                     'whatsappNumber' => $row['whatsapp_number'],
                     'web application link' => $row['institute_web_url'],
-                   'Job Type' =>match($row['job_type']) {
+                    'Job Type' => match($row['job_type']) {
                         'Part_time' => 'Part Time',
                         'Full_time' => 'Full Time',
                         'Remote'    => 'Remote',
@@ -83,33 +94,30 @@ class Project_control extends REST_Controller {
                     'Category Details' => []
                 ];
             }
-            
-           
     
-            // Append courses
             if (!empty($row['course_id'])) {
                 $formatted_list[$id]['Category Details'][$row['course_id']] = [
                     'id' => $row['course_id'],
                     'name' => $row['course_name']
                 ];
             }
-    
-          
         }
     
-        // Reset array keys (to make it a clean array, not an associative map)
         $result = array_values(array_map(function($institute) {
-            
             $institute['Category Details'] = array_values($institute['Category Details']);
-           
             return $institute;
         }, $formatted_list));
     
-        // Final response
         if (!empty($result)) {
             $response['message'] = $this->lang->line('success');
             $response['code'] = REST_Controller::HTTP_OK;
             $response['data'] = $result;
+            $response['pagination'] = [
+                'total_records' => $total_records,
+                'current_page'  => $page,
+                'per_page'      => $limit,
+                'total_pages'   => ceil($total_records / $limit),
+            ];
         } else {
             $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
             $response['message'] = $this->lang->line('no_record_found');
@@ -119,19 +127,21 @@ class Project_control extends REST_Controller {
     }
     
     
+    
     public function project_filter_post()
     {
         $data = $this->post();
     
-        // Base conditions
+        $page  = isset($data['page']) ? (int)$data['page'] : 1;
+        $limit = isset($data['limit']) ? (int)$data['limit'] : 10;
+        $offset = ($page - 1) * $limit;
+    
         $wheres = ["project_and_internship.status = 1"];
     
         // Filters
         $class_mode = isset($data['job_type']) ? trim($data['job_type']) : '';
         $course     = isset($data['course']) ? trim($data['course']) : '';
         $city       = isset($data['city']) ? trim($data['city']) : '';
-    
-        // Apply filters
     
         if ($class_mode !== '') {
             $wheres[] = "(project_and_internship.job_type = '" . $this->db->escape_str($class_mode) . "' OR project_and_internship.job_type IS NULL)";
@@ -147,7 +157,6 @@ class Project_control extends REST_Controller {
     
         $wherestring = implode(' AND ', $wheres);
     
-        // Fields
         $fields = [
             'project_and_internship.id',
             'project_and_internship.consultancy_name',
@@ -157,7 +166,6 @@ class Project_control extends REST_Controller {
             'project_and_internship.mou_is_present',
             'project_and_internship.whatsapp_number',
             'project_and_internship.institute_web_url',
-           
             'p_courses.id AS course_id',
             'p_courses.name AS course_name',
             'project_and_internship.job_type'
@@ -173,15 +181,19 @@ class Project_control extends REST_Controller {
                 'project_and_internship_courses' => 'project_and_internship_courses.project_and_internship_id = project_and_internship.id',
                 'p_courses' => 'p_courses.id = project_and_internship_courses.course_id',
                 'city' => 'city.id = project_and_internship.city_id',
-            ]
+            ],
+            'groupby'       => 'project_and_internship.id',
+            'limit'         => $limit,
+            'offset'        => $offset
         ];
     
-        // Get raw data
         $raw_list = $this->General_model->get_query_data($params);
     
-        // Format response
-        $formatted_list = [];
+        $countParams = $params;
+        unset($countParams['limit'], $countParams['offset']);
+        $total_records = $this->General_model->get_query_data_count($countParams);
     
+        $formatted_list = [];
         foreach ($raw_list as $row) {
             $id = $row['id'];
     
@@ -194,13 +206,13 @@ class Project_control extends REST_Controller {
                     'MOU' => (bool)$row['mou_is_present'],
                     'whatsappNumber' => $row['whatsapp_number'],
                     'web application link' => $row['institute_web_url'],
-                    'Job Type' =>match($row['job_type']) {
+                    'Job Type' => match($row['job_type']) {
                         'Part_time' => 'Part Time',
                         'Full_time' => 'Full Time',
                         'Remote'    => 'Remote',
                         default     => null
                     },
-                    'Category Details' => []
+                    'Course Details' => []
                 ];
             }
     
@@ -212,17 +224,21 @@ class Project_control extends REST_Controller {
             }
         }
     
-        // Clean result
         $result = array_values(array_map(function($institute) {
             $institute['Course Details'] = array_values($institute['Course Details']);
             return $institute;
         }, $formatted_list));
     
-        // Response
         if (!empty($result)) {
             $response['message'] = $this->lang->line('success');
             $response['code'] = REST_Controller::HTTP_OK;
             $response['data'] = $result;
+            $response['pagination'] = [
+                'total_records' => $total_records,
+                'current_page'  => $page,
+                'per_page'      => $limit,
+                'total_pages'   => ceil($total_records / $limit),
+            ];
         } else {
             $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
             $response['message'] = $this->lang->line('no_record_found');
@@ -230,6 +246,7 @@ class Project_control extends REST_Controller {
     
         $this->response($response, 200);
     }
+    
     public function course_list_get()
     {
 
