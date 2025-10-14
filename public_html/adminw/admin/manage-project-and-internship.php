@@ -68,10 +68,7 @@
         LEFT JOIN city ON city.id = project_and_internship.city_id
         GROUP BY project_and_internship.id
         ORDER BY 
-            CASE 
-                WHEN project_and_internship.consultancy_name REGEXP '^[઀-૿]' THEN 0 
-                ELSE 1 
-            END,
+          
             project_and_internship.consultancy_name ASC;";
 
                   $result = $conn->query($qry);
