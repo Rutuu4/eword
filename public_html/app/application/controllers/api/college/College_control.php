@@ -251,6 +251,76 @@ class College_control extends REST_Controller {
         
         $this->response($response, 200);
     }
+    public function college_application_post()
+    {
+        $data = $this->post();
+
+        // Validate required fields
+        if (
+            empty($data['name']) ||
+            empty($data['email']) ||
+            empty($data['contact_number']) ||
+            empty($data['course_type']) ||
+            empty($data['sub_course_type']) ||
+            empty($data['results_type']) ||
+            !isset($data['results_value']) ||
+            empty($data['passing_year'])
+        ) {
+            $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
+            $response['message'] = "Required fields are missing.";
+            return $this->response($response, 200);
+        }
+
+        // Prepare insert data
+        $insertData = [
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'contact_number' => $data['contact_number'],
+            'course_type' => $data['course_type'],
+            'sub_course_type' => $data['sub_course_type'],
+            'results_type' => $data['results_type'],
+            'results_value' => $data['results_value'],
+            'passing_year' => $data['passing_year'],
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+
+        // Insert into database using General_model->insert
+        $insert_id = $this->General_model->insert('college_application_form', $insertData);
+
+        if ($insert_id) {
+            // Optional: send WhatsApp or SMS notification if needed
+            if (!empty($data['contact_number'])) {
+                $msg = "Hello *{$data['name']}* 👋,\n\n"
+                    . "Your application for *{$data['course_type']}* has been successfully received.\n"
+                    . "Our team will contact you shortly. ✅\n\n"
+                    . "Thank you for applying to our college 🌟";
+
+                // Assuming you have Twilio or WhatsApp library
+                if (isset($this->twilio_lib)) {
+                    $this->twilio_lib->send_project_message(
+                        $data['contact_number'],
+                        $data['name'],
+                        'College Application',
+                        $msg
+                    );
+                }
+            }
+
+            $response = [
+                'code' => REST_Controller::HTTP_OK,
+                'message' => "Application submitted successfully.",
+                'data' => ['application_id' => $insert_id]
+            ];
+        } else {
+            $response = [
+                'code' => REST_Controller::HTTP_INTERNAL_ERROR,
+                'message' => "Failed to submit application."
+            ];
+        }
+
+        return $this->response($response, 200);
+    }
         
      
 
