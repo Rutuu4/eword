@@ -11,6 +11,8 @@ if ($_POST['h1'] == 1) {
   $video_link = mysqli_real_escape_string($conn, $_POST['video_link']);
   $status = mysqli_real_escape_string($conn, $_POST['status']);
   $create_datetime = date("Y-m-d H:i:s");
+  $is_mou = isset($_POST['is_mou']) ? 1 : 0;
+  $whatsapp_number = $is_mou ? mysqli_real_escape_string($conn, $_POST['whatsapp_number']) : '';
 
   $college_university_type_id = mysqli_real_escape_string($conn, $_POST['college_university_type_id']);
   $city_id = mysqli_real_escape_string($conn, $_POST['city_id']);
@@ -35,7 +37,7 @@ if ($_POST['h1'] == 1) {
 
 
 
-  $qury1 = "UPDATE college_university_details SET user_id='$login_id',college_university_type_id='$college_university_type_id',name='$name',city_id='$city_id',website_link='$website_link',course_ids='$course_ids',status='$status',course_name_list='$course_name_list' where id='$id'";
+  $qury1 = "UPDATE college_university_details SET user_id='$login_id',college_university_type_id='$college_university_type_id',name='$name',city_id='$city_id',website_link='$website_link',course_ids='$course_ids',status='$status',course_name_list='$course_name_list',is_mou='$is_mou',whatsapp_number='$whatsapp_number' where id='$id'";
   $sq1 = $conn->query($qury1);
 
   if (mysqli_affected_rows($conn) >= 1) {
@@ -48,75 +50,75 @@ if ($_POST['h1'] == 1) {
 <html>
 
 <head>
-  <base href="<?= $base_path ?>">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title><?= $softtitle ?></title>
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <?php include("../includes/css-scripts.php"); ?>
-  <style>
+    <base href="<?= $base_path ?>">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title><?= $softtitle ?></title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <?php include("../includes/css-scripts.php"); ?>
+    <style>
     .error {
-      color: red;
+        color: red;
     }
 
     .control-label {
-      text-align: left !important;
+        text-align: left !important;
     }
 
     .form-control {
-      display: block;
-      width: 100%;
-      height: 34px;
-      padding: 6px 12px;
-      font-size: 14px;
-      line-height: 1.42857143;
-      background-color: #fff;
-      background-image: none;
-      border: 1px solid #ccc;
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
     }
 
     .select2-container {
-      width: 100% !important;
+        width: 100% !important;
     }
 
     .select2-container--default .select2-selection--multiple .select2-selection__choice {
-      background-color: #3c8dbc;
-      border-color: #367fa9;
-      padding: 1px 10px;
-      color: #ffffff;
+        background-color: #3c8dbc;
+        border-color: #367fa9;
+        padding: 1px 10px;
+        color: #ffffff;
     }
 
     .select2-container--default .select2-search--inline .select2-search__field {
-      width: 100% !important;
+        width: 100% !important;
     }
 
     .select2-container--default.select2-container--open {
-      width: 100% !important;
+        width: 100% !important;
     }
 
     .select2-container {
-      width: 100% !important;
+        width: 100% !important;
     }
 
     sup {
-      color: #CC3300;
-      font-size: 14px;
-      top: -4px;
+        color: #CC3300;
+        font-size: 14px;
+        top: -4px;
     }
 
     .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-      color: #ffffff;
-      cursor: pointer;
-      display: inline-block;
-      font-weight: bold;
-      margin-right: 2px;
+        color: #ffffff;
+        cursor: pointer;
+        display: inline-block;
+        font-weight: bold;
+        margin-right: 2px;
     }
-  </style>
+    </style>
 </head>
 
 <body class="<?= $bodyclass ?>">
 
-  <?php
+    <?php
 
   if (!empty($_GET['key'])) {
 
@@ -133,81 +135,98 @@ if ($_POST['h1'] == 1) {
   ?>
 
 
-  <div class="wrapper">
-    <?php include("../includes/header.php"); ?>
-    <?php include("../includes/sidebar.php"); ?>
+    <div class="wrapper">
+        <?php include("../includes/header.php"); ?>
+        <?php include("../includes/sidebar.php"); ?>
 
-    <div class="content-wrapper">
-      <section class="content-header">
-        <h1>Update College University </h1>
-      </section>
+        <div class="content-wrapper">
+            <section class="content-header">
+                <h1>Update College University </h1>
+            </section>
 
-      <section class="content">
+            <section class="content">
 
-        <div class="box box-success">
+                <div class="box box-success">
 
-          <div class="box-body">
-            <form action="" method="POST" id="" class="form-horizontal" enctype="multipart/form-data">
-              <input name="h1" type="hidden" id="h1" value="1" />
-              <input name="id" type="hidden" id="id" value="<?= $id; ?>" />
-              <input name="qm1" type="hidden" id="qm1" value="<?= $qm1 ?>" />
-              <input name="current_page" type="hidden" id="current_page" value="<?= $page ?>" />
+                    <div class="box-body">
+                        <form action="" method="POST" id="" class="form-horizontal" enctype="multipart/form-data">
+                            <input name="h1" type="hidden" id="h1" value="1" />
+                            <input name="id" type="hidden" id="id" value="<?= $id; ?>" />
+                            <input name="qm1" type="hidden" id="qm1" value="<?= $qm1 ?>" />
+                            <input name="current_page" type="hidden" id="current_page" value="<?= $page ?>" />
 
 
-              <div class="form-group">
-                <label for="usernamee" class="col-sm-2">Type :</label>
-                <div class="col-sm-8">
+                            <div class="form-group">
+                                <label for="usernamee" class="col-sm-2">Type :</label>
+                                <div class="col-sm-8">
 
-                  <select name="college_university_type_id" id="college_university_type_id" class="form-control" required>
-                    <option value=""> Select Type </option>
-                    <?php
+                                    <select name="college_university_type_id" id="college_university_type_id"
+                                        class="form-control" required>
+                                        <option value=""> Select Type </option>
+                                        <?php
                     $sqlb = "SELECT id,name FROM m_college_university_type where status=1";
                     $resultb = $conn->query($sqlb);
                     while ($rowb = $resultb->fetch_array()) {
                     ?>
-                      <option <?php if ($row['college_university_type_id'] == $rowb['id']) {
+                                        <option <?php if ($row['college_university_type_id'] == $rowb['id']) {
                                 echo "selected";
                               } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
-                    <?php } ?>
-                  </select>
-                </div>
-              </div>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
 
 
-              <div class="form-group">
-                <label class="control-label col-sm-2">Name :</label>
-                <div class="col-sm-8">
-                  <input type="text" class="form-control" name="name" id="name" placeholder="Enter Name " value="<?= $row['name']; ?>" required>
-                </div>
-              </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Name :</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="name" id="name"
+                                        placeholder="Enter Name " value="<?= $row['name']; ?>" required>
+                                </div>
+                            </div>
 
-              <div class="form-group">
-                <label for="usernamee" class="col-sm-2">City :</label>
-                <div class="col-sm-8">
+                            <div class="form-group">
+                                <label for="usernamee" class="col-sm-2">City :</label>
+                                <div class="col-sm-8">
 
-                  <select name="city_id" id="city_id" class="form-control" required>
-                    <option value=""> Select City </option>
-                    <?php
+                                    <select name="city_id" id="city_id" class="form-control" required>
+                                        <option value=""> Select City </option>
+                                        <?php
                     $sqlb = "SELECT id,name FROM m_city where status=1 order by name ASC";
                     $resultb = $conn->query($sqlb);
                     while ($rowb = $resultb->fetch_array()) {
                     ?>
-                      <option <?php if ($row['city_id'] == $rowb['id']) {
+                                        <option <?php if ($row['city_id'] == $rowb['id']) {
                                 echo "selected";
                               } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
-                    <?php } ?>
-                  </select>
-                </div>
-              </div>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
 
-
-              <div class="form-group">
-                <label class="control-label col-sm-2">Website Link :</label>
-                <div class="col-sm-8">
-                  <input type="text" class="form-control" name="website_link" id="website_link" placeholder="Enter Website" value="<?= $row['website_link']; ?>">
-                </div>
-              </div>
-              <?php
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Is MOU Present?</label>
+                                <div class="col-sm-8">
+                                    <label><input type="checkbox" name="is_mou" id="is_mou" value="1"
+                                            <?php echo ($row['mou_present'] == 1) ? 'checked' : ''; ?>> Yes</label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="whatsapp_group" style="display: none;">
+                                <label class="control-label col-sm-2">WhatsApp Number:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="whatsapp_number" id="whatsapp_number"
+                                        maxlength="10" value="<?= $row['whats_app_number']; ?>"
+                                        placeholder="Enter WhatsApp Number">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Website Link :</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="website_link" id="website_link"
+                                        placeholder="Enter Website" value="<?= $row['website_link']; ?>">
+                                </div>
+                            </div>
+                            <?php
               $qry_chk1 = "SELECT id,name from m_main_courses where status=1 order by display_order ASC";
               $result_chk1 = $conn->query($qry_chk1);
               while ($row_chk1 = $result_chk1->fetch_array()) {
@@ -216,91 +235,112 @@ if ($_POST['h1'] == 1) {
               ?>
 
 
-                <div class="form-group">
-                  <label class="control-label col-sm-3" style="font-size: 18px;color: red;"><?= $row_chk1['name'] ?> </label>
-                </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3"
+                                    style="font-size: 18px;color: red;"><?= $row_chk1['name'] ?> </label>
+                            </div>
 
 
-                <?php
+                            <?php
                 $qry_chk = "SELECT id,name from m_exrta_course where status=1 and main_courses_id='$main_courses_id' order by id ASC";
                 $result_chk = $conn->query($qry_chk);
                 while ($row_chk = $result_chk->fetch_array()) {
                   $extra_course_id = $row_chk['id'];
 
                 ?>
-                  <hr>
-                  <div class="form-group">
-                    <label for="usernamee" class="col-sm-3"><?= $row_chk['name'] ?> :</label>
+                            <hr>
+                            <div class="form-group">
+                                <label for="usernamee" class="col-sm-3"><?= $row_chk['name'] ?> :</label>
 
 
-                    <?php
+                                <?php
                     $sql_fv = "SELECT id, name FROM courses_details WHERE status=1 AND extra_course_id='$extra_course_id'";
                     $result_fv = $conn->query($sql_fv);
                     while ($row_fv = $result_fv->fetch_array()) {
                     ?>
-                      <div class="col-sm-3">
-                        <div class="checkbox">
-                          <label style="font-size:10px">
-                            <input type="checkbox" name="course_ids[]" <?php $fam_val = explode(",", $course_ids);
+                                <div class="col-sm-3">
+                                    <div class="checkbox">
+                                        <label style="font-size:10px">
+                                            <input type="checkbox" name="course_ids[]" <?php $fam_val = explode(",", $course_ids);
                                                                         for ($fs = 0; $fs < count($fam_val); $fs++) {
-                                                                          if ($row_fv['id'] == $fam_val[$fs]) { ?> checked <?php }
-                                                                                                                        } ?> value="<?= $row_fv['id']; ?>"> <?= $row_fv['name']; ?>
-                          </label>
-                        </div>
-                      </div>
-                    <?php } ?>
-                  </div>
+                                                                          if ($row_fv['id'] == $fam_val[$fs]) { ?>
+                                                checked
+                                                <?php }
+                                                                                                                        } ?>
+                                                value="<?= $row_fv['id']; ?>"> <?= $row_fv['name']; ?>
+                                        </label>
+                                    </div>
+                                </div>
+                                <?php } ?>
+                            </div>
 
 
 
 
-              <?php }
+                            <?php }
               } ?>
 
 
-              <div class="form-group">
-                <label class="col-sm-2">Status :</label>
-                <div class="col-sm-6">
-                  <div class="col-sm-3 col-xs-6">
-                    <label>
-                      <input name="status" type="radio" value="1" <?php if ($status == 1) {  ?>checked="checked" <?php } ?> />
-                      Active</label>
-                  </div>
-                  <div class="col-sm-6 col-xs-6">
-                    <label>
-                      <input name="status" type="radio" value="0" <?php if ($status == 0) {  ?>checked="checked" <?php } ?> />
-                      Deactive</label>
-                  </div>
+                            <div class="form-group">
+                                <label class="col-sm-2">Status :</label>
+                                <div class="col-sm-6">
+                                    <div class="col-sm-3 col-xs-6">
+                                        <label>
+                                            <input name="status" type="radio" value="1"
+                                                <?php if ($status == 1) {  ?>checked="checked" <?php } ?> />
+                                            Active</label>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-6">
+                                        <label>
+                                            <input name="status" type="radio" value="0"
+                                                <?php if ($status == 0) {  ?>checked="checked" <?php } ?> />
+                                            Deactive</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-12" align="right">
+                                <button type="submit" class="btn btn-success ">Save changes</button>
+                            </div>
+
+                        </form>
+                    </div>
                 </div>
-              </div>
-
-
-              <div class="col-md-12" align="right">
-                <button type="submit" class="btn btn-success ">Save changes</button>
-              </div>
-
-            </form>
-          </div>
+            </section>
         </div>
-      </section>
+        <?php include("../includes/footer.php"); ?>
     </div>
-    <?php include("../includes/footer.php"); ?>
-  </div>
-  <?php include("../includes/js-scripts.php"); ?>
-  <script>
+    <?php include("../includes/js-scripts.php"); ?>
+    <script>
     $(document).ready(function() {
-      //Select2
-      $(".select2").select2();
+        //Select2
+        $(".select2").select2();
+
+        function toggleWhatsappField() {
+            if ($('#is_mou').is(':checked')) {
+                $('#whatsapp_group').show();
+                $('#whatsapp_number').attr('required', true);
+            } else {
+                $('#whatsapp_group').hide();
+                $('#whatsapp_number').removeAttr('required');
+            }
+        }
+
+        $('#is_mou').change(toggleWhatsappField);
+        //bootstrap WYSIHTML5 - text editor
+        $(".textarea").wysihtml5();
+        toggleWhatsappField();
     });
-  </script>
-  <script>
+    </script>
+    <script>
     $(document).ready(function() {
-      //Select2
-      $(".select2").select2();
-      //bootstrap WYSIHTML5 - text editor
-      $(".textarea").wysihtml5();
+        //Select2
+        $(".select2").select2();
+        //bootstrap WYSIHTML5 - text editor
+        $(".textarea").wysihtml5();
     });
-  </script>
+    </script>
 
 
 </body>

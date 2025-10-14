@@ -113,7 +113,7 @@ class College_control extends REST_Controller {
                                             CONVERT(college_university_details.name USING utf8mb4) ASC";
                 }
 
-                    $fields         = ['college_university_details.name,college_university_details.website_link,m_city.name AS city_name','college_university_details.remark AS courese_list_name'];
+                $fields         = ['college_university_details.name,college_university_details.is_mou,college_university_details.whatsapp_number,college_university_details.website_link,m_city.name AS city_name', 'college_university_details.remark AS courese_list_name'];
 
                 $params = array(
                 'table'         => TBL_COLLEGE_UNIVERSITY_DETAILS.' as college_university_details',
