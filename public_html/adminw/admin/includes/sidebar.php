@@ -220,6 +220,7 @@
 	                </ul>
 	            </li>
 
+
 	            <li class="treeview">
 	                <a href="#">
 	                    <i class="fa fa-question-circle"></i>
@@ -237,7 +238,26 @@
 	            </li>
 
 
+	            <li class="treeview">
+	                <a href="#">
+	                    <i class="fa fa-graduation-cap"></i>
+	                    <span> Job Placement </span>
+	                    <span class="pull-right-container">
+	                        <i class="fa fa-angle-left pull-right"></i>
+	                    </span>
+	                </a>
+	                <ul class="treeview-menu">
 
+	                    <li><a href="manage-job-and-placement.php"><i class="fa fa-circle-o"></i> Job Placement</a></li>
+
+
+
+	                    <li><a href="manage-job-and-placement-openning.php"><i class="fa fa-circle-o"></i> Job Placement
+	                            Openning</a></li>
+
+
+	                </ul>
+	            </li>
 	            <li class="treeview">
 	                <a href="#">
 	                    <i class="fa fa-globe"></i>
