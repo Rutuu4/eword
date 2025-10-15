@@ -49,12 +49,13 @@ include("../database.php");
                       <th>Sr No.</th>
                       <th>Type</th>
                       <th>Name </th>
+                      <th>Is_mou</th>
+                      <th>Whatsapp Number</th>
                       <th>Sub Main Course </th>
                       <th>Course </th>
                       <th>City </th>
                       <th>Website Link</th>
-                      <th>Whatsapp Number</th>
-                      <th>Is_mou</th>
+
                       <th>Status</th>
                       <th>Action</th>
 
@@ -121,12 +122,13 @@ include("../database.php");
                         <td><?= $i; ?></td>
                         <td><?= $row['college_university_type_name']; ?></td>
                         <td><?= $row['name']; ?></td>
+                        <td><?= $is_mouu; ?></td>
+                        <td><?= $row['whatsapp_number']; ?></td>
                         <td><?= $row['sub_main_course_names']; ?></td>
                         <td><?= $row['course_names']; ?></td>
                         <td><?= $row['city_name']; ?></td>
                         <td><?= $row['website_link']; ?></td>
-                        <td><?= $row['whatsapp_number']; ?></td>
-                        <td><?= $is_mouu; ?></td>
+
                         <td><?= $statuss; ?></td>
 
 
