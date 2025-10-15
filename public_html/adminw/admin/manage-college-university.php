@@ -53,6 +53,8 @@ include("../database.php");
                       <th>Course </th>
                       <th>City </th>
                       <th>Website Link</th>
+                      <th>Whatsapp Number</th>
+                      <th>Is_mou</th>
                       <th>Status</th>
                       <th>Action</th>
 
@@ -64,6 +66,8 @@ include("../database.php");
                     $qry = "SELECT 
                     college_university_details.id,
                     college_university_details.name,
+                    college_university_details.is_mou,
+                    college_university_details.whatsapp_number,
                     college_university_details.website_link,
                     college_university_details.status,
                     m_city.name AS city_name,
@@ -106,6 +110,12 @@ include("../database.php");
                       } else {
                         $statuss = "<span class=\"label label-warning\">Deactive</span>";
                       }
+                      $is_mou = $row['is_mou'];
+                      if ($is_mou == 1) {
+                        $is_mouu = "<span class=\"label label-success\">True</span>";
+                      } else {
+                        $is_mouu = "<span class=\"label label-danger\">False</span>";
+                      }
                     ?>
                       <tr>
                         <td><?= $i; ?></td>
@@ -115,13 +125,15 @@ include("../database.php");
                         <td><?= $row['course_names']; ?></td>
                         <td><?= $row['city_name']; ?></td>
                         <td><?= $row['website_link']; ?></td>
+                        <td><?= $row['whatsapp_number']; ?></td>
+                        <td><?= $is_mouu; ?></td>
                         <td><?= $statuss; ?></td>
 
 
                         <td>
                           <a button class="btn btn-warning edit-button" data-id="<?= base64_encode($row['id']) ?>"><i class="fa fa-edit"></i> Edit</a>
 
-                          <a button class="btn btn-danger btn-sm delete-button" data-id="<?= base64_encode($row['id']) ?>" ><i class="fa fa-trash"></i> Delete </button></a>
+                          <a button class="btn btn-danger btn-sm delete-button" data-id="<?= base64_encode($row['id']) ?>"><i class="fa fa-trash"></i> Delete </button></a>
 
                         </td>
                       </tr>
@@ -150,7 +162,7 @@ include("../database.php");
 
       if (pageNumber) {
         table.page(parseInt(pageNumber) - 1).draw(false); // Navigate to the correct page (DataTables uses 0-based indexing)
-      } else { 
+      } else {
         table.page(0).draw(false);
       }
 
