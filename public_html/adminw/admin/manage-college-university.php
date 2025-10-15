@@ -49,7 +49,7 @@ include("../database.php");
                       <th>Sr No.</th>
                       <th>Type</th>
                       <th>Name </th>
-                      <th>Is_mou</th>
+                      <th>Is mou</th>
                       <th>Whatsapp Number</th>
                       <th>Sub Main Course </th>
                       <th>Course </th>
@@ -68,7 +68,7 @@ include("../database.php");
                     college_university_details.id,
                     college_university_details.name,
                     college_university_details.is_mou,
-                    college_university_details.whatsapp_number,
+                    IFNULL(college_university_details.whatsapp_number, '-') AS whatsapp_number,  
                     college_university_details.website_link,
                     college_university_details.status,
                     m_city.name AS city_name,
