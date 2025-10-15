@@ -4,10 +4,11 @@ include("../../database.php");
 if ($_POST['h1'] == 1) {
 
   $id = mysqli_real_escape_string($conn, $_POST['id']);
-  $name = mysqli_real_escape_string($conn, $_POST['name']);
-  $name = str_replace("'", "", $name);
-  $name = str_replace('"', '', $name);
-  $name = preg_replace('/^[^a-zA-Z0-9]+/', '', $name);
+ $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $name = trim($name);
+    // Optional: You can remove only single/double quotes if you want
+    $name = str_replace(["'", '"'], '', $name);
+    $name = preg_replace('/^[\p{Z}\p{P}]+/u', '', $name);
   $video_link = mysqli_real_escape_string($conn, $_POST['video_link']);
   $status = mysqli_real_escape_string($conn, $_POST['status']);
   $create_datetime = date("Y-m-d H:i:s");
