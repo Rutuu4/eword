@@ -27,9 +27,8 @@ class Tuition_control extends REST_Controller
         $data = $this->post();
 
         // ✅ Pagination
-        $page  = isset($data['page']) ? (int)$data['page'] : 1;
-        $limit = isset($data['limit']) ? (int)$data['limit'] : 10;
-        $offset = ($page - 1) * $limit;
+        $page       = !empty($data['page_no']) ? $data['page_no'] - 1 : '1';
+        $per_page   = $page * PRODUCT_PAGINATION_SIZE;
 
         $wherestring = "tuition_and_training.status = 1";
 
@@ -58,18 +57,31 @@ class Tuition_control extends REST_Controller
                 't_courses'                    => 't_courses.id = tuition_and_training_courses.course_id',
                 'city'                         => 'city.id = tuition_and_training.city',
             ],
-            'groupby'     => 'tuition_and_training.id',
-            'limit'       => $limit,
-            'offset'      => $offset
+            'groupby'     => 'tuition_and_training.id'
+            // 'limit'       => $limit,
+            // 'offset'      => $offset
         ];
 
         // ✅ Get paginated records
-        $total = $this->General_model->get_query_data($params);
-
-        // ✅ Total count without limit
-        $countParams = $params;
-        unset($countParams['limit'], $countParams['offset']);
-        $total_records = $this->General_model->get_query_data_count($countParams);
+        $raw_list = $this->General_model->get_query_data($params);
+        // ✅ Query for total count (without pagination)
+        // $cntParams = array(
+        //     'table'         => 'tuition_and_training',
+        //     'fields'        => $fields,
+        //     'wherestring'   => !empty($wherestring) ? $wherestring : '',
+        //     'compare_type'  => '=',
+        //     "totalrow"      => '1',
+        //     'join_type'     => 'left',
+        //     'join_tables'   => [
+        //         'tuition_and_training_courses' => 'tuition_and_training_courses.tuition_and_training_id = tuition_and_training.id',
+        //         't_courses'                    => 't_courses.id = tuition_and_training_courses.course_id',
+        //         'city'                         => 'city.id = tuition_and_training.city',
+        //     ],
+        // );
+        // $totalProduct = $this->General_model->get_query_data($cntParams);
+        // if (!empty($totalProduct)) {
+        //     $total_page = ceil($totalProduct / PRODUCT_PAGINATION_SIZE);
+        // }
 
         // ✅ Format result
         $formatted_list = [];
@@ -106,7 +118,7 @@ class Tuition_control extends REST_Controller
         if (!empty($result)) {
             $response['message'] = $this->lang->line('success');
             $response['code'] = REST_Controller::HTTP_OK;
-            $response['total_page'] = ceil($total / PRODUCT_PAGINATION_SIZE);
+            // $response['total_page'] = isset($total_page) ? $total_page : '1';
             $response['data'] = $result;
         } else {
             $response = [
@@ -123,9 +135,10 @@ class Tuition_control extends REST_Controller
         $data = $this->post();
 
         // ✅ Pagination
-        $page  = isset($data['page']) ? (int)$data['page'] : 1;
-        $limit = isset($data['limit']) ? (int)$data['limit'] : 10;
-        $offset = ($page - 1) * $limit;
+        $page_no = !empty($data['page_no']) ? (int)$data['page_no'] : 1;
+        $offset  = ($page_no - 1) * PRODUCT_PAGINATION_SIZE;
+        $limit   = PRODUCT_PAGINATION_SIZE;
+
 
         // ✅ Filters
         $wheres = ["tuition_and_training.status = 1"];
@@ -148,6 +161,7 @@ class Tuition_control extends REST_Controller
 
         $wherestring = implode(' AND ', $wheres);
 
+
         // ✅ Fields
         $fields = [
             'tuition_and_training.id',
@@ -164,28 +178,38 @@ class Tuition_control extends REST_Controller
         ];
 
         $params = [
-            'table'       => 'tuition_and_training',
-            'fields'      => $fields,
+            'table' => 'tuition_and_training',
+            'fields' => $fields,
             'wherestring' => $wherestring,
-            'compare_type' => '=',
-            'join_type'   => 'left',
             'join_tables' => [
-                'tuition_and_training_courses' => 'tuition_and_training_courses.tuition_and_training_id = tuition_and_training.id',
-                't_courses'                    => 't_courses.id = tuition_and_training_courses.course_id',
-                'city'                         => 'city.id = tuition_and_training.city',
+                'tuition_and_training_courses jointype left' => 'tuition_and_training_courses.tuition_and_training_id = tuition_and_training.id',
+                't_courses jointype left'                    => 't_courses.id = tuition_and_training_courses.course_id',
+                'city jointype left'                         => 'city.id = tuition_and_training.city',
             ],
-            'groupby'     => 'tuition_and_training.id',
-            'limit'       => $limit,
-            'offset'      => $offset
+            'groupby' => 'tuition_and_training.id',
+            // 'num' => $limit,
+            // 'offset' => $offset
         ];
+
 
         // ✅ Get paginated records
         $raw_list = $this->General_model->get_query_data($params);
-
+        // $cntParams = [
+        //     'table' => 'tuition_and_training',
+        //     'fields' => $fields,
+        //     'wherestring' => $wherestring,
+        //     'join_tables' => [
+        //         'tuition_and_training_courses jointype left' => 'tuition_and_training_courses.tuition_and_training_id = tuition_and_training.id',
+        //         't_courses jointype left'                    => 't_courses.id = tuition_and_training_courses.course_id',
+        //         'city jointype left'                         => 'city.id = tuition_and_training.city',
+        //     ],
+        //     'groupby' => 'tuition_and_training.id',
+        //     'totalrow' => '1'
+        // ];
+        // $total_records = $this->General_model->get_query_data($cntParams);
+        // $total_page = !empty($total_records) ? ceil($total_records / PRODUCT_PAGINATION_SIZE) : 1;
         // ✅ Total count without limit
-        $countParams = $params;
-        unset($countParams['limit'], $countParams['offset']);
-        $total_records = $this->General_model->get_query_data_count($countParams);
+
 
         // ✅ Format result
         $formatted_list = [];
@@ -222,7 +246,7 @@ class Tuition_control extends REST_Controller
         if (!empty($result)) {
             $response['message'] = $this->lang->line('success');
             $response['code'] = REST_Controller::HTTP_OK;
-            $response['total_page'] = ceil($total / PRODUCT_PAGINATION_SIZE);
+            // $response['total_page'] = $total_page;
             $response['data'] = $result;
         } else {
             $response = [

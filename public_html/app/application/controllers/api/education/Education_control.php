@@ -73,22 +73,22 @@ class Education_control extends REST_Controller
                 'foreign_education_exam_types' => 'foreign_education_exam_types.foreign_education_id = foreign_education.id',
                 'exam_type' => 'exam_type.id = foreign_education_exam_types.exam_type_id',
                 'city' => 'city.id = foreign_education.city',
-            ],
-            'num'           => $limit,
-            'offset'        => $offset
+            ]
+            // 'num'           => $limit,
+            // 'offset'        => $offset
         ];
 
         $raw_list = $this->General_model->get_query_data($params);
 
         // ✅ Query for total count (without pagination)
-        $countParams = [
-            'table'         => 'foreign_education',
-            'fields'        => ['foreign_education.id'],
-            'wherestring'   => $wherestring,
-            'compare_type'  => '=',
-            'totalrow'      => '1'
-        ];
-        $total = $this->General_model->get_query_data($countParams);
+        // $countParams = [
+        //     'table'         => 'foreign_education',
+        //     'fields'        => ['foreign_education.id'],
+        //     'wherestring'   => $wherestring,
+        //     'compare_type'  => '=',
+        //     'totalrow'      => '1'
+        // ];
+        // $total = $this->General_model->get_query_data($countParams);
 
         // ✅ Grouping result (same logic as before)
         $formatted_list = [];
@@ -154,7 +154,7 @@ class Education_control extends REST_Controller
         if (!empty($result)) {
             $response['message'] = $this->lang->line('success');
             $response['code'] = REST_Controller::HTTP_OK;
-            $response['total_page'] = ceil($total / PRODUCT_PAGINATION_SIZE);
+            // $response['total_page'] = ceil($total / PRODUCT_PAGINATION_SIZE);
             $response['data'] = $result;
         } else {
             $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
@@ -237,23 +237,23 @@ class Education_control extends REST_Controller
             'fields' => $fields,
             'wherestring' => $wherestring,
             'join_tables' => $join_tables,
-            'groupby' => 'foreign_education.id',
-            'num' => $limit,
-            'offset' => $offset
+            'groupby' => 'foreign_education.id'
+            // 'num' => $limit,
+            // 'offset' => $offset
         ];
         $edu_list = $this->General_model->get_query_data($params);
 
         // ✅ Total count for pagination
-        $cntParams = [
-            'table' => 'foreign_education',
-            'fields' => $fields,
-            'wherestring' => $wherestring,
-            'join_tables' => $join_tables,
-            'groupby' => 'foreign_education.id',
-            'totalrow' => '1'
-        ];
-        $total_records = $this->General_model->get_query_data($cntParams);
-        $total_page = !empty($total_records) ? ceil($total_records / PRODUCT_PAGINATION_SIZE) : 1;
+        // $cntParams = [
+        //     'table' => 'foreign_education',
+        //     'fields' => $fields,
+        //     'wherestring' => $wherestring,
+        //     'join_tables' => $join_tables,
+        //     'groupby' => 'foreign_education.id',
+        //     'totalrow' => '1'
+        // ];
+        // $total_records = $this->General_model->get_query_data($cntParams);
+        // $total_page = !empty($total_records) ? ceil($total_records / PRODUCT_PAGINATION_SIZE) : 1;
 
         // ✅ Response formatting
         if (!empty($edu_list)) {
@@ -267,7 +267,7 @@ class Education_control extends REST_Controller
             $response = [
                 'code' => REST_Controller::HTTP_OK,
                 'message' => $this->lang->line('success'),
-                'total_page' => $total_page,
+                // 'total_page' => $total_page,
                 'data' => $edu_list
             ];
         } else {

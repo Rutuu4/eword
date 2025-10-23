@@ -61,22 +61,22 @@ class Project_control extends REST_Controller
                 'project_and_internship_courses' => 'project_and_internship_courses.project_and_internship_id = project_and_internship.id',
                 'p_courses'                      => 'p_courses.id = project_and_internship_courses.course_id',
                 'city'                           => 'city.id = project_and_internship.city_id',
-            ],
-            'num'         => $limit,
-            'offset'      => $offset
+            ]
+            // 'num'         => $limit,
+            // 'offset'      => $offset
         ];
 
         $raw_list = $this->General_model->get_query_data($params);
 
         // ✅ Total count (without pagination)
-        $countParams = [
-            'table'       => 'project_and_internship',
-            'fields'      => ['project_and_internship.id'],
-            'wherestring' => $wherestring,
-            'compare_type' => '=',
-            'totalrow'    => '1'
-        ];
-        $total = $this->General_model->get_query_data($countParams);
+        // $countParams = [
+        //     'table'       => 'project_and_internship',
+        //     'fields'      => ['project_and_internship.id'],
+        //     'wherestring' => $wherestring,
+        //     'compare_type' => '=',
+        //     'totalrow'    => '1'
+        // ];
+        // $total = $this->General_model->get_query_data($countParams);
 
         // ✅ Format grouped result
         $formatted_list = [];
@@ -118,7 +118,7 @@ class Project_control extends REST_Controller
         if (!empty($result)) {
             $response['message'] = $this->lang->line('success');
             $response['code'] = REST_Controller::HTTP_OK;
-            $response['total_page'] = ceil($total / PRODUCT_PAGINATION_SIZE);
+            // $response['total_page'] = ceil($total / PRODUCT_PAGINATION_SIZE);
             $response['data'] = $result;
         } else {
             $response = [
@@ -137,9 +137,9 @@ class Project_control extends REST_Controller
         $data = $this->post();
 
         // ✅ Pagination
-        $page  = isset($data['page']) ? (int)$data['page'] : 1;
-        $limit = isset($data['limit']) ? (int)$data['limit'] : 10;
-        $offset = ($page - 1) * $limit;
+        $page  = !empty($data['page_no']) ? (int)$data['page_no'] - 1 : 0;
+        $offset = $page * PRODUCT_PAGINATION_SIZE;
+        $limit  = PRODUCT_PAGINATION_SIZE;
 
         // ✅ Filters
         $wheres = ["project_and_internship.status = 1"];
@@ -187,18 +187,19 @@ class Project_control extends REST_Controller
                 'p_courses'                      => 'p_courses.id = project_and_internship_courses.course_id',
                 'city'                           => 'city.id = project_and_internship.city_id',
             ],
-            'groupby'     => 'project_and_internship.id',
-            'limit'       => $limit,
-            'offset'      => $offset
+            'groupby'     => 'project_and_internship.id'
+            // 'limit'       => $limit,
+            // 'offset'      => $offset
         ];
 
         // ✅ Get paginated records
         $raw_list = $this->General_model->get_query_data($params);
 
         // ✅ Total count without limit
-        $countParams = $params;
-        unset($countParams['limit'], $countParams['offset']);
-        $total_records = $this->General_model->get_query_data_count($countParams);
+        // $countParams = $params;
+        // unset($countParams['limit'], $countParams['offset']);
+        // $total_records = $this->General_model->get_query_data($countParams);
+        // $total_count = is_array($total_records) ? count($total_records) : 0;
 
         // ✅ Format result
         $formatted_list = [];
@@ -240,7 +241,7 @@ class Project_control extends REST_Controller
         if (!empty($result)) {
             $response['message'] = $this->lang->line('success');
             $response['code'] = REST_Controller::HTTP_OK;
-            $response['total_page'] = ceil($total / PRODUCT_PAGINATION_SIZE);
+            // $response['total_page'] = ceil($total_count / PRODUCT_PAGINATION_SIZE);
             $response['data'] = $result;
         } else {
             $response = [
