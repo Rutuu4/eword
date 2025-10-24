@@ -208,7 +208,7 @@
 					</a>
 					<ul class="treeview-menu">
 
-						<li><a href="manage-tuition-and-trainning.php"><i class="fa fa-circle-o"></i> Project
+						<li><a href="manage-project-and-internship.php"><i class="fa fa-circle-o"></i> Project
 								Internship</a></li>
 
 

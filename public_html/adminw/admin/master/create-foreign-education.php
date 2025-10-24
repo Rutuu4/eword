@@ -1,8 +1,7 @@
-<?php 
-include("../../database.php"); 
+<?php
+include("../../database.php");
 
-if($_POST['h1']==1)
-{  
+if ($_POST['h1'] == 1) {
     // Fetch all POST values safely
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $website_link = mysqli_real_escape_string($conn, $_POST['website_link']);
@@ -13,36 +12,36 @@ if($_POST['h1']==1)
     $course_id = mysqli_real_escape_string($conn, $_POST['courses_id']);
     $city_id = mysqli_real_escape_string($conn, $_POST['city_id']);
     $near_by_area = mysqli_real_escape_string($conn, $_POST['near_by_area']);
- 
+
 
     // Insert into foreign_education table WITHOUT country_id, visa_type_id, exam_type_id
     // (since those are now handled via linking tables)
-   // Build insert fields and values dynamically
-$fields = [
-    "consultancy_name" => "'$name'",
-    "institute_url" => "'$website_link'",
-    "status" => "'$status'",
-    "establishment_year" => "'$establishment_year'",
-    "mou_present" => "'$is_mou'",
-    "whats_app_number" => "'$whatsapp_number'",
-    "city" => "'$city_id'",
-    "nearby_area" => "'$near_by_area'"
-];
+    // Build insert fields and values dynamically
+    $fields = [
+        "consultancy_name" => "'$name'",
+        "institute_url" => "'$website_link'",
+        "status" => "'$status'",
+        "establishment_year" => "'$establishment_year'",
+        "mou_present" => "'$is_mou'",
+        "whats_app_number" => "'$whatsapp_number'",
+        "city" => "'$city_id'",
+        "nearby_area" => "'$near_by_area'"
+    ];
 
-// Only add course_id if it's not empty
-if (!empty($_POST['courses_id'])) {
-    $course_id = mysqli_real_escape_string($conn, $_POST['courses_id']);
-    $fields["course_id"] = "'$course_id'";
-}
+    // Only add course_id if it's not empty
+    if (!empty($_POST['courses_id'])) {
+        $course_id = mysqli_real_escape_string($conn, $_POST['courses_id']);
+        $fields["course_id"] = "'$course_id'";
+    }
 
-// Construct the query
-$columns = implode(", ", array_keys($fields));
-$values = implode(", ", array_values($fields));
+    // Construct the query
+    $columns = implode(", ", array_keys($fields));
+    $values = implode(", ", array_values($fields));
 
-$insert = "INSERT INTO foreign_education ($columns) VALUES ($values)";
+    $insert = "INSERT INTO foreign_education ($columns) VALUES ($values)";
 
 
-echo $insert;
+    echo $insert;
     $result = $conn->query($insert);
     if ($result) {
         $foreign_education_id = $conn->insert_id;
@@ -98,7 +97,7 @@ echo $insert;
     } else {
         echo "<div class='alert alert-danger'>Error: " . $conn->error . "</div>";
     }
-} 
+}
 
 
 ?>
@@ -106,41 +105,41 @@ echo $insert;
 <html>
 
 <head>
-    <base href="<?=$base_path?>">
+    <base href="<?= $base_path ?>">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><?=$softtitle?></title>
+    <title><?= $softtitle ?></title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <?php include("../includes/css-scripts.php"); ?>
     <style>
-    .error {
-        color: red;
-    }
+        .error {
+            color: red;
+        }
 
-    .control-label {
-        text-align: left !important;
-    }
+        .control-label {
+            text-align: left !important;
+        }
 
-    .form-control {
-        display: block;
-        width: 100%;
-        height: 34px;
-        padding: 6px 12px;
-        font-size: 14px;
-        line-height: 1.42857143;
-        color: #555;
-        background-color: #fff;
-        background-image: none;
-        border: 1px solid #ccc;
-    }
+        .form-control {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+        }
 
-    .select2-container {
-        width: 100% !important;
-    }
+        .select2-container {
+            width: 100% !important;
+        }
     </style>
 </head>
 
-<body class="<?=$bodyclass?>">
+<body class="<?= $bodyclass ?>">
 
     <div class="wrapper">
         <?php include("../includes/header.php"); ?>
@@ -183,13 +182,12 @@ echo $insert;
 
                                     <select name="courses_id" id="courses_id" class="form-control">
                                         <option value=""> Select Course </option>
-                                        <?php 
-                            $sqlb="SELECT id,name FROM f_courses where status=1";
-                            $resultb = $conn->query($sqlb);
-                            while($rowb = $resultb->fetch_array())
-                            {
-                              ?>
-                                        <option value="<?=$rowb['id'];?>"> <?=$rowb['name'];?> </option>
+                                        <?php
+                                        $sqlb = "SELECT id,name FROM f_courses where status=1";
+                                        $resultb = $conn->query($sqlb);
+                                        while ($rowb = $resultb->fetch_array()) {
+                                        ?>
+                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -199,7 +197,7 @@ echo $insert;
                                 <div class="col-sm-8">
 
                                     <textarea class="form-control textarea" placeholder="Enter near by area"
-                                        style="width: 100%; height: 250px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"
+                                        style="width: 100%; height: 50px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"
                                         name="near_by_area" id="near_by_area"></textarea>
 
                                 </div>
@@ -210,13 +208,12 @@ echo $insert;
 
                                     <select name="city_id" id="city_id" class="form-control" required>
                                         <option value=""> Select City</option>
-                                        <?php 
-                            $sqlb="SELECT id,name FROM city";
-                            $resultb = $conn->query($sqlb);
-                            while($rowb = $resultb->fetch_array())
-                            {
-                              ?>
-                                        <option value="<?=$rowb['id'];?>"> <?=$rowb['name'];?> </option>
+                                        <?php
+                                        $sqlb = "SELECT id,name FROM city";
+                                        $resultb = $conn->query($sqlb);
+                                        while ($rowb = $resultb->fetch_array()) {
+                                        ?>
+                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -239,13 +236,12 @@ echo $insert;
                                     <select name="country_id[]" id="country_id" class="form-control select2" multiple>
 
                                         <option value=""> Select Country</option>
-                                        <?php 
-                            $sqlb="SELECT id,name FROM country";
-                            $resultb = $conn->query($sqlb);
-                            while($rowb = $resultb->fetch_array())
-                            {
-                              ?>
-                                        <option value="<?=$rowb['id'];?>"> <?=$rowb['name'];?> </option>
+                                        <?php
+                                        $sqlb = "SELECT id,name FROM country";
+                                        $resultb = $conn->query($sqlb);
+                                        while ($rowb = $resultb->fetch_array()) {
+                                        ?>
+                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -257,13 +253,12 @@ echo $insert;
                                     <select name="visa_type_id[]" id="visa_type_id" class="form-control select2"
                                         multiple>
                                         <option value=""> Select Visa Type </option>
-                                        <?php 
-                            $sqlb="SELECT id,name FROM visa_type";
-                            $resultb = $conn->query($sqlb);
-                            while($rowb = $resultb->fetch_array())
-                            {
-                              ?>
-                                        <option value="<?=$rowb['id'];?>"> <?=$rowb['name'];?> </option>
+                                        <?php
+                                        $sqlb = "SELECT id,name FROM visa_type";
+                                        $resultb = $conn->query($sqlb);
+                                        while ($rowb = $resultb->fetch_array()) {
+                                        ?>
+                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -276,13 +271,12 @@ echo $insert;
                                         multiple>
 
                                         <option value=""> Select Exam Type </option>
-                                        <?php 
-                            $sqlb="SELECT id,name FROM exam_type";
-                            $resultb = $conn->query($sqlb);
-                            while($rowb = $resultb->fetch_array())
-                            {
-                              ?>
-                                        <option value="<?=$rowb['id'];?>"> <?=$rowb['name'];?> </option>
+                                        <?php
+                                        $sqlb = "SELECT id,name FROM exam_type";
+                                        $resultb = $conn->query($sqlb);
+                                        while ($rowb = $resultb->fetch_array()) {
+                                        ?>
+                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -327,34 +321,34 @@ echo $insert;
     </div>
     <?php include("../includes/js-scripts.php"); ?>
     <script>
-    $(document).ready(function() {
-        // Initialize Select2
-        $(".select2").select2();
+        $(document).ready(function() {
+            // Initialize Select2
+            $(".select2").select2();
 
-        // Toggle WhatsApp number required based on MOU checkbox
-        $('#is_mou').change(function() {
-            if ($(this).is(':checked')) {
-                $('#whatsapp_group').show();
-                $('#whatsapp_number').prop('required', true);
-            } else {
-                $('#whatsapp_group').hide();
-                $('#whatsapp_number').prop('required', false);
-            }
+            // Toggle WhatsApp number required based on MOU checkbox
+            $('#is_mou').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#whatsapp_group').show();
+                    $('#whatsapp_number').prop('required', true);
+                } else {
+                    $('#whatsapp_group').hide();
+                    $('#whatsapp_number').prop('required', false);
+                }
+            });
+
+            // Dynamic required logic: If course selected, country is required
+            $('#courses_id').change(function() {
+                let courseSelected = $(this).val();
+                if (courseSelected) {
+                    $('#country_id').attr('required', true);
+                } else {
+                    $('#country_id').removeAttr('required');
+                }
+            });
+
+            // Trigger change on load in case of pre-filled form
+            $('#courses_id').trigger('change');
         });
-
-        // Dynamic required logic: If course selected, country is required
-        $('#courses_id').change(function() {
-            let courseSelected = $(this).val();
-            if (courseSelected) {
-                $('#country_id').attr('required', true);
-            } else {
-                $('#country_id').removeAttr('required');
-            }
-        });
-
-        // Trigger change on load in case of pre-filled form
-        $('#courses_id').trigger('change');
-    });
     </script>
 
 

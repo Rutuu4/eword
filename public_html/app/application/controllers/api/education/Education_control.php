@@ -171,7 +171,7 @@ class Education_control extends REST_Controller
     {
         $data = $this->post();
 
-        // ✅ Pagination (same as college_university_list_post)
+        // ✅ Pagination
         $page_no = !empty($data['page_no']) ? (int)$data['page_no'] : 1;
         $offset  = ($page_no - 1) * PRODUCT_PAGINATION_SIZE;
         $limit   = PRODUCT_PAGINATION_SIZE;
@@ -214,24 +214,26 @@ class Education_control extends REST_Controller
         $wherestring = implode(' AND ', $wheres);
         $wherestring .= " GROUP BY foreign_education.id";
 
-        // ✅ Fields
+        // ✅ Fields (including both IDs and names)
         $fields = [
             'foreign_education.id',
             'foreign_education.consultancy_name',
             'city.name as city_name',
             'foreign_education.nearby_area',
-            'foreign_education.mou_present',
+            'foreign_education.mou_present as MOU',
             'foreign_education.whats_app_number',
             'foreign_education.establishment_year',
             'TIMESTAMPDIFF(YEAR, foreign_education.establishment_year, CURDATE()) as total_years',
             'foreign_education.institute_url',
-            'GROUP_CONCAT(DISTINCT country.name) as country',
-            'GROUP_CONCAT(DISTINCT visa_type.name) as visa_types',
-            'GROUP_CONCAT(DISTINCT f_courses.name) as courses',
-            'GROUP_CONCAT(DISTINCT exam_type.name) as exam_types'
+
+            // ✅ Combined lists
+            'GROUP_CONCAT(DISTINCT CONCAT(f_courses.id, ":", f_courses.name)) as courses',
+            'GROUP_CONCAT(DISTINCT CONCAT(country.id, ":", country.name)) as countries',
+            'GROUP_CONCAT(DISTINCT CONCAT(visa_type.id, ":", visa_type.name)) as visa_types',
+            'GROUP_CONCAT(DISTINCT CONCAT(exam_type.id, ":", exam_type.name)) as exam_types'
         ];
 
-        // ✅ Get paginated data
+        // ✅ Get data
         $params = [
             'table' => 'foreign_education',
             'fields' => $fields,
@@ -241,6 +243,7 @@ class Education_control extends REST_Controller
             // 'num' => $limit,
             // 'offset' => $offset
         ];
+
         $edu_list = $this->General_model->get_query_data($params);
 
         // ✅ Total count for pagination
@@ -255,13 +258,14 @@ class Education_control extends REST_Controller
         // $total_records = $this->General_model->get_query_data($cntParams);
         // $total_page = !empty($total_records) ? ceil($total_records / PRODUCT_PAGINATION_SIZE) : 1;
 
-        // ✅ Response formatting
+        // ✅ Response formatting        
         if (!empty($edu_list)) {
             foreach ($edu_list as &$item) {
-                $item['country']     = $item['country'] ? explode(',', $item['country']) : [];
-                $item['visa_types']  = $item['visa_types'] ? explode(',', $item['visa_types']) : [];
-                $item['courses']     = $item['courses'] ? explode(',', $item['courses']) : [];
-                $item['exam_types']  = $item['exam_types'] ? explode(',', $item['exam_types']) : [];
+                // Convert concatenated fields into arrays of {id, name}
+                $item['courses'] = $this->format_id_name_pairs($item['courses']);
+                $item['countries'] = $this->format_id_name_pairs($item['countries']);
+                $item['visa_types'] = $this->format_id_name_pairs($item['visa_types']);
+                $item['exam_types'] = $this->format_id_name_pairs($item['exam_types']);
             }
 
             $response = [
@@ -279,6 +283,27 @@ class Education_control extends REST_Controller
 
         $this->response($response, 200);
     }
+
+    /**
+     * ✅ Helper: Convert "1:India,2:Canada" → [{id:"1",name:"India"},{id:"2",name:"Canada"}]
+     */
+    private function format_id_name_pairs($str)
+    {
+        if (empty($str)) return [];
+        $pairs = explode(',', $str);
+        $result = [];
+        foreach ($pairs as $pair) {
+            $parts = explode(':', $pair);
+            if (count($parts) == 2) {
+                $result[] = [
+                    'id' => trim($parts[0]),
+                    'name' => trim($parts[1])
+                ];
+            }
+        }
+        return $result;
+    }
+
 
 
 
