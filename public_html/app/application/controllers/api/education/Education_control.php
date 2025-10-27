@@ -214,23 +214,21 @@ class Education_control extends REST_Controller
         $wherestring = implode(' AND ', $wheres);
         $wherestring .= " GROUP BY foreign_education.id";
 
-        // ✅ Fields (including both IDs and names)
+        // ✅ Fields (same structure as list API)
         $fields = [
             'foreign_education.id',
             'foreign_education.consultancy_name',
-            'city.name as city_name',
+            'city.name AS city_name',
             'foreign_education.nearby_area',
-            'foreign_education.mou_present as MOU',
+            'foreign_education.mou_present',
             'foreign_education.whats_app_number',
             'foreign_education.establishment_year',
-            'TIMESTAMPDIFF(YEAR, foreign_education.establishment_year, CURDATE()) as total_years',
+            'TIMESTAMPDIFF(YEAR, foreign_education.establishment_year, CURDATE()) AS total_years',
             'foreign_education.institute_url',
-
-            // ✅ Combined lists
-            'GROUP_CONCAT(DISTINCT CONCAT(f_courses.id, ":", f_courses.name)) as courses',
-            'GROUP_CONCAT(DISTINCT CONCAT(country.id, ":", country.name)) as countries',
-            'GROUP_CONCAT(DISTINCT CONCAT(visa_type.id, ":", visa_type.name)) as visa_types',
-            'GROUP_CONCAT(DISTINCT CONCAT(exam_type.id, ":", exam_type.name)) as exam_types'
+            'GROUP_CONCAT(DISTINCT CONCAT(country.id, ":", country.name)) AS countries',
+            'GROUP_CONCAT(DISTINCT CONCAT(visa_type.id, ":", visa_type.name)) AS visa_types',
+            'GROUP_CONCAT(DISTINCT CONCAT(f_courses.id, ":", f_courses.name)) AS courses',
+            'GROUP_CONCAT(DISTINCT CONCAT(exam_type.id, ":", exam_type.name)) AS exam_types'
         ];
 
         // ✅ Get data
@@ -246,33 +244,35 @@ class Education_control extends REST_Controller
 
         $edu_list = $this->General_model->get_query_data($params);
 
-        // ✅ Total count for pagination
-        // $cntParams = [
-        //     'table' => 'foreign_education',
-        //     'fields' => $fields,
-        //     'wherestring' => $wherestring,
-        //     'join_tables' => $join_tables,
-        //     'groupby' => 'foreign_education.id',
-        //     'totalrow' => '1'
-        // ];
-        // $total_records = $this->General_model->get_query_data($cntParams);
-        // $total_page = !empty($total_records) ? ceil($total_records / PRODUCT_PAGINATION_SIZE) : 1;
+        // ✅ Format response like list API
+        $formatted_list = [];
+        foreach ($edu_list as $row) {
+            $id = $row['id'];
+            $formatted_list[$id] = [
+                'id' => $id,
+                'Name' => $row['consultancy_name'],
+                'City' => $row['city_name'],
+                'Near By Area' => $row['nearby_area'],
+                'MOU' => (bool)$row['mou_present'],
+                'whatsappNumber' => $row['whats_app_number'],
+                'year' => $row['establishment_year'],
+                'total' => $row['total_years'],
+                'web application link' => $row['institute_url'],
+                'Country' => $this->format_id_name_pairs($row['countries']),
+                'visaType' => $this->format_id_name_pairs($row['visa_types']),
+                'Course Details' => $this->format_id_name_pairs($row['courses']),
+                'Exam Type' => $this->format_id_name_pairs($row['exam_types'])
+            ];
+        }
 
-        // ✅ Response formatting        
-        if (!empty($edu_list)) {
-            foreach ($edu_list as &$item) {
-                // Convert concatenated fields into arrays of {id, name}
-                $item['courses'] = $this->format_id_name_pairs($item['courses']);
-                $item['countries'] = $this->format_id_name_pairs($item['countries']);
-                $item['visa_types'] = $this->format_id_name_pairs($item['visa_types']);
-                $item['exam_types'] = $this->format_id_name_pairs($item['exam_types']);
-            }
+        $result = array_values($formatted_list);
 
+        // ✅ Response
+        if (!empty($result)) {
             $response = [
                 'code' => REST_Controller::HTTP_OK,
                 'message' => $this->lang->line('success'),
-                // 'total_page' => $total_page,
-                'data' => $edu_list
+                'data' => $result
             ];
         } else {
             $response = [
@@ -285,24 +285,23 @@ class Education_control extends REST_Controller
     }
 
     /**
-     * ✅ Helper: Convert "1:India,2:Canada" → [{id:"1",name:"India"},{id:"2",name:"Canada"}]
+     * ✅ Helper function to format "1:Name,2:Name" -> [{"id":1,"name":"Name"}]
      */
-    private function format_id_name_pairs($str)
+    private function format_id_name_pairs($string)
     {
-        if (empty($str)) return [];
-        $pairs = explode(',', $str);
-        $result = [];
-        foreach ($pairs as $pair) {
-            $parts = explode(':', $pair);
-            if (count($parts) == 2) {
-                $result[] = [
-                    'id' => trim($parts[0]),
-                    'name' => trim($parts[1])
-                ];
+        $pairs = [];
+        if (!empty($string)) {
+            $items = explode(',', $string);
+            foreach ($items as $item) {
+                list($id, $name) = explode(':', $item);
+                $pairs[] = ['id' => (int)$id, 'name' => $name];
             }
         }
-        return $result;
+        return $pairs;
     }
+
+
+
 
 
 
