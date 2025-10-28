@@ -134,8 +134,10 @@ include("../database.php");
 
                         <td>
                           <a button class="btn btn-warning edit-button" data-id="<?= base64_encode($row['id']) ?>"><i class="fa fa-edit"></i> Edit</a>
-
-                          <a button class="btn btn-danger btn-sm delete-button" data-id="<?= base64_encode($row['id']) ?>"><i class="fa fa-trash"></i> Delete </button></a>
+                          <a button class="btn btn-danger btn-sm"
+                            onClick="window.open('master/delete-college-university.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
+                              class="fa fa-trash"></i> Delete </button></a>
+                          <!-- <a button class="btn btn-danger btn-sm delete-button" data-id="<?= base64_encode($row['id']) ?>"><i class="fa fa-trash"></i> Delete </button></a> -->
 
                         </td>
                       </tr>
