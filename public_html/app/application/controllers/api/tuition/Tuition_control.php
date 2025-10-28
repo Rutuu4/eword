@@ -286,49 +286,65 @@ class Tuition_control extends REST_Controller
     {
         $data = $this->post();
 
-        // Validate required fields
-        if (
-            empty($data['name']) ||
-            empty($data['email']) ||
-            empty($data['phoneNumber']) ||
-            empty($data['courseForApplying']) ||
-            empty($data['tuitionTrainingId'])
-        ) {
-            $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
-            $response['message'] = "Required fields are missing.";
+        // ✅ Validate only name and phoneNumber as required
+        if (empty($data['name']) || empty($data['phoneNumber'])) {
+            $response = [
+                'code' => REST_Controller::HTTP_BAD_REQUEST,
+                'message' => "Name and phone number are required."
+            ];
             return $this->response($response, 200);
         }
 
-        // Prepare insert data
+        // ✅ Check if email already exists (only if email is provided)
+        if (!empty($data['email'])) {
+            $existingEmail = $this->db
+                ->where('email', $data['email'])
+                ->get('t_student_application')
+                ->row();
+
+            if (!empty($existingEmail)) {
+                $response = [
+                    'code' => REST_Controller::HTTP_CONFLICT,
+                    'message' => "Email is already registered."
+                ];
+                return $this->response($response, 200);
+            }
+        }
+
+        // ✅ Prepare insert data (optional fields handled with null fallback)
         $insertData = [
             'name' => $data['name'],
-            'email' => $data['email'],
+            'email' => $data['email'] ?? null,
             'phone_number' => $data['phoneNumber'],
-            'course_applying' => $data['courseForApplying'],
-            'tuition_and_training_id' => $data['tuitionTrainingId'],
+            'course_applying' => $data['courseForApplying'] ?? null,
+            'tuition_and_training_id' => $data['tuitionTrainingId'] ?? null,
             'class_type' => $data['preferredClassType'] ?? null,
             'whatsapp_number' => $data['whatsAppNumber'] ?? null,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        // Insert into database
+        // ✅ Insert into database
         $insert_id = $this->General_model->insert('t_student_application', $insertData);
 
         if ($insert_id) {
-            // If WhatsApp number exists, send message
+            // ✅ Send WhatsApp/SMS if phone number exists
             if (!empty($data['phoneNumber'])) {
                 $msg = "Hello *{$data['name']}* 👋,\n\n"
-                    . "Your tuition/training application for *{$data['courseForApplying']}* has been successfully received.\n"
+                    . "Your tuition/training application"
+                    . (!empty($data['courseForApplying']) ? " for *{$data['courseForApplying']}*" : "")
+                    . " has been successfully received.\n"
                     . "Our academic team will contact you soon with the next steps. 📚\n\n"
                     . "Thank you for choosing *Eword Education* 🙌";
 
-                $this->twilio_lib->send_project_message(
-                    $data['phoneNumber'],
-                    $data['name'],
-                    'Tuition & Training Application',
-                    $msg
-                );
+                if (isset($this->twilio_lib)) {
+                    $this->twilio_lib->send_project_message(
+                        $data['phoneNumber'],
+                        $data['name'],
+                        'Tuition & Training Application',
+                        $msg
+                    );
+                }
             }
 
             $response = [

@@ -27,51 +27,49 @@ class Job_control extends REST_Controller
     {
         $data = $this->post();
 
-        // Validate required fields
-        if (
-            empty($data['name']) ||
-            empty($data['email']) ||
-            empty($data['phoneNumber']) ||
-            empty($data['resumeFile']) ||
-            !isset($data['yearofExperience']) ||
-            !isset($data['relevantExperience']) ||
-            empty($data['roleApplyingFor']) ||
-            empty($data['currentCTC']) ||
-            empty($data['expectedCTC']) ||
-            empty($data['companyId'])
-        ) {
+        // ✅ Validate only required fields: name and contact number
+        if (empty($data['name']) || empty($data['phoneNumber'])) {
             $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
-            $response['message'] = "Required fields are missing.";
+            $response['message'] = "Name and contact number are required.";
             return $this->response($response, 200);
         }
 
-        // Prepare insert data
+        // ✅ If email provided, check for duplicate
+        if (!empty($data['email'])) {
+            $existing = $this->db->get_where('job_application', ['email' => $data['email']])->row();
+            if (!empty($existing)) {
+                $response['code'] = REST_Controller::HTTP_CONFLICT;
+                $response['message'] = "Email is already registered.";
+                return $this->response($response, 200);
+            }
+        }
+
+        // ✅ Prepare insert data (optional fields handled gracefully)
         $insertData = [
             'name' => $data['name'],
-            'email' => $data['email'],
+            'email' => $data['email'] ?? null,
             'phone_number' => $data['phoneNumber'],
-            'resume_file' => $data['resumeFile'],
-            'year_of_experience' => $data['yearofExperience'],
-            'relevant_experience' => $data['relevantExperience'],
-            'role_applying_for' => $data['roleApplyingFor'],
-            'current_ctc' => $data['currentCTC'],
-            'expected_ctc' => $data['expectedCTC'],
-            'company_id' => $data['companyId'],
+            'resume_file' => $data['resumeFile'] ?? null,
+            'year_of_experience' => $data['yearofExperience'] ?? null,
+            'relevant_experience' => $data['relevantExperience'] ?? null,
+            'role_applying_for' => $data['roleApplyingFor'] ?? null,
+            'current_ctc' => $data['currentCTC'] ?? null,
+            'expected_ctc' => $data['expectedCTC'] ?? null,
+            'company_id' => $data['companyId'] ?? null,
             'company_whatsapp_number' => $data['companyWhatsappNumber'] ?? null,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        // Insert into database
+        // ✅ Insert into database
         $insert_id = $this->General_model->insert('job_application', $insertData);
 
         if ($insert_id) {
-            // Optional: send WhatsApp message if company WhatsApp number exists
+            // Optional WhatsApp notification
             if (!empty($data['companyWhatsappNumber'])) {
                 $msg = "Hello *{$data['name']}* 👋,\n\n"
-                    . "Your application for *{$data['roleApplyingFor']}* has been successfully received by company ID: *{$data['companyId']}*.\n"
-                    . "Our HR team will contact you shortly. ✅\n\n"
-                    . "Thank you for applying! 🌟";
+                    . "Your job application has been successfully received.\n"
+                    . "Our HR team will contact you shortly. ✅";
 
                 if (isset($this->twilio_lib)) {
                     $this->twilio_lib->send_project_message(
@@ -97,6 +95,8 @@ class Job_control extends REST_Controller
 
         return $this->response($response, 200);
     }
+
+
     public function job_placement_list_post()
     {
         $data = $this->post();

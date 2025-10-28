@@ -238,48 +238,56 @@ class College_control extends REST_Controller
     {
         $data = $this->post();
 
-        // Validate required fields
-        if (
-            empty($data['name']) ||
-            empty($data['email']) ||
-            empty($data['contact_number']) ||
-            empty($data['course_type']) ||
-            empty($data['sub_course_type']) ||
-            empty($data['results_type']) ||
-            !isset($data['results_value']) ||
-            empty($data['passing_year'])
-        ) {
-            $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
-            $response['message'] = "Required fields are missing.";
+        // ✅ Validate only name and contact number as required
+        if (empty($data['name']) || empty($data['contact_number'])) {
+            $response = [
+                'code' => REST_Controller::HTTP_BAD_REQUEST,
+                'message' => "Name and contact number are required."
+            ];
             return $this->response($response, 200);
+        }
+
+        // ✅ Check if email already exists (only if email is provided)
+        if (!empty($data['email'])) {
+            $existingEmail = $this->db
+                ->where('email', $data['email'])
+                ->get('college_application_form')
+                ->row();
+
+            if (!empty($existingEmail)) {
+                $response = [
+                    'code' => REST_Controller::HTTP_CONFLICT,
+                    'message' => "Email is already registered."
+                ];
+                return $this->response($response, 200);
+            }
         }
 
         // Prepare insert data
         $insertData = [
             'name' => $data['name'],
-            'email' => $data['email'],
+            'email' => $data['email'] ?? null,
             'contact_number' => $data['contact_number'],
-            'course_type' => $data['course_type'],
-            'sub_course_type' => $data['sub_course_type'],
-            'results_type' => $data['results_type'],
-            'results_value' => $data['results_value'],
-            'passing_year' => $data['passing_year'],
+            'course_type' => $data['course_type'] ?? null,
+            'sub_course_type' => $data['sub_course_type'] ?? null,
+            'results_type' => $data['results_type'] ?? null,
+            'results_value' => $data['results_value'] ?? null,
+            'passing_year' => $data['passing_year'] ?? null,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        // Insert into database using General_model->insert
+        // Insert into database
         $insert_id = $this->General_model->insert('college_application_form', $insertData);
 
         if ($insert_id) {
             // Optional: send WhatsApp or SMS notification if needed
             if (!empty($data['contact_number'])) {
                 $msg = "Hello *{$data['name']}* 👋,\n\n"
-                    . "Your application for *{$data['course_type']}* has been successfully received.\n"
+                    . "Your application has been successfully received.\n"
                     . "Our team will contact you shortly. ✅\n\n"
                     . "Thank you for applying to our college 🌟";
 
-                // Assuming you have Twilio or WhatsApp library
                 if (isset($this->twilio_lib)) {
                     $this->twilio_lib->send_project_message(
                         $data['contact_number'],

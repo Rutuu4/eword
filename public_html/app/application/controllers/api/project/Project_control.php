@@ -282,51 +282,77 @@ class Project_control extends REST_Controller
     {
         $data = $this->post();
 
-        // Validate required fields
-        if (empty($data['name']) || empty($data['email']) || empty($data['phoneNumber']) || empty($data['domain']) || empty($data['projectPlacementId'])) {
-            $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
-            $response['message'] = "Required fields are missing.";
+        // ✅ Validate only name and phoneNumber as required
+        if (empty($data['name']) || empty($data['phoneNumber'])) {
+            $response = [
+                'code' => REST_Controller::HTTP_BAD_REQUEST,
+                'message' => "Name and phone number are required."
+            ];
             return $this->response($response, 200);
         }
 
-        // Prepare insert data
+        // ✅ Check if email already exists (only if email is provided)
+        if (!empty($data['email'])) {
+            $existingEmail = $this->db
+                ->where('email', $data['email'])
+                ->get('p_student_application')
+                ->row();
+
+            if (!empty($existingEmail)) {
+                $response = [
+                    'code' => REST_Controller::HTTP_CONFLICT,
+                    'message' => "Email is already registered."
+                ];
+                return $this->response($response, 200);
+            }
+        }
+
+        // ✅ Prepare insert data (optional fields handled with null fallback)
         $insertData = [
             'name' => $data['name'],
-            'email' => $data['email'],
+            'email' => $data['email'] ?? null,
             'phone_number' => $data['phoneNumber'],
-            'domain' => $data['domain'],
-            'job_type' => isset($data['courseType']) ? $data['courseType'] : null,
-            'project_and_internship_id' => $data['projectPlacementId'],
-            'whatsapp_number' => isset($data['whatsappNumber']) ? $data['whatsappNumber'] : null,
+            'domain' => $data['domain'] ?? null,
+            'job_type' => $data['courseType'] ?? null,
+            'project_and_internship_id' => $data['projectPlacementId'] ?? null,
+            'whatsapp_number' => $data['whatsappNumber'] ?? null,
             'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
+            'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        // Insert into database
+        // ✅ Insert into database
         $insert_id = $this->General_model->insert('p_student_application', $insertData);
 
         if ($insert_id) {
             // ✅ Send WhatsApp Message
-            if (!empty($data['phone_number'])) {
-                $msg = "Dear {$data['name']},\n"
-                    . "Your application for *{$data['domain']}* (Placement ID: {$data['projectPlacementId']}) has been received.\n"
+            if (!empty($data['phoneNumber'])) {
+                $msg = "Dear *{$data['name']}*,\n\n"
+                    . "Your application for *{$data['domain']}*"
+                    . (!empty($data['projectPlacementId']) ? " (Placement ID: {$data['projectPlacementId']})" : "")
+                    . " has been successfully received. ✅\n"
                     . "Course Type: " . ($data['courseType'] ?? "N/A") . "\n\n"
-                    . "We’ll contact you shortly. ✅";
+                    . "We’ll contact you shortly. 📞";
 
-                $this->twilio_lib->send_project_message(
-                    $data['phone_number'],
-                    $data['name'],
-                    $data['domain'],
-                    $msg
-                );
+                if (isset($this->twilio_lib)) {
+                    $this->twilio_lib->send_project_message(
+                        $data['phoneNumber'],
+                        $data['name'],
+                        $data['domain'] ?? 'Project Application',
+                        $msg
+                    );
+                }
             }
 
-            $response['code'] = REST_Controller::HTTP_OK;
-            $response['message'] = "Application submitted successfully & WhatsApp message sent.";
-            $response['data'] = ['application_id' => $insert_id];
+            $response = [
+                'code' => REST_Controller::HTTP_OK,
+                'message' => "Application submitted successfully.",
+                'data' => ['application_id' => $insert_id]
+            ];
         } else {
-            $response['code'] = REST_Controller::HTTP_INTERNAL_ERROR;
-            $response['message'] = "Failed to submit application.";
+            $response = [
+                'code' => REST_Controller::HTTP_INTERNAL_ERROR,
+                'message' => "Failed to submit application."
+            ];
         }
 
         return $this->response($response, 200);
