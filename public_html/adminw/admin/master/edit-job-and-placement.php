@@ -4,7 +4,8 @@ include("../../database.php");
 if ($_POST['h1'] == 1) {
     $id = mysqli_real_escape_string($conn, $_POST['id']);
     $name = mysqli_real_escape_string($conn, $_POST['name']);
-
+    $salary = mysqli_real_escape_string($conn, $_POST['salary']);
+    $required_experience = mysqli_real_escape_string($conn, $_POST['required_experience']);
 
     $city_id = mysqli_real_escape_string($conn, $_POST['city_id']);
     $near_by_area = mysqli_real_escape_string($conn, $_POST['near_by_area']);
@@ -23,6 +24,8 @@ if ($_POST['h1'] == 1) {
     $update_query = "UPDATE job_placements 
                      SET company_name='$name', 
                          city_id='$city_id',
+                          salary='$salary',
+                        required_experience='$required_experience',
                          nearby_area='$near_by_area',
                          company_website='$website_link',
                          is_mou='$is_mou',
@@ -159,6 +162,42 @@ if ($_POST['h1'] == 1) {
                                     </select>
                                 </div>
                             </div>
+                            <!-- Salary Range -->
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Salary :</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="salary" id="salary">
+                                        <option value="">Select Salary Range</option>
+                                        <option value="0-1 LPA" <?= ($row['salary'] == '0-1 LPA') ? 'selected' : '' ?>>0 - 1 LPA</option>
+                                        <option value="1-2 LPA" <?= ($row['salary'] == '1-2 LPA') ? 'selected' : '' ?>>1 - 2 LPA</option>
+                                        <option value="2-3 LPA" <?= ($row['salary'] == '2-3 LPA') ? 'selected' : '' ?>>2 - 3 LPA</option>
+                                        <option value="3-5 LPA" <?= ($row['salary'] == '3-5 LPA') ? 'selected' : '' ?>>3 - 5 LPA</option>
+                                        <option value="5-8 LPA" <?= ($row['salary'] == '5-8 LPA') ? 'selected' : '' ?>>5 - 8 LPA</option>
+                                        <option value="8-12 LPA" <?= ($row['salary'] == '8-12 LPA') ? 'selected' : '' ?>>8 - 12 LPA</option>
+                                        <option value="12-20 LPA" <?= ($row['salary'] == '12-20 LPA') ? 'selected' : '' ?>>12 - 20 LPA</option>
+                                        <option value="20+ LPA" <?= ($row['salary'] == '20+ LPA') ? 'selected' : '' ?>>20+ LPA</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Required Experience -->
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Required Experience :</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="required_experience" id="required_experience" >
+                                        <option value="">Select Experience</option>
+                                        <option value="Fresher" <?= ($row['required_experience'] == 'Fresher') ? 'selected' : '' ?>>Fresher</option>
+                                        <option value="0-1 Years" <?= ($row['required_experience'] == '0-1 Years') ? 'selected' : '' ?>>0 - 1 Year</option>
+                                        <option value="1-2 Years" <?= ($row['required_experience'] == '1-2 Years') ? 'selected' : '' ?>>1 - 2 Years</option>
+                                        <option value="2-3 Years" <?= ($row['required_experience'] == '2-3 Years') ? 'selected' : '' ?>>2 - 3 Years</option>
+                                        <option value="3-5 Years" <?= ($row['required_experience'] == '3-5 Years') ? 'selected' : '' ?>>3 - 5 Years</option>
+                                        <option value="5-8 Years" <?= ($row['required_experience'] == '5-8 Years') ? 'selected' : '' ?>>5 - 8 Years</option>
+                                        <option value="8-10 Years" <?= ($row['required_experience'] == '8-10 Years') ? 'selected' : '' ?>>8 - 10 Years</option>
+                                        <option value="10+ Years" <?= ($row['required_experience'] == '10+ Years') ? 'selected' : '' ?>>10+ Years</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label for="passwrod" class="col-sm-2">Near By Area :</label>
                                 <div class="col-sm-8">

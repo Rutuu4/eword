@@ -27,14 +27,14 @@ class Job_control extends REST_Controller
     {
         $data = $this->post();
 
-        // ✅ Validate only required fields: name and contact number
+        // ✅ Validate required fields
         if (empty($data['name']) || empty($data['phoneNumber'])) {
             $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
             $response['message'] = "Name and contact number are required.";
             return $this->response($response, 200);
         }
 
-        // ✅ If email provided, check for duplicate
+        // ✅ Check duplicate email (if provided)
         if (!empty($data['email'])) {
             $existing = $this->db->get_where('job_application', ['email' => $data['email']])->row();
             if (!empty($existing)) {
@@ -44,12 +44,52 @@ class Job_control extends REST_Controller
             }
         }
 
-        // ✅ Prepare insert data (optional fields handled gracefully)
+        // ✅ File validation and upload
+        $resume_file = null;
+        if (!empty($_FILES['resumeFile']['name'])) {
+            $allowed_types = ['pdf', 'doc', 'docx'];
+            $file_ext = pathinfo($_FILES['resumeFile']['name'], PATHINFO_EXTENSION);
+            $file_size = $_FILES['resumeFile']['size'];
+
+            if (!in_array(strtolower($file_ext), $allowed_types)) {
+                $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
+                $response['message'] = "Invalid file type. Only PDF, DOC, and DOCX are allowed.";
+                return $this->response($response, 200);
+            }
+
+            if ($file_size > 5 * 1024 * 1024) { // 5MB limit
+                $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
+                $response['message'] = "File size must be less than 5MB.";
+                return $this->response($response, 200);
+            }
+
+            $upload_path = FCPATH . 'uploads/resumes/';
+            if (!is_dir($upload_path)) {
+                mkdir($upload_path, 0777, true);
+            }
+
+            $new_filename = 'resume_' . time() . '.' . $file_ext;
+            $target_file = $upload_path . $new_filename;
+
+            if (move_uploaded_file($_FILES['resumeFile']['tmp_name'], $target_file)) {
+                $resume_file = 'uploads/resumes/' . $new_filename;
+            } else {
+                $response['code'] = REST_Controller::HTTP_INTERNAL_ERROR;
+                $response['message'] = "Failed to upload resume file.";
+                return $this->response($response, 200);
+            }
+        } else {
+            $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
+            $response['message'] = "Resume file is required.";
+            return $this->response($response, 200);
+        }
+
+        // ✅ Prepare data for insertion
         $insertData = [
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'phone_number' => $data['phoneNumber'],
-            'resume_file' => $data['resumeFile'] ?? null,
+            'resume_file' => $resume_file,
             'year_of_experience' => $data['yearofExperience'] ?? null,
             'relevant_experience' => $data['relevantExperience'] ?? null,
             'role_applying_for' => $data['roleApplyingFor'] ?? null,
@@ -61,7 +101,7 @@ class Job_control extends REST_Controller
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        // ✅ Insert into database
+        // ✅ Insert into DB
         $insert_id = $this->General_model->insert('job_application', $insertData);
 
         if ($insert_id) {
@@ -97,6 +137,7 @@ class Job_control extends REST_Controller
     }
 
 
+
     public function job_placement_list_post()
     {
         $data = $this->post();
@@ -116,13 +157,14 @@ class Job_control extends REST_Controller
             'job_placements.city_id',
             'city.name AS city_name',
             'job_placements.nearby_area',
+            'job_placements.salary',
+            'job_placements.required_experience',
             'job_placements.is_mou',
             'job_placements.whatsapp_number',
             'job_placements.company_website',
             'j_openings.id AS opening_id',
-            'j_openings.position_name',
-            'j_openings.salary',
-            'j_openings.required_experience'
+            'j_openings.position_name'
+
         ];
 
         // ✅ Main data query
@@ -164,6 +206,8 @@ class Job_control extends REST_Controller
                     'Company Name'      => $row['company_name'],
                     'City'              => $row['city_name'],
                     'Nearby Area'       => $row['nearby_area'],
+                    'Salary'       => $row['salary'],
+                    'required_experience'       => $row['required_experience'],
                     'MOU'               => (bool)$row['is_mou'],
                     'WhatsApp Number'   => $row['whatsapp_number'],
                     'Company Website'   => $row['company_website'],
@@ -174,9 +218,8 @@ class Job_control extends REST_Controller
             if (!empty($row['opening_id'])) {
                 $formatted_list[$id]['Openings'][$row['opening_id']] = [
                     'id'                 => $row['opening_id'],
-                    'position_name'      => $row['position_name'],
-                    'salary'             => $row['salary'],
-                    'required_experience' => $row['required_experience']
+                    'position_name'      => $row['position_name']
+
                 ];
             }
         }
@@ -238,13 +281,14 @@ class Job_control extends REST_Controller
             'job_placements.city_id',
             'city.name AS city_name',
             'job_placements.nearby_area',
+            'job_placements.salary',
+            'job_placements.required_experience',
             'job_placements.is_mou',
             'job_placements.whatsapp_number',
             'job_placements.company_website',
             'j_openings.id AS opening_id',
-            'j_openings.position_name',
-            'j_openings.salary',
-            'j_openings.required_experience'
+            'j_openings.position_name'
+
         ];
 
         $params = [
@@ -284,6 +328,8 @@ class Job_control extends REST_Controller
                     'Company Name'       => $row['company_name'],
                     'City'               => $row['city_name'],
                     'Nearby Area'        => $row['nearby_area'],
+                    'Salary'              => $row['salary'],
+                    'required_experience' => $row['required_experience'],
                     'MOU'                => (bool)$row['is_mou'],
                     'WhatsApp Number'    => $row['whatsapp_number'],
                     'Company Website'    => $row['company_website'],
@@ -294,9 +340,8 @@ class Job_control extends REST_Controller
             if (!empty($row['opening_id'])) {
                 $formatted_list[$id]['Openings'][$row['opening_id']] = [
                     'id'                  => $row['opening_id'],
-                    'position_name'       => $row['position_name'],
-                    'salary'              => $row['salary'],
-                    'required_experience' => $row['required_experience']
+                    'position_name'       => $row['position_name']
+
                 ];
             }
         }
@@ -325,7 +370,7 @@ class Job_control extends REST_Controller
     {
         $params = [
             'table'          => 'j_openings',
-            'fields'         => ['id', 'position_name', 'salary', 'required_experience'],
+            'fields'         => ['id', 'position_name'],
             'wherestring'    => '1=1',
             'orderby'        => 'position_name',
             'orderdirection' => 'ASC'

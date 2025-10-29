@@ -1,5 +1,5 @@
 <?php
-  include("../database.php");
+include("../database.php");
 ?>
 <!DOCTYPE html>
 <html>
@@ -7,14 +7,14 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><?=$softtitle?></title>
+    <title><?= $softtitle ?></title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     <?php include("includes/css-scripts.php"); ?>
 
 </head>
 
-<body class="<?=$bodyclass?>">
+<body class="<?= $bodyclass ?>">
 
     <div class="wrapper">
 
@@ -50,7 +50,8 @@
                                             <th>Sr No.</th>
                                             <th style="width:20%">Name</th>
                                             <th style="width:20%">Openning</th>
-
+                                            <th>Is mou</th>
+                                            <th>Whatsapp Number</th>
                                             <th>City </th>
                                             <th>Status</th>
                                             <th>Action</th>
@@ -58,9 +59,9 @@
                                     </thead>
                                     <tbody>
                                         <?php
-                 
-                  $i = 0;
-                  $qry = "SELECT job_placements.*, city.name as city,
+
+                                        $i = 0;
+                                        $qry = "SELECT job_placements.*,  COALESCE(NULLIF(job_placements.whatsapp_number, ''), '-') AS whatsapp_number, city.name as city,
                GROUP_CONCAT(DISTINCT j_openings.position_name ORDER BY j_openings.position_name ASC) AS openning_names
         FROM job_placements
         LEFT JOIN job_placements_openings ON job_placements_openings.job_placement_id = job_placements.id
@@ -71,40 +72,47 @@
           
             job_placements.company_name ASC;";
 
-                  $result = $conn->query($qry);
-                  while($row = $result->fetch_array()){
-                      $i++;
-                      $status = $row['status'];
-                      if($status == 1){
-                          $statuss = "<span class=\"label label-success\">Active</span>";
-                      } else {
-                          $statuss = "<span class=\"label label-warning\">Deactive</span>";
-                      }
-                ?>
-                                        <tr>
-                                            <td><?=$i;?></td>
-                                            <td><?=$row['company_name'];?></td>
-                                            <td>
-                                                <?= !empty($row['openning_names']) ? $row['openning_names'] : '<span class="text-danger">No Course Assigned</span>'; ?>
-                                            </td>
+                                        $result = $conn->query($qry);
+                                        while ($row = $result->fetch_array()) {
+                                            $i++;
+                                            $status = $row['status'];
+                                            if ($status == 1) {
+                                                $statuss = "<span class=\"label label-success\">Active</span>";
+                                            } else {
+                                                $statuss = "<span class=\"label label-warning\">Deactive</span>";
+                                            }
+                                            $is_mou = $row['is_mou'];
+                                            if ($is_mou == 1) {
+                                                $is_mouu = "<span class=\"label label-success\">True</span>";
+                                            } else {
+                                                $is_mouu = "<span class=\"label label-danger\">False</span>";
+                                            }
+                                        ?>
+                                            <tr>
+                                                <td><?= $i; ?></td>
+                                                <td><?= $row['company_name']; ?></td>
+                                                <td>
+                                                    <?= !empty($row['openning_names']) ? $row['openning_names'] : '<span class="text-danger">No Course Assigned</span>'; ?>
+                                                </td>
+
+                                                <td><?= $is_mouu; ?></td>
+                                                <td><?= $row['whatsapp_number']; ?></td>
+                                                <td><?= $row['city']; ?></td>
+                                                <td><?= $statuss; ?></td>
+
+                                                <td>
+                                                    <a href="master/edit-job-and-placement.php?key=<?= base64_encode($row['id']) ?>"
+                                                        class="btn btn-warning"><i class="fa fa-edit"></i> Edit</a>
+
+                                                    <a button class="btn btn-danger btn-sm"
+                                                        onClick="window.open('master/delete-job-and-placement.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
+                                                            class="fa fa-trash"></i> Delete </button></a>
+
+                                                    <!--   <a button class="btn btn-danger btn-sm" onClick="window.open('master/delete-message-type.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i class="fa fa-trash"></i> Delete </button></a> -->
 
 
-                                            <td><?=$row['city'];?></td>
-                                            <td><?=$statuss;?></td>
-
-                                            <td>
-                                                <a href="master/edit-job-and-placement.php?key=<?=base64_encode($row['id'])?>"
-                                                    class="btn btn-warning"><i class="fa fa-edit"></i> Edit</a>
-
-                                                <a button class="btn btn-danger btn-sm"
-                                                    onClick="window.open('master/delete-job-and-placement.php?id=<?=$row['id'];?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
-                                                        class="fa fa-trash"></i> Delete </button></a>
-
-                                                <!--   <a button class="btn btn-danger btn-sm" onClick="window.open('master/delete-message-type.php?id=<?=$row['id'];?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i class="fa fa-trash"></i> Delete </button></a> -->
-
-
-                                            </td>
-                                        </tr>
+                                                </td>
+                                            </tr>
                                         <?php } ?>
                                 </table>
                             </div>
@@ -119,33 +127,33 @@
 
     <?php include("includes/js-scripts.php"); ?>
     <script>
-    $(document).ready(function() {
-        //datatable
-        $('#datatable').DataTable({
-            "pageLength": 25 // Set default number of rows per page
-        });
+        $(document).ready(function() {
+            //datatable
+            $('#datatable').DataTable({
+                "pageLength": 25 // Set default number of rows per page
+            });
 
 
-        $(".deletestate").click(function() {
-            var key = $(this).data("key");
-            if (confirm('Are you sure you want to delete this?')) {
-                $.ajax({
-                    url: 'master/delete-state.php',
-                    type: "POST",
-                    data: {
-                        key: key
-                    },
-                    success: function(response) {
-                        if (response == "TRUE" && response != "") {
-                            location.reload();
-                        } else {
-                            alert("Please Try Again .!");
+            $(".deletestate").click(function() {
+                var key = $(this).data("key");
+                if (confirm('Are you sure you want to delete this?')) {
+                    $.ajax({
+                        url: 'master/delete-state.php',
+                        type: "POST",
+                        data: {
+                            key: key
+                        },
+                        success: function(response) {
+                            if (response == "TRUE" && response != "") {
+                                location.reload();
+                            } else {
+                                alert("Please Try Again .!");
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
-    });
     </script>
 </body>
 

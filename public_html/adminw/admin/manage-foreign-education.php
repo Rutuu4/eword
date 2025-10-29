@@ -50,7 +50,8 @@ include("../database.php");
                                             <th>Sr No.</th>
                                             <th style="width:20%">Name</th>
                                             <th style="width:20%">Course</th>
-                                            <th>Establishment Year </th>
+                                            <th>Is mou</th>
+                                            <th>Whatsapp Number</th>
                                             <th>City </th>
                                             <th>Status</th>
                                             <th>Action</th>
@@ -60,7 +61,7 @@ include("../database.php");
                                         <?php
 
                                         $i = 0;
-                                        $qry = "SELECT foreign_education.*,   city.name as city,
+                                        $qry = "SELECT foreign_education.*,   COALESCE(NULLIF(foreign_education.whats_app_number, ''), '-') AS whats_app_number, city.name as city,
        COALESCE(f_courses.name, 'No Course Assigned') AS course_name 
 FROM foreign_education 
 LEFT JOIN f_courses ON f_courses.id = foreign_education.course_id 
@@ -77,12 +78,19 @@ foreign_education.consultancy_name ASC;
                                             } else {
                                                 $statuss = "<span class=\"label label-warning\">Deactive</span>";
                                             }
+                                            $is_mou = $row['mou_present'];
+                                            if ($is_mou == 1) {
+                                                $is_mouu = "<span class=\"label label-success\">True</span>";
+                                            } else {
+                                                $is_mouu = "<span class=\"label label-danger\">False</span>";
+                                            }
                                         ?>
                                             <tr>
                                                 <td><?= $i; ?></td>
                                                 <td><?= $row['consultancy_name']; ?></td>
                                                 <td><?= $row['course_name']; ?></td>
-                                                <td><?= $row['establishment_year']; ?></td>
+                                                <td><?= $is_mouu; ?></td>
+                                                <td><?= $row['whats_app_number']; ?></td>
                                                 <td><?= $row['city']; ?></td>
                                                 <td><?= $statuss; ?></td>
 

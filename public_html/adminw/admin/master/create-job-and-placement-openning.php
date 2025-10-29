@@ -1,14 +1,13 @@
-<?php 
-include("../../database.php"); 
+<?php
+include("../../database.php");
 
-if ($_POST['h1'] == 1) {  
+if ($_POST['h1'] == 1) {
     $position_name = mysqli_real_escape_string($conn, $_POST['position_name']);
-    $salary = mysqli_real_escape_string($conn, $_POST['salary']);
-    $required_experience = mysqli_real_escape_string($conn, $_POST['required_experience']);
+
     $status = mysqli_real_escape_string($conn, $_POST['status']);
     // Optional: Validate fields (e.g., salary must be numeric, etc.)
-    $query = "INSERT INTO j_openings(position_name, salary, required_experience, status) 
-              VALUES ('$position_name', '$salary', '$required_experience','$status')";
+    $query = "INSERT INTO j_openings(position_name, status) 
+              VALUES ('$position_name','$status')";
 
     $result = $conn->query($query);
 
@@ -16,43 +15,43 @@ if ($_POST['h1'] == 1) {
         header("location:../manage-job-and-placement-openning.php");
         exit;
     }
-} 
+}
 ?>
 <!DOCTYPE html>
 <html>
 
 <head>
-    <base href="<?=$base_path?>">
+    <base href="<?= $base_path ?>">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><?=$softtitle?></title>
+    <title><?= $softtitle ?></title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <?php include("../includes/css-scripts.php"); ?>
     <style>
-    .error {
-        color: red;
-    }
+        .error {
+            color: red;
+        }
 
-    .control-label {
-        text-align: left !important;
-    }
+        .control-label {
+            text-align: left !important;
+        }
 
-    .form-control {
-        display: block;
-        width: 100%;
-        height: 34px;
-        padding: 6px 12px;
-        font-size: 14px;
-        border: 1px solid #ccc;
-    }
+        .form-control {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+        }
 
-    .select2-container {
-        width: 100% !important;
-    }
+        .select2-container {
+            width: 100% !important;
+        }
     </style>
 </head>
 
-<body class="<?=$bodyclass?>">
+<body class="<?= $bodyclass ?>">
 
     <div class="wrapper">
         <?php include("../includes/header.php"); ?>
@@ -79,23 +78,7 @@ if ($_POST['h1'] == 1) {
                                 </div>
                             </div>
 
-                            <!-- Salary -->
-                            <div class="form-group">
-                                <label class="control-label col-sm-2">Salary :</label>
-                                <div class="col-sm-8">
-                                    <input type="number" step="0.01" class="form-control" name="salary" id="salary"
-                                        placeholder="Enter Salary" required>
-                                </div>
-                            </div>
 
-                            <!-- Required Experience -->
-                            <div class="form-group">
-                                <label class="control-label col-sm-2">Required Experience :</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="required_experience"
-                                        id="required_experience" placeholder="e.g., 2+ years" required>
-                                </div>
-                            </div>
                             <div class="form-group">
                                 <label class="col-sm-2">Status :</label>
                                 <div class="col-sm-6">
@@ -127,10 +110,10 @@ if ($_POST['h1'] == 1) {
 
     <?php include("../includes/js-scripts.php"); ?>
     <script>
-    $(document).ready(function() {
-        $(".select2").select2();
-        $(".textarea").wysihtml5();
-    });
+        $(document).ready(function() {
+            $(".select2").select2();
+            $(".textarea").wysihtml5();
+        });
     </script>
 </body>
 

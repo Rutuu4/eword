@@ -48,7 +48,7 @@ include("../database.php");
                                         <tr>
                                             <th>Sr No.</th>
                                             <th style="width:20%">Name</th>
-                                            <th style="width:20%">Salary</th>
+                                            <!-- <th style="width:20%">Salary</th> -->
                                             <!-- <th>Video Link</th> -->
                                             <th>Status</th>
                                             <th>Action</th>
@@ -77,7 +77,7 @@ ORDER BY
                                                 <td><?= $i; ?></td>
 
                                                 <td><?= $row['position_name']; ?></td>
-                                                <td><?= $row['salary']; ?></td>
+                                                <!-- <td><?= $row['salary']; ?></td> -->
                                                 <td><?= $statuss; ?></td>
 
                                                 <td>

@@ -50,7 +50,8 @@ include("../database.php");
                                             <th>Sr No.</th>
                                             <th style="width:20%">Name</th>
                                             <th style="width:20%">Course</th>
-                                            <th>Class Type </th>
+                                            <th>Is mou</th>
+                                            <th>Whatsapp Number</th>
                                             <th>City </th>
                                             <th>Status</th>
                                             <th>Action</th>
@@ -60,7 +61,7 @@ include("../database.php");
                                         <?php
 
                                         $i = 0;
-                                        $qry = "SELECT tuition_and_training.*, city.name as city,
+                                        $qry = "SELECT tuition_and_training.*, COALESCE(NULLIF(tuition_and_training.whats_app_number, ''), '-') AS whats_app_number,city.name as city,
                GROUP_CONCAT(DISTINCT t_courses.name ORDER BY t_courses.name ASC) AS course_names
         FROM tuition_and_training
         LEFT JOIN tuition_and_training_courses ON tuition_and_training_courses.tuition_and_training_id = tuition_and_training.id
@@ -80,6 +81,12 @@ include("../database.php");
                                             } else {
                                                 $statuss = "<span class=\"label label-warning\">Deactive</span>";
                                             }
+                                            $is_mou = $row['mou_is_present'];
+                                            if ($is_mou == 1) {
+                                                $is_mouu = "<span class=\"label label-success\">True</span>";
+                                            } else {
+                                                $is_mouu = "<span class=\"label label-danger\">False</span>";
+                                            }
                                         ?>
                                             <tr>
                                                 <td><?= $i; ?></td>
@@ -88,7 +95,8 @@ include("../database.php");
                                                     <?= !empty($row['course_names']) ? $row['course_names'] : '<span class="text-danger">No Course Assigned</span>'; ?>
                                                 </td>
 
-                                                <td><?= $row['class_type']; ?></td>
+                                                <td><?= $is_mouu; ?></td>
+                                                <td><?= $row['whats_app_number']; ?></td>
                                                 <td><?= $row['city']; ?></td>
                                                 <td><?= $statuss; ?></td>
 

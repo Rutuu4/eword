@@ -6,7 +6,8 @@ if ($_POST['h1'] == 1) {
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $website_link = mysqli_real_escape_string($conn, $_POST['website_link']);
     $status = mysqli_real_escape_string($conn, $_POST['status']);
-
+    $salary = mysqli_real_escape_string($conn, $_POST['salary']);
+    $required_experience = mysqli_real_escape_string($conn, $_POST['required_experience']);
     $is_mou = isset($_POST['is_mou']) ? 1 : 0;
     $whatsapp_number = mysqli_real_escape_string($conn, $_POST['whatsapp_number'] ?? '');
     $city_id = mysqli_real_escape_string($conn, $_POST['city_id']);
@@ -20,6 +21,8 @@ if ($_POST['h1'] == 1) {
     $fields = [
         "company_name" => "'$name'",
         "company_website" => "'$website_link'",
+        "salary" => "'$salary'",
+        "required_experience" => "'$required_experience'",
         "status" => "'$status'",
         "is_mou" => "'$is_mou'",
         "whatsapp_number" => "'$whatsapp_number'",
@@ -151,6 +154,42 @@ if ($_POST['h1'] == 1) {
                                     </select>
                                 </div>
                             </div>
+                            <!-- Salary Range -->
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Salary :</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="salary" id="salary">
+                                        <option value="">Select Salary Range</option>
+                                        <option value="0-1 LPA">0 - 1 LPA</option>
+                                        <option value="1-2 LPA">1 - 2 LPA</option>
+                                        <option value="2-3 LPA">2 - 3 LPA</option>
+                                        <option value="3-5 LPA">3 - 5 LPA</option>
+                                        <option value="5-8 LPA">5 - 8 LPA</option>
+                                        <option value="8-12 LPA">8 - 12 LPA</option>
+                                        <option value="12-20 LPA">12 - 20 LPA</option>
+                                        <option value="20+ LPA">20+ LPA</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Required Experience -->
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Required Experience :</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="required_experience" id="required_experience">
+                                        <option value="">Select Experience</option>
+                                        <option value="Fresher">Fresher</option>
+                                        <option value="0-1 Years">0 - 1 Year</option>
+                                        <option value="1-2 Years">1 - 2 Years</option>
+                                        <option value="2-3 Years">2 - 3 Years</option>
+                                        <option value="3-5 Years">3 - 5 Years</option>
+                                        <option value="5-8 Years">5 - 8 Years</option>
+                                        <option value="8-10 Years">8 - 10 Years</option>
+                                        <option value="10+ Years">10+ Years</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label for="passwrod" class="col-sm-2">Near By Area :</label>
                                 <div class="col-sm-8">
