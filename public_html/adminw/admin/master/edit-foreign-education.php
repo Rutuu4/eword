@@ -4,12 +4,18 @@ include("../../database.php");
 if ($_POST['h1'] == 1) {
     $id = mysqli_real_escape_string($conn, $_POST['id']);
     $name = mysqli_real_escape_string($conn, $_POST['name']);
-    $courses_id = isset($_POST['courses_id']) ? mysqli_real_escape_string($conn, $_POST['courses_id']) : null; // Handle empty or null course_id
+    // Multiple courses handling
+    $courses_ids = $_POST['courses_id'] ?? [];
+    $courses_ids_str = implode(',', $courses_ids); // Converts array → comma string
+
+
+    // Handle empty or null course_id
     $establishment_year = mysqli_real_escape_string($conn, $_POST['establishment_year']);
     $city_id = mysqli_real_escape_string($conn, $_POST['city_id']);
     $near_by_area = mysqli_real_escape_string($conn, $_POST['near_by_area']);
     $website_link = mysqli_real_escape_string($conn, $_POST['website_link']);
     $status = mysqli_real_escape_string($conn, $_POST['status']);
+    $dob = mysqli_real_escape_string($conn, $_POST['dob'] ?? '');
 
     $is_mou = isset($_POST['is_mou']) ? 1 : 0;
     $whatsapp_number = $is_mou ? mysqli_real_escape_string($conn, $_POST['whatsapp_number']) : '';
@@ -21,24 +27,24 @@ if ($_POST['h1'] == 1) {
 
     // Construct the Update Query
     $update_query = "UPDATE foreign_education 
-                     SET consultancy_name='$name', 
-                         establishment_year='$establishment_year',
-                         city='$city_id',
-                         nearby_area='$near_by_area',
-                         institute_url='$website_link',
-                         mou_present='$is_mou',
-                         whats_app_number='$whatsapp_number',
-                         status='$status' ";
+                 SET consultancy_name='$name', 
+                     establishment_year='$establishment_year',
+                     dob='$dob',
+                      course_ids='$courses_ids_str',
+                     city='$city_id',
+                     nearby_area='$near_by_area',
+                     institute_url='$website_link',
+                     mou_present='$is_mou',
+                     whats_app_number='$whatsapp_number',
+                     status='$status'
+                 WHERE id='$id'";
+
+
 
     // Only update course_id if it is provided (not null or empty)
-    if ($courses_id !== null && $courses_id !== "") {
-        $update_query .= ", course_id='$courses_id' ";
-    }
-
-    $update_query .= " WHERE id='$id'";
-
-    // Execute the query
+    // After executing $update_query
     $conn->query($update_query);
+
 
     // Update country mappings
     $conn->query("DELETE FROM foreign_education_countries WHERE foreign_education_id = '$id'");
@@ -118,7 +124,9 @@ if ($_POST['h1'] == 1) {
 
         $status = $row['status'];
         $qm1 = $row['pdf_file'];
-        $main_courses_id = $row['course_id'];
+        // Fetch selected course IDs
+        $selected_course_ids = !empty($row['course_ids']) ? explode(',', $row['course_ids']) : [];
+
 
         // Fetch selected country IDs
         $selected_country_ids = [];
@@ -180,24 +188,30 @@ if ($_POST['h1'] == 1) {
                                         id="establishment_year" value="<?= $establishment_date; ?>" required>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Date of Birth (DOB):</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control" name="dob" id="dob"
+                                        value="<?= htmlspecialchars($row['dob'] ?? ''); ?>">
+                                </div>
+                            </div>
 
                             <div class="form-group">
                                 <label for="usernamee" class="col-sm-2">Course :</label>
                                 <div class="col-sm-8">
-
-                                    <select name="courses_id" id="courses_id" class="form-control">
-                                        <option value=""> Select Course </option>
+                                    <select name="courses_id[]" id="courses_id" class="form-control select2" multiple>
+                                        <option value="">Select Course</option>
                                         <?php
-                                        $sqlb = "SELECT id,name FROM f_courses";
+                                        $sqlb = "SELECT id, name FROM f_courses WHERE status = 1";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
+                                            $selected = in_array($rowb['id'], $selected_course_ids) ? 'selected' : '';
+                                            echo "<option value='{$rowb['id']}' $selected>{$rowb['name']}</option>";
+                                        }
                                         ?>
-                                            <option <?php if ($row['courses_id'] == $rowb['id']) {
-                                                        echo "selected";
-                                                    } ?>
-                                                value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
-                                        <?php } ?>
                                     </select>
+
+
                                 </div>
                             </div>
                             <div class="form-group">

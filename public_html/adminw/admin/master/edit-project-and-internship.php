@@ -10,7 +10,9 @@ if ($_POST['h1'] == 1) {
     $near_by_area = mysqli_real_escape_string($conn, $_POST['near_by_area']);
     $website_link = mysqli_real_escape_string($conn, $_POST['website_link']);
     $status = mysqli_real_escape_string($conn, $_POST['status']);
-    $class_type_id = mysqli_real_escape_string($conn, $_POST['class_type_id']);
+    $class_type_ids = $_POST['class_type_id'] ?? [];
+    $class_type_str = mysqli_real_escape_string($conn, implode(',', $class_type_ids));
+
 
     $is_mou = isset($_POST['is_mou']) ? 1 : 0;
     $whatsapp_number = $is_mou ? mysqli_real_escape_string($conn, $_POST['whatsapp_number']) : '';
@@ -26,7 +28,7 @@ if ($_POST['h1'] == 1) {
                          nearby_area='$near_by_area',
                          institute_web_url='$website_link',
                          mou_is_present='$is_mou',
-                         job_type='$class_type_id',
+                         job_type='$class_type_str',
                          whatsapp_number='$whatsapp_number',
                          status='$status' ";
 
@@ -204,33 +206,20 @@ if ($_POST['h1'] == 1) {
                                         placeholder="Enter WhatsApp Number">
                                 </div>
                             </div>
+                            <?php
+                            $selected_class_types = !empty($row['job_type']) ? explode(',', $row['job_type']) : [];
+                            ?>
                             <div class="form-group">
-                                <label for="usernamee" class="col-sm-2">Class Type :</label>
+                                <label for="class_type_id" class="col-sm-2">Job Type :</label>
                                 <div class="col-sm-8">
-                                    <select name="class_type_id" id="class_type_id" class="form-control">
-                                        <option value="">Select Class Type</option>
-
-                                        <!-- Static class type options -->
-                                        <option value="Part_time"
-                                            <?php if ($selected_class_type == "Part_time") {
-                                                echo "selected";
-                                            } ?>>Part
-                                            Time
-                                        </option>
-                                        <option value="Full_time"
-                                            <?php if ($selected_class_type == "Full_time") {
-                                                echo "selected";
-                                            } ?>>Full
-                                            Time
-                                        </option>
-                                        <option value="Remote"
-                                            <?php if ($selected_class_type == "Remote") {
-                                                echo "selected";
-                                            } ?>>Remote
-                                        </option>
+                                    <select name="class_type_id[]" id="class_type_id" class="form-control select2" multiple required>
+                                        <option value="Part_time" <?= in_array("Part_time", $selected_class_types) ? 'selected' : '' ?>>Part Time</option>
+                                        <option value="Full_time" <?= in_array("Full_time", $selected_class_types) ? 'selected' : '' ?>>Full Time</option>
+                                        <option value="Remote" <?= in_array("Remote", $selected_class_types) ? 'selected' : '' ?>>Remote</option>
                                     </select>
                                 </div>
                             </div>
+
 
 
                             <div class="form-group">

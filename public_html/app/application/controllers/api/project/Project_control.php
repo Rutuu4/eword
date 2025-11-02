@@ -91,12 +91,8 @@ class Project_control extends REST_Controller
                     'MOU'                  => (bool)$row['mou_is_present'],
                     'whatsappNumber'       => $row['whatsapp_number'],
                     'web application link' => $row['institute_web_url'],
-                    'Job Type'             => match ($row['job_type']) {
-                        'Part_time' => 'Part Time',
-                        'Full_time' => 'Full Time',
-                        'Remote'    => 'Remote',
-                        default     => null
-                    },
+                    'Job Type'           => !empty($row['job_type']) ? explode(',', $row['job_type']) : [],
+
                     'Category Details'     => []
                 ];
             }
@@ -214,12 +210,7 @@ class Project_control extends REST_Controller
                     'MOU'                  => (bool)$row['mou_is_present'],
                     'whatsappNumber'       => $row['whatsapp_number'],
                     'web application link' => $row['institute_web_url'],
-                    'Job Type'             => match ($row['job_type']) {
-                        'Part_time' => 'Part Time',
-                        'Full_time' => 'Full Time',
-                        'Remote'    => 'Remote',
-                        default     => null
-                    },
+                    'Job Type'           => !empty($row['job_type']) ? explode(',', $row['job_type']) : [],
                     'Course Details'       => []
                 ];
             }

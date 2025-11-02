@@ -96,7 +96,8 @@ class Tuition_control extends REST_Controller
                     'MOU'                  => (bool)$row['mou_is_present'],
                     'whatsappNumber'       => $row['whats_app_number'],
                     'web application link' => $row['institute_web_url'],
-                    'Class Type'           => $row['class_type'],
+                    'Class Type'           => !empty($row['class_type']) ? explode(',', $row['class_type']) : [],
+
                     'Course Details'       => []
                 ];
             }
@@ -224,7 +225,7 @@ class Tuition_control extends REST_Controller
                     'MOU'                  => (bool)$row['mou_is_present'],
                     'whatsappNumber'       => $row['whats_app_number'],
                     'web application link' => $row['institute_web_url'],
-                    'Class Type'           => $row['class_type'],
+                    'Class Type'           => !empty($row['class_type']) ? explode(',', $row['class_type']) : [],
                     'Course Details'       => []
                 ];
             }

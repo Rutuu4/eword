@@ -11,7 +11,10 @@ if ($_POST['h1'] == 1) {
     $whatsapp_number = mysqli_real_escape_string($conn, $_POST['whatsapp_number'] ?? '');
     $city_id = mysqli_real_escape_string($conn, $_POST['city_id']);
     $near_by_area = mysqli_real_escape_string($conn, $_POST['near_by_area']);
-    $class_type_id = mysqli_real_escape_string($conn, $_POST['class_type_id']);
+    $class_type_ids = $_POST['class_type_id'] ?? [];
+    $class_type_str = mysqli_real_escape_string($conn, implode(',', $class_type_ids));
+
+
 
 
     // Insert into foreign_education table WITHOUT country_id, visa_type_id, exam_type_id
@@ -24,7 +27,7 @@ if ($_POST['h1'] == 1) {
         "mou_is_present" => "'$is_mou'",
         "whats_app_number" => "'$whatsapp_number'",
         "city" => "'$city_id'",
-        "class_type" => "'$class_type_id'",
+        "class_type" => "'$class_type_str'",
         "nearby_area" => "'$near_by_area'"
     ];
 
@@ -193,7 +196,7 @@ if ($_POST['h1'] == 1) {
                             <div class="form-group">
                                 <label for="class_type_id" class="col-sm-2">Class Type :</label>
                                 <div class="col-sm-8">
-                                    <select name="class_type_id" id="class_type_id" class="form-control">
+                                    <select name="class_type_id[]" id="class_type_id" class="form-control select2" multiple>
                                         <option value=""> Select Class Type </option>
                                         <option value="Online"> Online </option>
                                         <option value="Offline"> Offline </option>

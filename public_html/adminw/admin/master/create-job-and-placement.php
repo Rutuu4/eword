@@ -158,17 +158,9 @@ if ($_POST['h1'] == 1) {
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Salary :</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="salary" id="salary">
-                                        <option value="">Select Salary Range</option>
-                                        <option value="0-1 LPA">0 - 1 LPA</option>
-                                        <option value="1-2 LPA">1 - 2 LPA</option>
-                                        <option value="2-3 LPA">2 - 3 LPA</option>
-                                        <option value="3-5 LPA">3 - 5 LPA</option>
-                                        <option value="5-8 LPA">5 - 8 LPA</option>
-                                        <option value="8-12 LPA">8 - 12 LPA</option>
-                                        <option value="12-20 LPA">12 - 20 LPA</option>
-                                        <option value="20+ LPA">20+ LPA</option>
-                                    </select>
+                                    <input type="number" class="form-control" name="salary" id="salary"
+                                        placeholder="Enter Salary in ₹" min="0" step="1000">
+
                                 </div>
                             </div>
 

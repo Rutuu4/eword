@@ -166,17 +166,9 @@ if ($_POST['h1'] == 1) {
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Salary :</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="salary" id="salary">
-                                        <option value="">Select Salary Range</option>
-                                        <option value="0-1 LPA" <?= ($row['salary'] == '0-1 LPA') ? 'selected' : '' ?>>0 - 1 LPA</option>
-                                        <option value="1-2 LPA" <?= ($row['salary'] == '1-2 LPA') ? 'selected' : '' ?>>1 - 2 LPA</option>
-                                        <option value="2-3 LPA" <?= ($row['salary'] == '2-3 LPA') ? 'selected' : '' ?>>2 - 3 LPA</option>
-                                        <option value="3-5 LPA" <?= ($row['salary'] == '3-5 LPA') ? 'selected' : '' ?>>3 - 5 LPA</option>
-                                        <option value="5-8 LPA" <?= ($row['salary'] == '5-8 LPA') ? 'selected' : '' ?>>5 - 8 LPA</option>
-                                        <option value="8-12 LPA" <?= ($row['salary'] == '8-12 LPA') ? 'selected' : '' ?>>8 - 12 LPA</option>
-                                        <option value="12-20 LPA" <?= ($row['salary'] == '12-20 LPA') ? 'selected' : '' ?>>12 - 20 LPA</option>
-                                        <option value="20+ LPA" <?= ($row['salary'] == '20+ LPA') ? 'selected' : '' ?>>20+ LPA</option>
-                                    </select>
+                                    <input type="text" class="form-control" name="salary" id="salary"
+                                        value="<?= htmlspecialchars($row['salary']); ?>"
+                                        placeholder="Enter salary (e.g., 3-5 LPA)">
                                 </div>
                             </div>
 
@@ -184,7 +176,7 @@ if ($_POST['h1'] == 1) {
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Required Experience :</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="required_experience" id="required_experience" >
+                                    <select class="form-control" name="required_experience" id="required_experience">
                                         <option value="">Select Experience</option>
                                         <option value="Fresher" <?= ($row['required_experience'] == 'Fresher') ? 'selected' : '' ?>>Fresher</option>
                                         <option value="0-1 Years" <?= ($row['required_experience'] == '0-1 Years') ? 'selected' : '' ?>>0 - 1 Year</option>

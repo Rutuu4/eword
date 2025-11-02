@@ -9,7 +9,11 @@ if ($_POST['h1'] == 1) {
     $establishment_year = mysqli_real_escape_string($conn, $_POST['establishment_year']);
     $is_mou = isset($_POST['is_mou']) ? 1 : 0;
     $whatsapp_number = mysqli_real_escape_string($conn, $_POST['whatsapp_number'] ?? '');
-    $course_id = mysqli_real_escape_string($conn, $_POST['courses_id']);
+    $dob = mysqli_real_escape_string($conn, $_POST['dob'] ?? '');
+
+    $courses = isset($_POST['courses_id']) ? $_POST['courses_id'] : [];
+    $course_ids = !empty($courses) ? implode(',', array_map('intval', $courses)) : '';
+
     $city_id = mysqli_real_escape_string($conn, $_POST['city_id']);
     $near_by_area = mysqli_real_escape_string($conn, $_POST['near_by_area']);
 
@@ -28,10 +32,12 @@ if ($_POST['h1'] == 1) {
         "nearby_area" => "'$near_by_area'"
     ];
 
-    // Only add course_id if it's not empty
-    if (!empty($_POST['courses_id'])) {
-        $course_id = mysqli_real_escape_string($conn, $_POST['courses_id']);
-        $fields["course_id"] = "'$course_id'";
+    if (!empty($course_ids)) {
+        $fields["course_ids"] = "'$course_ids'";
+    }
+
+    if (!empty($dob)) {
+        $fields["dob"] = "'$dob'";
     }
 
     // Construct the query
@@ -175,21 +181,28 @@ if ($_POST['h1'] == 1) {
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Date of Birth :</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control" name="dob" id="dob" required>
+                                </div>
+                            </div>
 
                             <div class="form-group">
                                 <label for="usernamee" class="col-sm-2">Course :</label>
                                 <div class="col-sm-8">
 
-                                    <select name="courses_id" id="courses_id" class="form-control">
-                                        <option value=""> Select Course </option>
+                                    <select name="courses_id[]" id="courses_id" class="form-control select2" multiple required>
+                                        <option value="">Select Course</option>
                                         <?php
-                                        $sqlb = "SELECT id,name FROM f_courses where status=1";
+                                        $sqlb = "SELECT id,name FROM f_courses WHERE status=1";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
+                                            echo "<option value='{$rowb['id']}'>{$rowb['name']}</option>";
+                                        }
                                         ?>
-                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
-                                        <?php } ?>
                                     </select>
+
                                 </div>
                             </div>
                             <div class="form-group">

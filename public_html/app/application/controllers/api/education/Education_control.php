@@ -40,6 +40,7 @@ class Education_control extends REST_Controller
             'foreign_education.id',
             'foreign_education.consultancy_name',
             'foreign_education.establishment_year',
+            'foreign_education.dob',
             'TIMESTAMPDIFF(YEAR, foreign_education.establishment_year, CURDATE()) AS total_years',
             'foreign_education.city AS city_id',
             'city.name AS city_name',
@@ -47,14 +48,13 @@ class Education_control extends REST_Controller
             'foreign_education.mou_present',
             'foreign_education.whats_app_number',
             'foreign_education.institute_url',
+            'foreign_education.course_ids',
             'country.id AS country_id',
             'country.name AS country_name',
             'visa_type.id AS visa_type_id',
             'visa_type.name AS visa_type_name',
             'exam_type.id AS exam_type_id',
-            'exam_type.name AS exam_type_name',
-            'f_courses.id AS course_id',
-            'f_courses.name AS course_name'
+            'exam_type.name AS exam_type_name'
         ];
 
         // ✅ Query for paginated data
@@ -65,7 +65,6 @@ class Education_control extends REST_Controller
             'compare_type'  => '=',
             'join_type'     => 'left',
             'join_tables'   => [
-                'f_courses' => 'f_courses.id = foreign_education.course_id',
                 'foreign_education_countries' => 'foreign_education_countries.foreign_education_id = foreign_education.id',
                 'country' => 'country.id = foreign_education_countries.country_id',
                 'foreign_education_visa_types' => 'foreign_education_visa_types.foreign_education_id = foreign_education.id',
@@ -73,13 +72,12 @@ class Education_control extends REST_Controller
                 'foreign_education_exam_types' => 'foreign_education_exam_types.foreign_education_id = foreign_education.id',
                 'exam_type' => 'exam_type.id = foreign_education_exam_types.exam_type_id',
                 'city' => 'city.id = foreign_education.city',
-            ]
+            ],
             // 'num'           => $limit,
             // 'offset'        => $offset
         ];
 
         $raw_list = $this->General_model->get_query_data($params);
-
         // ✅ Query for total count (without pagination)
         // $countParams = [
         //     'table'         => 'foreign_education',
@@ -96,9 +94,27 @@ class Education_control extends REST_Controller
             $id = $row['id'];
 
             if (!isset($formatted_list[$id])) {
+                // 🔹 fetch multiple courses based on comma-separated course_ids
+                $courseDetails = [];
+                if (!empty($row['course_ids'])) {
+                    $courseIds = explode(',', $row['course_ids']);
+                    $courseIds = array_filter($courseIds);
+                    if (!empty($courseIds)) {
+                        $inIds = implode(',', array_map('intval', $courseIds));
+                        $courses = $this->db->query("SELECT id, name FROM f_courses WHERE id IN ($inIds)")->result_array();
+                        foreach ($courses as $c) {
+                            $courseDetails[] = [
+                                'id' => $c['id'],
+                                'name' => $c['name']
+                            ];
+                        }
+                    }
+                }
+
                 $formatted_list[$id] = [
                     'id' => $id,
                     'Name' => $row['consultancy_name'],
+                    'DOB' => $row['dob'],
                     'City' => $row['city_name'],
                     'Near By Area' => $row['nearby_area'],
                     'MOU' => (bool)$row['mou_present'],
@@ -108,7 +124,7 @@ class Education_control extends REST_Controller
                     'web application link' => $row['institute_url'],
                     'Country' => [],
                     'visaType' => [],
-                    'Course Details' => [],
+                    'Course Details' => $courseDetails,
                     'Exam Type' => []
                 ];
             }
@@ -127,13 +143,6 @@ class Education_control extends REST_Controller
                 ];
             }
 
-            if (!empty($row['course_id'])) {
-                $formatted_list[$id]['Course Details'][$row['course_id']] = [
-                    'id' => $row['course_id'],
-                    'name' => $row['course_name']
-                ];
-            }
-
             if (!empty($row['exam_type_id'])) {
                 $formatted_list[$id]['Exam Type'][$row['exam_type_id']] = [
                     'id' => $row['exam_type_id'],
@@ -145,7 +154,6 @@ class Education_control extends REST_Controller
         $result = array_values(array_map(function ($institute) {
             $institute['Country'] = array_values($institute['Country']);
             $institute['visaType'] = array_values($institute['visaType']);
-            $institute['Course Details'] = array_values($institute['Course Details']);
             $institute['Exam Type'] = array_values($institute['Exam Type']);
             return $institute;
         }, $formatted_list));
@@ -154,7 +162,6 @@ class Education_control extends REST_Controller
         if (!empty($result)) {
             $response['message'] = $this->lang->line('success');
             $response['code'] = REST_Controller::HTTP_OK;
-            // $response['total_page'] = ceil($total / PRODUCT_PAGINATION_SIZE);
             $response['data'] = $result;
         } else {
             $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
@@ -163,6 +170,7 @@ class Education_control extends REST_Controller
 
         $this->response($response, 200);
     }
+
 
 
 
@@ -181,7 +189,6 @@ class Education_control extends REST_Controller
 
         // ✅ Joins
         $join_tables = [
-            'f_courses jointype left' => 'f_courses.id = foreign_education.course_id',
             'foreign_education_countries jointype left' => 'foreign_education_countries.foreign_education_id = foreign_education.id',
             'country jointype left' => 'country.id = foreign_education_countries.country_id',
             'foreign_education_visa_types jointype left' => 'foreign_education_visa_types.foreign_education_id = foreign_education.id',
@@ -193,18 +200,25 @@ class Education_control extends REST_Controller
 
         // ✅ Filters
         $filters = [
-            'course'     => ['column' => 'f_courses.name', 'type' => 'like'],
             'city'       => ['column' => 'city.name', 'type' => 'equal'],
             'visa_type'  => ['column' => 'visa_type.name', 'type' => 'equal'],
             'exam_type'  => ['column' => 'exam_type.name', 'type' => 'equal'],
-            'country'    => ['column' => 'country.name', 'type' => 'equal']
+            'country'    => ['column' => 'country.name', 'type' => 'equal'],
+            'course'     => ['column' => 'foreign_education.course_ids', 'type' => 'in'], // changed
         ];
 
         foreach ($filters as $key => $filter) {
             if (!empty($data[$key])) {
                 $value = $this->db->escape_str($data[$key]);
+
                 if ($filter['type'] === 'like') {
                     $wheres[] = "({$filter['column']} LIKE '%" . $this->db->escape_like_str($value) . "%')";
+                } elseif ($filter['type'] === 'in') {
+                    // ✅ Course filter supports multiple comma-separated IDs
+                    $ids = is_array($data[$key]) ? $data[$key] : explode(',', $data[$key]);
+                    $ids = array_map('intval', $ids);
+                    $ids = implode(',', $ids);
+                    $wheres[] = "(foreign_education.course_ids REGEXP '(^|,)(" . str_replace(',', '|', $ids) . ")(,|$)')";
                 } else {
                     $wheres[] = "({$filter['column']} = '{$value}')";
                 }
@@ -214,20 +228,22 @@ class Education_control extends REST_Controller
         $wherestring = implode(' AND ', $wheres);
         $wherestring .= " GROUP BY foreign_education.id";
 
-        // ✅ Fields (same structure as list API)
+        // ✅ Fields
         $fields = [
             'foreign_education.id',
             'foreign_education.consultancy_name',
+            'foreign_education.city AS city_id',
             'city.name AS city_name',
             'foreign_education.nearby_area',
             'foreign_education.mou_present',
             'foreign_education.whats_app_number',
             'foreign_education.establishment_year',
+            'foreign_education.dob',
+            'foreign_education.course_ids',
             'TIMESTAMPDIFF(YEAR, foreign_education.establishment_year, CURDATE()) AS total_years',
             'foreign_education.institute_url',
             'GROUP_CONCAT(DISTINCT CONCAT(country.id, ":", country.name)) AS countries',
             'GROUP_CONCAT(DISTINCT CONCAT(visa_type.id, ":", visa_type.name)) AS visa_types',
-            'GROUP_CONCAT(DISTINCT CONCAT(f_courses.id, ":", f_courses.name)) AS courses',
             'GROUP_CONCAT(DISTINCT CONCAT(exam_type.id, ":", exam_type.name)) AS exam_types'
         ];
 
@@ -244,13 +260,32 @@ class Education_control extends REST_Controller
 
         $edu_list = $this->General_model->get_query_data($params);
 
-        // ✅ Format response like list API
+        // ✅ Format response
         $formatted_list = [];
         foreach ($edu_list as $row) {
             $id = $row['id'];
+
+            // 🔹 fetch multiple courses based on comma-separated course_ids
+            $courseDetails = [];
+            if (!empty($row['course_ids'])) {
+                $courseIds = explode(',', $row['course_ids']);
+                $courseIds = array_filter($courseIds);
+                if (!empty($courseIds)) {
+                    $inIds = implode(',', array_map('intval', $courseIds));
+                    $courses = $this->db->query("SELECT id, name FROM f_courses WHERE id IN ($inIds)")->result_array();
+                    foreach ($courses as $c) {
+                        $courseDetails[] = [
+                            'id' => $c['id'],
+                            'name' => $c['name']
+                        ];
+                    }
+                }
+            }
+
             $formatted_list[$id] = [
                 'id' => $id,
                 'Name' => $row['consultancy_name'],
+                'DOB' => $row['dob'],
                 'City' => $row['city_name'],
                 'Near By Area' => $row['nearby_area'],
                 'MOU' => (bool)$row['mou_present'],
@@ -260,7 +295,7 @@ class Education_control extends REST_Controller
                 'web application link' => $row['institute_url'],
                 'Country' => $this->format_id_name_pairs($row['countries']),
                 'visaType' => $this->format_id_name_pairs($row['visa_types']),
-                'Course Details' => $this->format_id_name_pairs($row['courses']),
+                'Course Details' => $courseDetails,
                 'Exam Type' => $this->format_id_name_pairs($row['exam_types'])
             ];
         }
@@ -283,6 +318,7 @@ class Education_control extends REST_Controller
 
         $this->response($response, 200);
     }
+
 
     /**
      * ✅ Helper function to format "1:Name,2:Name" -> [{"id":1,"name":"Name"}]
