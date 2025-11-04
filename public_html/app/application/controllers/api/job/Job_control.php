@@ -24,6 +24,7 @@ class Job_control extends REST_Controller
     }
     public function job_application_post()
     {
+
         $data = $this->post();
 
         // ✅ Validate required fields
@@ -68,96 +69,260 @@ class Job_control extends REST_Controller
         }
     }
 
+    // public function job_application_resume_post()
+    // {
+    //     // header("Content-Type: application/json; charset=UTF-8");
+    //     // ✅ Get job application ID from query params (?id=123)
+    //     $job_id = $this->input->get('id'); // use input->get() instead of $this->get()
+
+    //     // ✅ Validate job application ID
+    //     if (empty($job_id) || !is_numeric($job_id)) {
+    //         return $this->response([
+    //             'code' => REST_Controller::HTTP_BAD_REQUEST,
+    //             'message' => "Invalid or missing job application ID."
+    //         ], 200);
+    //     }
+
+    //     // ✅ Check if job application exists using General_model
+    //     $checkApplication = $this->General_model->get_query_data([
+    //         'table' => 'job_application',
+    //         'condition' => ['id' => $job_id],
+    //         'num' => 1
+    //     ]);
+
+    //     if (empty($checkApplication)) {
+    //         return $this->response([
+    //             'code' => REST_Controller::HTTP_NOT_FOUND,
+    //             'message' => "Job application not found."
+    //         ], 200);
+    //     }
+
+    //     // ✅ Validate resume file
+    //     if (empty($_FILES['resumeFile']['name'])) {
+    //         return $this->response([
+    //             'code' => REST_Controller::HTTP_BAD_REQUEST,
+    //             'message' => "Resume file is required."
+    //         ], 200);
+    //     }
+
+    //     $allowed_types = ['pdf', 'doc', 'docx'];
+    //     $file_ext = strtolower(pathinfo($_FILES['resumeFile']['name'], PATHINFO_EXTENSION));
+    //     $file_size = $_FILES['resumeFile']['size'];
+
+    //     if (!in_array($file_ext, $allowed_types)) {
+    //         return $this->response([
+    //             'code' => REST_Controller::HTTP_BAD_REQUEST,
+    //             'message' => "Invalid file type. Only PDF, DOC, and DOCX are allowed."
+    //         ], 200);
+    //     }
+
+    //     if ($file_size > 5 * 1024 * 1024) { // 5 MB
+    //         return $this->response([
+    //             'code' => REST_Controller::HTTP_BAD_REQUEST,
+    //             'message' => "File size must be less than 5MB."
+    //         ], 200);
+    //     }
+
+    //     // ✅ Upload path setup
+    //     $upload_path = FCPATH . 'uploads/resumes/';
+    //     if (!is_dir($upload_path)) {
+    //         mkdir($upload_path, 0777, true);
+    //     }
+
+    //     $new_filename = 'resume_' . time() . '.' . $file_ext;
+    //     $target_file = $upload_path . $new_filename;
+
+    //     if (!move_uploaded_file($_FILES['resumeFile']['tmp_name'], $target_file)) {
+    //         return $this->response([
+    //             'code' => REST_Controller::HTTP_INTERNAL_ERROR,
+    //             'message' => "Failed to upload resume file."
+    //         ], 200);
+    //     }
+
+    //     $resume_file_path = 'uploads/resumes/' . $new_filename;
+    //     log_message('info', 'Resume uploaded successfully: ' . print_r($_FILES, true));
+    //     log_message('info', 'Saved file path: ' . $resume_file_path);
+    //     // ✅ Update resume file using General_model
+    //     $this->General_model->update('job_application', [
+    //         'resume_file' => $resume_file_path,
+    //         'updated_at' => date('Y-m-d H:i:s')
+    //     ], ['id' => $job_id]);
+
+    //     return $this->response([
+    //         'code' => REST_Controller::HTTP_OK,
+    //         'message' => "Resume uploaded successfully.",
+    //         'data' => [
+    //             'job_application_id' => $job_id,
+    //             'resume_file' => $resume_file_path
+    //         ]
+    //     ], 200);
+    // }
+
     public function job_application_resume_post()
     {
-        // ✅ Get job application ID from query params (?id=123)
-        $job_id = $this->input->get('id'); // use input->get() instead of $this->get()
+        try {
+            // 1) Safe runtime limits (helps with bigger files)
+            ini_set('upload_max_filesize', '50M');
+            ini_set('post_max_size', '50M');
+            ini_set('max_execution_time', '300');
+            ini_set('max_input_time', '300');
+            ini_set('memory_limit', '256M');
 
-        // ✅ Validate job application ID
-        if (empty($job_id) || !is_numeric($job_id)) {
+            // 2) Get job application ID from query param ?id=30
+            $job_id = $this->input->get('id');
+            if (empty($job_id) || !is_numeric($job_id)) {
+                return $this->response([
+                    'code' => REST_Controller::HTTP_BAD_REQUEST,
+                    'status' => false,
+                    'message' => "Invalid or missing job application ID."
+                ], REST_Controller::HTTP_OK); // you are returning 200 always
+            }
+
+            // 3) Check if job exists
+            $checkApplication = $this->General_model->get_query_data([
+                'table' => 'job_application',
+                'condition' => ['id' => $job_id],
+                'num' => 1
+            ]);
+
+            if (empty($checkApplication)) {
+                return $this->response([
+                    'code' => REST_Controller::HTTP_NOT_FOUND,
+                    'status' => false,
+                    'message' => "Job application not found."
+                ], REST_Controller::HTTP_OK);
+            }
+
+            // 4) Check file present
+            if (empty($_FILES['resumeFile']['name'])) {
+                return $this->response([
+                    'code' => REST_Controller::HTTP_BAD_REQUEST,
+                    'status' => false,
+                    'message' => "Resume file is required or upload failed (maybe too large)."
+                ], REST_Controller::HTTP_OK);
+            }
+
+            // 5) Check PHP upload error
+            if ($_FILES['resumeFile']['error'] !== UPLOAD_ERR_OK) {
+                $errorMessage = $this->fileUploadErrorMessage($_FILES['resumeFile']['error']);
+                return $this->response([
+                    'code' => REST_Controller::HTTP_INTERNAL_SERVER_ERROR, // ✅ your constant
+                    'status' => false,
+                    'message' => "File upload error: " . $errorMessage
+                ], REST_Controller::HTTP_OK);
+            }
+
+            // 6) Validate extension
+            $file_ext = strtolower(pathinfo($_FILES['resumeFile']['name'], PATHINFO_EXTENSION));
+            $allowed_ext = ['pdf', 'doc', 'docx'];
+            if (!in_array($file_ext, $allowed_ext)) {
+                return $this->response([
+                    'code' => REST_Controller::HTTP_BAD_REQUEST,
+                    'status' => false,
+                    'message' => "Invalid file type. Only PDF, DOC, DOCX allowed."
+                ], REST_Controller::HTTP_OK);
+            }
+
+            // 7) Validate size (5MB)
+            $file_size = $_FILES['resumeFile']['size'];
+            if ($file_size > 5 * 1024 * 1024) {
+                return $this->response([
+                    'code' => REST_Controller::HTTP_BAD_REQUEST,
+                    'status' => false,
+                    'message' => "File size must be less than 5MB."
+                ], REST_Controller::HTTP_OK);
+            }
+
+            // 8) Validate MIME
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_file($finfo, $_FILES['resumeFile']['tmp_name']);
+            finfo_close($finfo);
+
+            $allowed_mimes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            ];
+
+            if (!in_array($mime, $allowed_mimes)) {
+                return $this->response([
+                    'code' => REST_Controller::HTTP_BAD_REQUEST,
+                    'status' => false,
+                    'message' => "Invalid MIME type. Only PDF, DOC, and DOCX allowed."
+                ], REST_Controller::HTTP_OK);
+            }
+
+            // 9) Prepare upload dir
+            $upload_path = FCPATH . 'uploads/resumes/';
+            if (!is_dir($upload_path)) {
+                if (!mkdir($upload_path, 0777, true)) {
+                    return $this->response([
+                        'code' => REST_Controller::HTTP_INTERNAL_SERVER_ERROR,
+                        'status' => false,
+                        'message' => "Failed to create upload directory."
+                    ], REST_Controller::HTTP_OK);
+                }
+            }
+
+            // 10) Move file
+            $new_filename = 'resume_' . time() . '.' . $file_ext;
+            $target_file = $upload_path . $new_filename;
+
+            if (!move_uploaded_file($_FILES['resumeFile']['tmp_name'], $target_file)) {
+                return $this->response([
+                    'code' => REST_Controller::HTTP_INTERNAL_SERVER_ERROR,
+                    'status' => false,
+                    'message' => "Failed to move uploaded file. Check folder permissions."
+                ], REST_Controller::HTTP_OK);
+            }
+
+            // 11) Save to DB
+            $resume_file_path = 'uploads/resumes/' . $new_filename;
+
+            $this->General_model->update('job_application', [
+                'resume_file' => $resume_file_path,
+                'updated_at' => date('Y-m-d H:i:s')
+            ], ['id' => $job_id]);
+
+            // 12) Final success
             return $this->response([
-                'code' => REST_Controller::HTTP_BAD_REQUEST,
-                'message' => "Invalid or missing job application ID."
-            ], 200);
-        }
-
-        // ✅ Check if job application exists using General_model
-        $checkApplication = $this->General_model->get_query_data([
-            'table' => 'job_application',
-            'condition' => ['id' => $job_id],
-            'num' => 1
-        ]);
-
-        if (empty($checkApplication)) {
+                'code' => REST_Controller::HTTP_OK,
+                'status' => true,
+                'message' => "Resume uploaded successfully.",
+                'data' => [
+                    'job_application_id' => $job_id,
+                    'resume_file' => base_url($resume_file_path),
+                    'mime_type' => $mime,
+                    'file_size_kb' => round($file_size / 1024, 2)
+                ]
+            ], REST_Controller::HTTP_OK);
+        } catch (Exception $e) {
+            // catch any unhandled error
             return $this->response([
-                'code' => REST_Controller::HTTP_NOT_FOUND,
-                'message' => "Job application not found."
-            ], 200);
+                'code' => REST_Controller::HTTP_INTERNAL_SERVER_ERROR,
+                'status' => false,
+                'message' => "Unexpected server error: " . $e->getMessage()
+            ], REST_Controller::HTTP_OK);
         }
-
-        // ✅ Validate resume file
-        if (empty($_FILES['resumeFile']['name'])) {
-            return $this->response([
-                'code' => REST_Controller::HTTP_BAD_REQUEST,
-                'message' => "Resume file is required."
-            ], 200);
-        }
-
-        $allowed_types = ['pdf', 'doc', 'docx'];
-        $file_ext = strtolower(pathinfo($_FILES['resumeFile']['name'], PATHINFO_EXTENSION));
-        $file_size = $_FILES['resumeFile']['size'];
-
-        if (!in_array($file_ext, $allowed_types)) {
-            return $this->response([
-                'code' => REST_Controller::HTTP_BAD_REQUEST,
-                'message' => "Invalid file type. Only PDF, DOC, and DOCX are allowed."
-            ], 200);
-        }
-
-        if ($file_size > 5 * 1024 * 1024) { // 5 MB
-            return $this->response([
-                'code' => REST_Controller::HTTP_BAD_REQUEST,
-                'message' => "File size must be less than 5MB."
-            ], 200);
-        }
-
-        // ✅ Upload path setup
-        $upload_path = FCPATH . 'uploads/resumes/';
-        if (!is_dir($upload_path)) {
-            mkdir($upload_path, 0777, true);
-        }
-
-        $new_filename = 'resume_' . time() . '.' . $file_ext;
-        $target_file = $upload_path . $new_filename;
-
-        if (!move_uploaded_file($_FILES['resumeFile']['tmp_name'], $target_file)) {
-            return $this->response([
-                'code' => REST_Controller::HTTP_INTERNAL_ERROR,
-                'message' => "Failed to upload resume file."
-            ], 200);
-        }
-
-        $resume_file_path = 'uploads/resumes/' . $new_filename;
-
-        // ✅ Update resume file using General_model
-        $this->General_model->update('job_application', [
-            'resume_file' => $resume_file_path,
-            'updated_at' => date('Y-m-d H:i:s')
-        ], ['id' => $job_id]);
-
-        return $this->response([
-            'code' => REST_Controller::HTTP_OK,
-            'message' => "Resume uploaded successfully.",
-            'data' => [
-                'job_application_id' => $job_id,
-                'resume_file' => $resume_file_path
-            ]
-        ], 200);
     }
 
+    /**
+     * ✅ Converts PHP file upload error codes into readable messages
+     */
+    private function fileUploadErrorMessage($error_code)
+    {
+        $errors = [
+            UPLOAD_ERR_INI_SIZE   => 'File exceeds upload_max_filesize limit (php.ini).',
+            UPLOAD_ERR_FORM_SIZE  => 'File exceeds MAX_FILE_SIZE directive in HTML form.',
+            UPLOAD_ERR_PARTIAL    => 'File was only partially uploaded.',
+            UPLOAD_ERR_NO_FILE    => 'No file was uploaded.',
+            UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder on server.',
+            UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk. Check permissions.',
+            UPLOAD_ERR_EXTENSION  => 'File upload stopped by a PHP extension.'
+        ];
 
-
-
+        return $errors[$error_code] ?? 'Unknown upload error.';
+    }
 
 
     public function job_placement_list_post()
