@@ -290,7 +290,7 @@ if ($_POST['h1'] == 1) {
             //Select2
             $(".select2").select2();
             //bootstrap WYSIHTML5 - text editor
-            $(".textarea").wysihtml5();
+            // $(".textarea").wysihtml5();
 
         });
     </script>

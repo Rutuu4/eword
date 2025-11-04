@@ -60,30 +60,30 @@ if ($_POST['h1'] == 1) {
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <?php include("../includes/css-scripts.php"); ?>
     <style>
-        .error {
-            color: red;
-        }
+    .error {
+        color: red;
+    }
 
-        .control-label {
-            text-align: left !important;
-        }
+    .control-label {
+        text-align: left !important;
+    }
 
-        .form-control {
-            display: block;
-            width: 100%;
-            height: 34px;
-            padding: 6px 12px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #555;
-            background-color: #fff;
-            background-image: none;
-            border: 1px solid #ccc;
-        }
+    .form-control {
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+    }
 
-        .select2-container {
-            width: 100% !important;
-        }
+    .select2-container {
+        width: 100% !important;
+    }
     </style>
 </head>
 
@@ -152,11 +152,10 @@ if ($_POST['h1'] == 1) {
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                            <option
-                                                <?php if (in_array($rowb['id'], $selected_course_ids)) {
+                                        <option <?php if (in_array($rowb['id'], $selected_course_ids)) {
                                                     echo "selected";
-                                                } ?>
-                                                value="<?= $rowb['id']; ?>"> <?= $rowb['position_name']; ?> </option>
+                                                } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['position_name']; ?>
+                                        </option>
 
                                         <?php } ?>
                                     </select>
@@ -178,14 +177,30 @@ if ($_POST['h1'] == 1) {
                                 <div class="col-sm-8">
                                     <select class="form-control" name="required_experience" id="required_experience">
                                         <option value="">Select Experience</option>
-                                        <option value="Fresher" <?= ($row['required_experience'] == 'Fresher') ? 'selected' : '' ?>>Fresher</option>
-                                        <option value="0-1 Years" <?= ($row['required_experience'] == '0-1 Years') ? 'selected' : '' ?>>0 - 1 Year</option>
-                                        <option value="1-2 Years" <?= ($row['required_experience'] == '1-2 Years') ? 'selected' : '' ?>>1 - 2 Years</option>
-                                        <option value="2-3 Years" <?= ($row['required_experience'] == '2-3 Years') ? 'selected' : '' ?>>2 - 3 Years</option>
-                                        <option value="3-5 Years" <?= ($row['required_experience'] == '3-5 Years') ? 'selected' : '' ?>>3 - 5 Years</option>
-                                        <option value="5-8 Years" <?= ($row['required_experience'] == '5-8 Years') ? 'selected' : '' ?>>5 - 8 Years</option>
-                                        <option value="8-10 Years" <?= ($row['required_experience'] == '8-10 Years') ? 'selected' : '' ?>>8 - 10 Years</option>
-                                        <option value="10+ Years" <?= ($row['required_experience'] == '10+ Years') ? 'selected' : '' ?>>10+ Years</option>
+                                        <option value="Fresher"
+                                            <?= ($row['required_experience'] == 'Fresher') ? 'selected' : '' ?>>Fresher
+                                        </option>
+                                        <option value="0-1 Years"
+                                            <?= ($row['required_experience'] == '0-1 Years') ? 'selected' : '' ?>>0 - 1
+                                            Year</option>
+                                        <option value="1-2 Years"
+                                            <?= ($row['required_experience'] == '1-2 Years') ? 'selected' : '' ?>>1 - 2
+                                            Years</option>
+                                        <option value="2-3 Years"
+                                            <?= ($row['required_experience'] == '2-3 Years') ? 'selected' : '' ?>>2 - 3
+                                            Years</option>
+                                        <option value="3-5 Years"
+                                            <?= ($row['required_experience'] == '3-5 Years') ? 'selected' : '' ?>>3 - 5
+                                            Years</option>
+                                        <option value="5-8 Years"
+                                            <?= ($row['required_experience'] == '5-8 Years') ? 'selected' : '' ?>>5 - 8
+                                            Years</option>
+                                        <option value="8-10 Years"
+                                            <?= ($row['required_experience'] == '8-10 Years') ? 'selected' : '' ?>>8 -
+                                            10 Years</option>
+                                        <option value="10+ Years"
+                                            <?= ($row['required_experience'] == '10+ Years') ? 'selected' : '' ?>>10+
+                                            Years</option>
                                     </select>
                                 </div>
                             </div>
@@ -211,10 +226,9 @@ if ($_POST['h1'] == 1) {
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                            <option <?php if ($row['city_id'] == $rowb['id']) {
+                                        <option <?php if ($row['city_id'] == $rowb['id']) {
                                                         echo "selected";
-                                                    } ?>
-                                                value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
+                                                    } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -279,35 +293,35 @@ if ($_POST['h1'] == 1) {
     </div>
     <?php include("../includes/js-scripts.php"); ?>
     <script>
-        $(document).ready(function() {
-            //Select2
-            $(".select2").select2();
+    $(document).ready(function() {
+        //Select2
+        $(".select2").select2();
 
-            function toggleWhatsappField() {
-                if ($('#is_mou').is(':checked')) {
-                    $('#whatsapp_group').show();
-                    $('#whatsapp_number').attr('required', true);
-                } else {
-                    $('#whatsapp_group').hide();
-                    $('#whatsapp_number').removeAttr('required');
-                }
+        function toggleWhatsappField() {
+            if ($('#is_mou').is(':checked')) {
+                $('#whatsapp_group').show();
+                $('#whatsapp_number').attr('required', true);
+            } else {
+                $('#whatsapp_group').hide();
+                $('#whatsapp_number').removeAttr('required');
             }
+        }
 
-            $('#is_mou').change(toggleWhatsappField);
+        $('#is_mou').change(toggleWhatsappField);
 
-            // Call on page load
-            toggleWhatsappField();
+        // Call on page load
+        toggleWhatsappField();
 
-        });
+    });
     </script>
     <script>
-        $(document).ready(function() {
-            //Select2
-            $(".select2").select2();
-            //bootstrap WYSIHTML5 - text editor
-            $(".textarea").wysihtml5();
+    $(document).ready(function() {
+        //Select2
+        $(".select2").select2();
+        //bootstrap WYSIHTML5 - text editor
+        // $(".textarea").wysihtml5();
 
-        });
+    });
     </script>
 
 
