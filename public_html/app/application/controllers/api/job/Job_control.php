@@ -22,7 +22,6 @@ class Job_control extends REST_Controller
         }
         $this->globalVars         = $final;
     }
-
     public function job_application_post()
     {
         $data = $this->post();
@@ -35,21 +34,12 @@ class Job_control extends REST_Controller
             ], 200);
         }
 
-        // ✅ Check duplicate email
-        if (!empty($data['email'])) {
-            $existing = $this->db->get_where('job_application', ['email' => $data['email']])->row();
-            if (!empty($existing)) {
-                return $this->response([
-                    'code' => REST_Controller::HTTP_CONFLICT,
-                    'message' => "Email is already registered."
-                ], 200);
-            }
-        }
+        // ❌ Removed duplicate email validation — duplicates and null are allowed
 
         // ✅ Prepare data (no file)
         $insertData = [
             'name' => $data['name'],
-            'email' => $data['email'] ?? null,
+            'email' => $data['email'] ?? null, // can be duplicate or null
             'phone_number' => $data['phoneNumber'],
             'year_of_experience' => $data['yearofExperience'] ?? null,
             'relevant_experience' => $data['relevantExperience'] ?? null,
@@ -77,6 +67,7 @@ class Job_control extends REST_Controller
             ], 200);
         }
     }
+
     public function job_application_resume_post()
     {
         // ✅ Get job application ID from query params (?id=123)

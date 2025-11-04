@@ -386,28 +386,14 @@ class Education_control extends REST_Controller
             $dob = null;
         }
 
-        // ✅ Check if email already exists (only if email is provided)
-        if (!empty($data['email'])) {
-            $existingEmail = $this->db
-                ->where('email', $data['email'])
-                ->get('f_student_application')
-                ->row();
-
-            if (!empty($existingEmail)) {
-                $response = [
-                    'code' => REST_Controller::HTTP_CONFLICT,
-                    'message' => "Email is already registered."
-                ];
-                return $this->response($response, 200);
-            }
-        }
+        // ❌ Removed email uniqueness check — duplicates and null are allowed
 
         // ✅ Prepare insert data
         $insertData = [
             'name' => $data['name'],
-            'email' => $data['email'] ?? null,
+            'email' => $data['email'] ?? null, // can be duplicate or null
             'phone_number' => $data['phoneNumber'],
-            'dob' => $dob, // ✅ Added DOB field
+            'dob' => $dob,
             'course_for_applying' => $data['courseForApplying'] ?? null,
             'exam_preference' => $data['examPreference'] ?? null,
             'preferred_country' => $data['preferredCountry'] ?? null,

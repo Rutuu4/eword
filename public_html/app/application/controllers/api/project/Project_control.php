@@ -282,21 +282,7 @@ class Project_control extends REST_Controller
             return $this->response($response, 200);
         }
 
-        // ✅ Check if email already exists (only if email is provided)
-        if (!empty($data['email'])) {
-            $existingEmail = $this->db
-                ->where('email', $data['email'])
-                ->get('p_student_application')
-                ->row();
-
-            if (!empty($existingEmail)) {
-                $response = [
-                    'code' => REST_Controller::HTTP_CONFLICT,
-                    'message' => "Email is already registered."
-                ];
-                return $this->response($response, 200);
-            }
-        }
+        // 🚫 Removed email uniqueness check
 
         // ✅ Prepare insert data (optional fields handled with null fallback)
         $insertData = [
