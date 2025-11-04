@@ -200,7 +200,7 @@ if ($_POST['h1'] == 1) {
                                 <label for="usernamee" class="col-sm-2">Course :</label>
                                 <div class="col-sm-8">
                                     <select name="courses_id[]" id="courses_id" class="form-control select2" multiple>
-                                        <option value="">Select Course</option>
+                                        <option value="" disabled>Select Course</option>
                                         <?php
                                         $sqlb = "SELECT id, name FROM f_courses WHERE status = 1";
                                         $resultb = $conn->query($sqlb);
@@ -265,7 +265,7 @@ if ($_POST['h1'] == 1) {
                                 <div class="col-sm-8">
 
                                     <select name="country_id[]" id="country_id" class="form-control select2" multiple>
-                                        <option value=""> Select Country </option>
+                                        <option value="" disabled> Select Country </option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM country";
                                         $resultb = $conn->query($sqlb);
@@ -284,7 +284,7 @@ if ($_POST['h1'] == 1) {
 
                                     <select name="visa_type_id[]" id="visa_type_id" class="form-control select2"
                                         multiple>
-                                        <option value=""> Select Visa Type </option>
+                                        <option value="" disabled> Select Visa Type </option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM visa_type";
                                         $resultb = $conn->query($sqlb);
@@ -303,7 +303,7 @@ if ($_POST['h1'] == 1) {
 
                                     <select name="exam_type_id[]" id="exam_type_id" class="form-control select2"
                                         multiple>
-                                        <option value=""> Select Exam Type </option>
+                                        <option value="" disabled> Select Exam Type </option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM exam_type";
                                         $resultb = $conn->query($sqlb);

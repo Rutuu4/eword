@@ -146,7 +146,7 @@ if ($_POST['h1'] == 1) {
                                 <div class="col-sm-8">
 
                                     <select name="courses_id[]" id="courses_id" class="form-control select2" multiple>
-                                        <option value=""> Select Openning </option>
+                                        <option value="" disabled> Select Openning </option>
                                         <?php
                                         $sqlb = "SELECT id,position_name FROM j_openings";
                                         $resultb = $conn->query($sqlb);

@@ -79,30 +79,30 @@ if ($_POST['h1'] == 1) {
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <?php include("../includes/css-scripts.php"); ?>
     <style>
-        .error {
-            color: red;
-        }
+    .error {
+        color: red;
+    }
 
-        .control-label {
-            text-align: left !important;
-        }
+    .control-label {
+        text-align: left !important;
+    }
 
-        .form-control {
-            display: block;
-            width: 100%;
-            height: 34px;
-            padding: 6px 12px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #555;
-            background-color: #fff;
-            background-image: none;
-            border: 1px solid #ccc;
-        }
+    .form-control {
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+    }
 
-        .select2-container {
-            width: 100% !important;
-        }
+    .select2-container {
+        width: 100% !important;
+    }
     </style>
 </head>
 
@@ -142,13 +142,13 @@ if ($_POST['h1'] == 1) {
                                 <div class="col-sm-8">
 
                                     <select name="courses_id[]" id="courses_id" class="form-control select2" multiple>
-                                        <option value=""> Select Category </option>
+                                        <option value="" disabled> Select Category </option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM p_courses where status=1";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
+                                        <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -174,7 +174,7 @@ if ($_POST['h1'] == 1) {
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
+                                        <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -195,7 +195,8 @@ if ($_POST['h1'] == 1) {
                             <div class="form-group">
                                 <label for="class_type_id" class="col-sm-2">Job Type :</label>
                                 <div class="col-sm-8">
-                                    <select name="class_type_id[]" id="class_type_id" class="form-control select2" multiple required>
+                                    <select name="class_type_id[]" id="class_type_id" class="form-control select2"
+                                        multiple required>
                                         <option value="Part_time">Part Time</option>
                                         <option value="Full_time">Full Time</option>
                                         <option value="Remote">Remote</option>
@@ -243,23 +244,23 @@ if ($_POST['h1'] == 1) {
     </div>
     <?php include("../includes/js-scripts.php"); ?>
     <script>
-        $(document).ready(function() {
-            // Initialize Select2
-            $(".select2").select2();
+    $(document).ready(function() {
+        // Initialize Select2
+        $(".select2").select2();
 
-            // Toggle WhatsApp number required based on MOU checkbox
-            $('#is_mou').change(function() {
-                if ($(this).is(':checked')) {
-                    $('#whatsapp_group').show();
-                    $('#whatsapp_number').prop('required', true);
-                } else {
-                    $('#whatsapp_group').hide();
-                    $('#whatsapp_number').prop('required', false);
-                }
-            });
-
-
+        // Toggle WhatsApp number required based on MOU checkbox
+        $('#is_mou').change(function() {
+            if ($(this).is(':checked')) {
+                $('#whatsapp_group').show();
+                $('#whatsapp_number').prop('required', true);
+            } else {
+                $('#whatsapp_group').hide();
+                $('#whatsapp_number').prop('required', false);
+            }
         });
+
+
+    });
     </script>
 
 

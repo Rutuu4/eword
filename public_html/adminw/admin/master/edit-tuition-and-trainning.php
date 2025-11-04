@@ -146,7 +146,7 @@ if ($_POST['h1'] == 1) {
                                 <div class="col-sm-8">
 
                                     <select name="courses_id[]" id="courses_id" class="form-control select2" multiple>
-                                        <option value=""> Select Course </option>
+                                        <option value="" disabled> Select Course </option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM t_courses";
                                         $resultb = $conn->query($sqlb);

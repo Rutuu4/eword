@@ -118,30 +118,30 @@ if ($_POST['h1'] == 1) {
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <?php include("../includes/css-scripts.php"); ?>
     <style>
-        .error {
-            color: red;
-        }
+    .error {
+        color: red;
+    }
 
-        .control-label {
-            text-align: left !important;
-        }
+    .control-label {
+        text-align: left !important;
+    }
 
-        .form-control {
-            display: block;
-            width: 100%;
-            height: 34px;
-            padding: 6px 12px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #555;
-            background-color: #fff;
-            background-image: none;
-            border: 1px solid #ccc;
-        }
+    .form-control {
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+    }
 
-        .select2-container {
-            width: 100% !important;
-        }
+    .select2-container {
+        width: 100% !important;
+    }
     </style>
 </head>
 
@@ -192,8 +192,9 @@ if ($_POST['h1'] == 1) {
                                 <label for="usernamee" class="col-sm-2">Course :</label>
                                 <div class="col-sm-8">
 
-                                    <select name="courses_id[]" id="courses_id" class="form-control select2" multiple required>
-                                        <option value="">Select Course</option>
+                                    <select name="courses_id[]" id="courses_id" class="form-control select2" multiple
+                                        required>
+                                        <option value="" disabled>Select Course</option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM f_courses WHERE status=1";
                                         $resultb = $conn->query($sqlb);
@@ -226,7 +227,7 @@ if ($_POST['h1'] == 1) {
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
+                                        <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -248,13 +249,13 @@ if ($_POST['h1'] == 1) {
 
                                     <select name="country_id[]" id="country_id" class="form-control select2" multiple>
 
-                                        <option value=""> Select Country</option>
+                                        <option value="" disabled> Select Country</option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM country";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
+                                        <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -265,13 +266,13 @@ if ($_POST['h1'] == 1) {
 
                                     <select name="visa_type_id[]" id="visa_type_id" class="form-control select2"
                                         multiple>
-                                        <option value=""> Select Visa Type </option>
+                                        <option value="" disabled> Select Visa Type </option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM visa_type";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
+                                        <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -283,13 +284,13 @@ if ($_POST['h1'] == 1) {
                                     <select name="exam_type_id[]" id="exam_type_id" class="form-control select2"
                                         multiple>
 
-                                        <option value=""> Select Exam Type </option>
+                                        <option value="" disabled> Select Exam Type </option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM exam_type";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                            <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
+                                        <option value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -334,34 +335,34 @@ if ($_POST['h1'] == 1) {
     </div>
     <?php include("../includes/js-scripts.php"); ?>
     <script>
-        $(document).ready(function() {
-            // Initialize Select2
-            $(".select2").select2();
+    $(document).ready(function() {
+        // Initialize Select2
+        $(".select2").select2();
 
-            // Toggle WhatsApp number required based on MOU checkbox
-            $('#is_mou').change(function() {
-                if ($(this).is(':checked')) {
-                    $('#whatsapp_group').show();
-                    $('#whatsapp_number').prop('required', true);
-                } else {
-                    $('#whatsapp_group').hide();
-                    $('#whatsapp_number').prop('required', false);
-                }
-            });
-
-            // Dynamic required logic: If course selected, country is required
-            $('#courses_id').change(function() {
-                let courseSelected = $(this).val();
-                if (courseSelected) {
-                    $('#country_id').attr('required', true);
-                } else {
-                    $('#country_id').removeAttr('required');
-                }
-            });
-
-            // Trigger change on load in case of pre-filled form
-            $('#courses_id').trigger('change');
+        // Toggle WhatsApp number required based on MOU checkbox
+        $('#is_mou').change(function() {
+            if ($(this).is(':checked')) {
+                $('#whatsapp_group').show();
+                $('#whatsapp_number').prop('required', true);
+            } else {
+                $('#whatsapp_group').hide();
+                $('#whatsapp_number').prop('required', false);
+            }
         });
+
+        // Dynamic required logic: If course selected, country is required
+        $('#courses_id').change(function() {
+            let courseSelected = $(this).val();
+            if (courseSelected) {
+                $('#country_id').attr('required', true);
+            } else {
+                $('#country_id').removeAttr('required');
+            }
+        });
+
+        // Trigger change on load in case of pre-filled form
+        $('#courses_id').trigger('change');
+    });
     </script>
 
 
