@@ -35,6 +35,10 @@ include("../database.php");
                             <div class="box-body">
                                 <h4>
                                     Foreign Education List
+                                    <a href="master/export-foreign-education.php" class="btn btn-success pull-right"
+                                        style="margin-left:10px;">
+                                        <i class="fa fa-file-excel-o"></i> Export
+                                    </a>
                                     <a href="master/create-foreign-education.php"
                                         class="btn btn-primary pull-right">Create
                                         Foreign Education </a>
@@ -85,28 +89,28 @@ foreign_education.consultancy_name ASC;
                                                 $is_mouu = "<span class=\"label label-danger\">False</span>";
                                             }
                                         ?>
-                                            <tr>
-                                                <td><?= $i; ?></td>
-                                                <td><?= $row['consultancy_name']; ?></td>
-                                                <td><?= $row['course_name']; ?></td>
-                                                <td><?= $is_mouu; ?></td>
-                                                <td><?= $row['whats_app_number']; ?></td>
-                                                <td><?= $row['city']; ?></td>
-                                                <td><?= $statuss; ?></td>
+                                        <tr>
+                                            <td><?= $i; ?></td>
+                                            <td><?= $row['consultancy_name']; ?></td>
+                                            <td><?= $row['course_name']; ?></td>
+                                            <td><?= $is_mouu; ?></td>
+                                            <td><?= $row['whats_app_number']; ?></td>
+                                            <td><?= $row['city']; ?></td>
+                                            <td><?= $statuss; ?></td>
 
-                                                <td>
-                                                    <a href="master/edit-foreign-education.php?key=<?= base64_encode($row['id']) ?>"
-                                                        class="btn btn-warning"><i class="fa fa-edit"></i> Edit</a>
+                                            <td>
+                                                <a href="master/edit-foreign-education.php?key=<?= base64_encode($row['id']) ?>"
+                                                    class="btn btn-warning"><i class="fa fa-edit"></i> Edit</a>
 
-                                                    <a button class="btn btn-danger btn-sm"
-                                                        onClick="window.open('master/delete-foreign-education.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
-                                                            class="fa fa-trash"></i> Delete </button></a>
+                                                <a button class="btn btn-danger btn-sm"
+                                                    onClick="window.open('master/delete-foreign-education.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
+                                                        class="fa fa-trash"></i> Delete </button></a>
 
-                                                    <!--   <a button class="btn btn-danger btn-sm" onClick="window.open('master/delete-message-type.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i class="fa fa-trash"></i> Delete </button></a> -->
+                                                <!--   <a button class="btn btn-danger btn-sm" onClick="window.open('master/delete-message-type.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i class="fa fa-trash"></i> Delete </button></a> -->
 
 
-                                                </td>
-                                            </tr>
+                                            </td>
+                                        </tr>
                                         <?php } ?>
                                 </table>
                             </div>
@@ -121,33 +125,33 @@ foreign_education.consultancy_name ASC;
 
     <?php include("includes/js-scripts.php"); ?>
     <script>
-        $(document).ready(function() {
-            //datatable
-            $('#datatable').DataTable({
-                "pageLength": 25 // Set default number of rows per page
-            });
-
-
-            $(".deletestate").click(function() {
-                var key = $(this).data("key");
-                if (confirm('Are you sure you want to delete this?')) {
-                    $.ajax({
-                        url: 'master/delete-state.php',
-                        type: "POST",
-                        data: {
-                            key: key
-                        },
-                        success: function(response) {
-                            if (response == "TRUE" && response != "") {
-                                location.reload();
-                            } else {
-                                alert("Please Try Again .!");
-                            }
-                        }
-                    });
-                }
-            });
+    $(document).ready(function() {
+        //datatable
+        $('#datatable').DataTable({
+            "pageLength": 25 // Set default number of rows per page
         });
+
+
+        $(".deletestate").click(function() {
+            var key = $(this).data("key");
+            if (confirm('Are you sure you want to delete this?')) {
+                $.ajax({
+                    url: 'master/delete-state.php',
+                    type: "POST",
+                    data: {
+                        key: key
+                    },
+                    success: function(response) {
+                        if (response == "TRUE" && response != "") {
+                            location.reload();
+                        } else {
+                            alert("Please Try Again .!");
+                        }
+                    }
+                });
+            }
+        });
+    });
     </script>
 </body>
 

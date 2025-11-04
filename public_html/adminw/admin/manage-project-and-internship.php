@@ -35,6 +35,10 @@ include("../database.php");
                             <div class="box-body">
                                 <h4>
                                     Project and Internship List
+                                    <a href="master/export-project-and-internship.php"
+                                        class="btn btn-success pull-right" style="margin-left:10px;">
+                                        <i class="fa fa-file-excel-o"></i> Export
+                                    </a>
                                     <a href="master/create-project-and-internship.php"
                                         class="btn btn-primary pull-right">Create Project and Internship
                                     </a>
@@ -88,31 +92,31 @@ include("../database.php");
                                                 $is_mouu = "<span class=\"label label-danger\">False</span>";
                                             }
                                         ?>
-                                            <tr>
-                                                <td><?= $i; ?></td>
-                                                <td><?= $row['consultancy_name']; ?></td>
-                                                <td>
-                                                    <?= !empty($row['course_names']) ? $row['course_names'] : '<span class="text-danger">No Course Assigned</span>'; ?>
-                                                </td>
+                                        <tr>
+                                            <td><?= $i; ?></td>
+                                            <td><?= $row['consultancy_name']; ?></td>
+                                            <td>
+                                                <?= !empty($row['course_names']) ? $row['course_names'] : '<span class="text-danger">No Course Assigned</span>'; ?>
+                                            </td>
 
-                                                <td><?= $is_mouu; ?></td>
-                                                <td><?= $row['whatsapp_number']; ?></td>
-                                                <td><?= $row['city']; ?></td>
-                                                <td><?= $statuss; ?></td>
+                                            <td><?= $is_mouu; ?></td>
+                                            <td><?= $row['whatsapp_number']; ?></td>
+                                            <td><?= $row['city']; ?></td>
+                                            <td><?= $statuss; ?></td>
 
-                                                <td>
-                                                    <a href="master/edit-project-and-internship.php?key=<?= base64_encode($row['id']) ?>"
-                                                        class="btn btn-warning"><i class="fa fa-edit"></i> Edit</a>
+                                            <td>
+                                                <a href="master/edit-project-and-internship.php?key=<?= base64_encode($row['id']) ?>"
+                                                    class="btn btn-warning"><i class="fa fa-edit"></i> Edit</a>
 
-                                                    <a button class="btn btn-danger btn-sm"
-                                                        onClick="window.open('master/delete-project-and-internship.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
-                                                            class="fa fa-trash"></i> Delete </button></a>
+                                                <a button class="btn btn-danger btn-sm"
+                                                    onClick="window.open('master/delete-project-and-internship.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
+                                                        class="fa fa-trash"></i> Delete </button></a>
 
-                                                    <!--   <a button class="btn btn-danger btn-sm" onClick="window.open('master/delete-message-type.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i class="fa fa-trash"></i> Delete </button></a> -->
+                                                <!--   <a button class="btn btn-danger btn-sm" onClick="window.open('master/delete-message-type.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i class="fa fa-trash"></i> Delete </button></a> -->
 
 
-                                                </td>
-                                            </tr>
+                                            </td>
+                                        </tr>
                                         <?php } ?>
                                 </table>
                             </div>
@@ -127,33 +131,33 @@ include("../database.php");
 
     <?php include("includes/js-scripts.php"); ?>
     <script>
-        $(document).ready(function() {
-            //datatable
-            $('#datatable').DataTable({
-                "pageLength": 25 // Set default number of rows per page
-            });
-
-
-            $(".deletestate").click(function() {
-                var key = $(this).data("key");
-                if (confirm('Are you sure you want to delete this?')) {
-                    $.ajax({
-                        url: 'master/delete-state.php',
-                        type: "POST",
-                        data: {
-                            key: key
-                        },
-                        success: function(response) {
-                            if (response == "TRUE" && response != "") {
-                                location.reload();
-                            } else {
-                                alert("Please Try Again .!");
-                            }
-                        }
-                    });
-                }
-            });
+    $(document).ready(function() {
+        //datatable
+        $('#datatable').DataTable({
+            "pageLength": 25 // Set default number of rows per page
         });
+
+
+        $(".deletestate").click(function() {
+            var key = $(this).data("key");
+            if (confirm('Are you sure you want to delete this?')) {
+                $.ajax({
+                    url: 'master/delete-state.php',
+                    type: "POST",
+                    data: {
+                        key: key
+                    },
+                    success: function(response) {
+                        if (response == "TRUE" && response != "") {
+                            location.reload();
+                        } else {
+                            alert("Please Try Again .!");
+                        }
+                    }
+                });
+            }
+        });
+    });
     </script>
 </body>
 
