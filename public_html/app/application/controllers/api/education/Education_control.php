@@ -370,13 +370,20 @@ class Education_control extends REST_Controller
     {
         $data = $this->post();
 
-        // ✅ Validate only name and phoneNumber as required
+        // ✅ Validate required fields
         if (empty($data['name']) || empty($data['phoneNumber'])) {
             $response = [
                 'code' => REST_Controller::HTTP_BAD_REQUEST,
                 'message' => "Name and phone number are required."
             ];
             return $this->response($response, 200);
+        }
+
+        // ✅ Validate DOB format (optional but recommended)
+        if (!empty($data['dob'])) {
+            $dob = date('Y-m-d', strtotime($data['dob']));
+        } else {
+            $dob = null;
         }
 
         // ✅ Check if email already exists (only if email is provided)
@@ -395,11 +402,12 @@ class Education_control extends REST_Controller
             }
         }
 
-        // ✅ Prepare insert data (others optional)
+        // ✅ Prepare insert data
         $insertData = [
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'phone_number' => $data['phoneNumber'],
+            'dob' => $dob, // ✅ Added DOB field
             'course_for_applying' => $data['courseForApplying'] ?? null,
             'exam_preference' => $data['examPreference'] ?? null,
             'preferred_country' => $data['preferredCountry'] ?? null,
