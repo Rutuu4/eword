@@ -60,30 +60,30 @@ if ($_POST['h1'] == 1) {
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <?php include("../includes/css-scripts.php"); ?>
     <style>
-    .error {
-        color: red;
-    }
+        .error {
+            color: red;
+        }
 
-    .control-label {
-        text-align: left !important;
-    }
+        .control-label {
+            text-align: left !important;
+        }
 
-    .form-control {
-        display: block;
-        width: 100%;
-        height: 34px;
-        padding: 6px 12px;
-        font-size: 14px;
-        line-height: 1.42857143;
-        color: #555;
-        background-color: #fff;
-        background-image: none;
-        border: 1px solid #ccc;
-    }
+        .form-control {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+        }
 
-    .select2-container {
-        width: 100% !important;
-    }
+        .select2-container {
+            width: 100% !important;
+        }
     </style>
 </head>
 
@@ -120,7 +120,7 @@ if ($_POST['h1'] == 1) {
 
         <div class="content-wrapper">
             <section class="content-header">
-                <h1>Update Tuition and Trainning</h1>
+                <h1>Update Tuition and Training</h1>
             </section>
 
             <section class="content">
@@ -152,9 +152,9 @@ if ($_POST['h1'] == 1) {
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                        <option <?php if (in_array($rowb['id'], $selected_course_ids)) {
-                                                    echo "selected";
-                                                } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
+                                            <option <?php if (in_array($rowb['id'], $selected_course_ids)) {
+                                                        echo "selected";
+                                                    } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
 
                                         <?php } ?>
                                     </select>
@@ -181,7 +181,7 @@ if ($_POST['h1'] == 1) {
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                        <option <?php if ($row['city'] == $rowb['id']) {
+                                            <option <?php if ($row['city'] == $rowb['id']) {
                                                         echo "selected";
                                                     } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
@@ -268,35 +268,35 @@ if ($_POST['h1'] == 1) {
     </div>
     <?php include("../includes/js-scripts.php"); ?>
     <script>
-    $(document).ready(function() {
-        //Select2
-        $(".select2").select2();
+        $(document).ready(function() {
+            //Select2
+            $(".select2").select2();
 
-        function toggleWhatsappField() {
-            if ($('#is_mou').is(':checked')) {
-                $('#whatsapp_group').show();
-                $('#whatsapp_number').attr('required', true);
-            } else {
-                $('#whatsapp_group').hide();
-                $('#whatsapp_number').removeAttr('required');
+            function toggleWhatsappField() {
+                if ($('#is_mou').is(':checked')) {
+                    $('#whatsapp_group').show();
+                    $('#whatsapp_number').attr('required', true);
+                } else {
+                    $('#whatsapp_group').hide();
+                    $('#whatsapp_number').removeAttr('required');
+                }
             }
-        }
 
-        $('#is_mou').change(toggleWhatsappField);
+            $('#is_mou').change(toggleWhatsappField);
 
-        // Call on page load
-        toggleWhatsappField();
+            // Call on page load
+            toggleWhatsappField();
 
-    });
+        });
     </script>
     <script>
-    $(document).ready(function() {
-        //Select2
-        $(".select2").select2();
-        //bootstrap WYSIHTML5 - text editor
-        // $(".textarea").wysihtml5();
+        $(document).ready(function() {
+            //Select2
+            $(".select2").select2();
+            //bootstrap WYSIHTML5 - text editor
+            // $(".textarea").wysihtml5();
 
-    });
+        });
     </script>
 
 

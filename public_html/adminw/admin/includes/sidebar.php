@@ -158,7 +158,7 @@
 				<li class="treeview">
 					<a href="#">
 						<i class="fa fa-graduation-cap"></i>
-						<span>Manage Foreign Education </span>
+						<span>Foreign Education </span>
 						<span class="pull-right-container">
 							<i class="fa fa-angle-left pull-right"></i>
 						</span>
@@ -180,20 +180,20 @@
 				<li class="treeview">
 					<a href="#">
 						<i class="fa fa-graduation-cap"></i>
-						<span>Tuition Trainning </span>
+						<span>Tuition Training </span>
 						<span class="pull-right-container">
 							<i class="fa fa-angle-left pull-right"></i>
 						</span>
 					</a>
 					<ul class="treeview-menu">
 
-						<li><a href="manage-tuition-and-trainning.php"><i class="fa fa-circle-o"></i> Tuition Trainning</a>
+						<li><a href="manage-tuition-and-trainning.php"><i class="fa fa-circle-o"></i> Tuition Training</a>
 						</li>
 
 
 
 						<li><a href="manage-tuition-and-trainning-course.php"><i class="fa fa-circle-o"></i> Tuition
-								Trainning Course</a></li>
+								Training Course</a></li>
 
 
 					</ul>
