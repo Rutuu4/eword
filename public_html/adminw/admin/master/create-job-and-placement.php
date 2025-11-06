@@ -158,8 +158,8 @@ if ($_POST['h1'] == 1) {
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Salary :</label>
                                 <div class="col-sm-8">
-                                    <input type="number" class="form-control" name="salary" id="salary"
-                                        placeholder="Enter Salary in ₹">
+                                    <input type="text" class="form-control" name="salary" id="salary"
+                                        placeholder="Enter salary (e.g., 3-5 LPA)">
 
                                 </div>
                             </div>
@@ -181,17 +181,6 @@ if ($_POST['h1'] == 1) {
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <label for="passwrod" class="col-sm-2">Near By Area :</label>
-                                <div class="col-sm-8">
-
-                                    <textarea class="form-control textarea" placeholder="Enter near by area"
-                                        style="width: 100%; height: 50px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"
-                                        name="near_by_area" id="near_by_area"></textarea>
-
-                                </div>
-                            </div>
                             <div class="form-group">
                                 <label for="city_id" class="col-sm-2">City :</label>
                                 <div class="col-sm-8">
@@ -208,6 +197,18 @@ if ($_POST['h1'] == 1) {
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label for="passwrod" class="col-sm-2">Near By Area :</label>
+                                <div class="col-sm-8">
+
+                                    <textarea class="form-control textarea" placeholder="Enter near by area"
+                                        style="width: 100%; height: 50px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"
+                                        name="near_by_area" id="near_by_area"></textarea>
+
+                                </div>
+                            </div>
+
                             <div class="form-group"> <label class="control-label col-sm-2">Is MOU Present?</label>
                                 <div class="col-sm-8"> <label><input type="checkbox" name="is_mou" id="is_mou"
                                             value="1"> Yes</label> </div>
