@@ -247,26 +247,9 @@ class College_control extends REST_Controller
             return $this->response($response, 200);
         }
 
-        // ✅ Check if email already exists (only if email is provided)
-        if (!empty($data['email'])) {
-            $existingEmail = $this->db
-                ->where('email', $data['email'])
-                ->get('college_application_form')
-                ->row();
-
-            if (!empty($existingEmail)) {
-                $response = [
-                    'code' => REST_Controller::HTTP_CONFLICT,
-                    'message' => "Email is already registered."
-                ];
-                return $this->response($response, 200);
-            }
-        }
-
-        // Prepare insert data
+        // ✅ Prepare insert data (no email field)
         $insertData = [
             'name' => $data['name'],
-            'email' => $data['email'] ?? null,
             'contact_number' => $data['contact_number'],
             'course_type' => $data['course_type'] ?? null,
             'sub_course_type' => $data['sub_course_type'] ?? null,
@@ -277,7 +260,7 @@ class College_control extends REST_Controller
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        // Insert into database
+        // ✅ Insert into database
         $insert_id = $this->General_model->insert('college_application_form', $insertData);
 
         if ($insert_id) {
