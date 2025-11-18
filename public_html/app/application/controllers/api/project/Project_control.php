@@ -145,8 +145,11 @@ class Project_control extends REST_Controller
         $city       = isset($data['city']) ? trim($data['city']) : '';
 
         if ($class_mode !== '') {
-            $wheres[] = "(project_and_internship.job_type = '" . $this->db->escape_str($class_mode) . "' OR project_and_internship.job_type IS NULL)";
+            $job_type = $this->db->escape_str($class_mode);
+            $wheres[] = "(FIND_IN_SET('{$job_type}', project_and_internship.job_type) 
+                  OR project_and_internship.job_type IS NULL)";
         }
+
 
         if ($course !== '') {
             $wheres[] = "(p_courses.name LIKE '%" . $this->db->escape_like_str($course) . "%' OR project_and_internship_courses.course_id IS NULL)";

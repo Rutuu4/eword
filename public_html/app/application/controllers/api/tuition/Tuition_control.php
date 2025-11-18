@@ -149,8 +149,10 @@ class Tuition_control extends REST_Controller
         $city       = isset($data['city']) ? trim($data['city']) : '';
 
         if ($class_mode !== '') {
-            $wheres[] = "(tuition_and_training.class_type = '" . $this->db->escape_str($class_mode) . "' OR tuition_and_training.class_type IS NULL)";
+            $class_mode = $this->db->escape_str($class_mode);
+            $wheres[] = "(FIND_IN_SET('{$class_mode}', tuition_and_training.class_type) OR tuition_and_training.class_type IS NULL)";
         }
+
 
         if ($course !== '') {
             $wheres[] = "(t_courses.name LIKE '%" . $this->db->escape_like_str($course) . "%' OR tuition_and_training_courses.course_id IS NULL)";
