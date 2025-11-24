@@ -365,7 +365,9 @@ class Job_control extends REST_Controller
                 'job_placements_openings' => 'job_placements_openings.job_placement_id = job_placements.id',
                 'j_openings'              => 'j_openings.id = job_placements_openings.opening_id',
                 'city'                    => 'city.id = job_placements.city_id',
-            ]
+            ],
+            'orderby' => 'job_placements.company_name',
+            'order'   => 'ASC'
             // 'num'          => $limit,
             // 'offset'       => $offset
         ];
@@ -489,7 +491,9 @@ class Job_control extends REST_Controller
                 'j_openings'              => 'j_openings.id = job_placements_openings.opening_id',
                 'city'                    => 'city.id = job_placements.city_id'
             ],
-            'groupby'     => 'job_placements.id'
+            'groupby'     => 'job_placements.id',
+            'orderby' => 'job_placements.company_name',
+            'order'   => 'ASC'
             // 'limit'       => $limit,
             // 'offset'      => $offset
         ];

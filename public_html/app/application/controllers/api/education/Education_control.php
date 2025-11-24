@@ -73,6 +73,8 @@ class Education_control extends REST_Controller
                 'exam_type' => 'exam_type.id = foreign_education_exam_types.exam_type_id',
                 'city' => 'city.id = foreign_education.city',
             ],
+            'orderby' => 'foreign_education.consultancy_name',
+            'order'   => 'ASC'
             // 'num'           => $limit,
             // 'offset'        => $offset
         ];
@@ -253,7 +255,9 @@ class Education_control extends REST_Controller
             'fields' => $fields,
             'wherestring' => $wherestring,
             'join_tables' => $join_tables,
-            'groupby' => 'foreign_education.id'
+            'groupby' => 'foreign_education.id',
+            'orderby' => 'foreign_education.consultancy_name',
+            'order'   => 'ASC'
             // 'num' => $limit,
             // 'offset' => $offset
         ];

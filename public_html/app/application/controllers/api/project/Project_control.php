@@ -61,7 +61,9 @@ class Project_control extends REST_Controller
                 'project_and_internship_courses' => 'project_and_internship_courses.project_and_internship_id = project_and_internship.id',
                 'p_courses'                      => 'p_courses.id = project_and_internship_courses.course_id',
                 'city'                           => 'city.id = project_and_internship.city_id',
-            ]
+            ],
+            'orderby' => 'project_and_internship.consultancy_name',
+            'order'   => 'ASC'
             // 'num'         => $limit,
             // 'offset'      => $offset
         ];
@@ -186,7 +188,9 @@ class Project_control extends REST_Controller
                 'p_courses'                      => 'p_courses.id = project_and_internship_courses.course_id',
                 'city'                           => 'city.id = project_and_internship.city_id',
             ],
-            'groupby'     => 'project_and_internship.id'
+            'groupby'     => 'project_and_internship.id',
+            'orderby' => 'project_and_internship.consultancy_name',
+            'order'   => 'ASC'
             // 'limit'       => $limit,
             // 'offset'      => $offset
         ];

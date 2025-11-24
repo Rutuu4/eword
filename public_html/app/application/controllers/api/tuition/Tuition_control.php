@@ -57,7 +57,9 @@ class Tuition_control extends REST_Controller
                 't_courses'                    => 't_courses.id = tuition_and_training_courses.course_id',
                 'city'                         => 'city.id = tuition_and_training.city',
             ],
-            'groupby'     => 'tuition_and_training.id'
+            'groupby'     => 'tuition_and_training.id',
+            'orderby' => 'tuition_and_training.consultancy_name',
+            'order'   => 'ASC'
             // 'limit'       => $limit,
             // 'offset'      => $offset
         ];
@@ -190,6 +192,8 @@ class Tuition_control extends REST_Controller
                 'city jointype left'                         => 'city.id = tuition_and_training.city',
             ],
             'groupby' => 'tuition_and_training.id',
+            'orderby' => 'tuition_and_training.consultancy_name',
+            'order'   => 'ASC'
             // 'num' => $limit,
             // 'offset' => $offset
         ];
