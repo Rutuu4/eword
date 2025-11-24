@@ -83,30 +83,30 @@ if ($_POST['h1'] == 1) {
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <?php include("../includes/css-scripts.php"); ?>
     <style>
-    .error {
-        color: red;
-    }
+        .error {
+            color: red;
+        }
 
-    .control-label {
-        text-align: left !important;
-    }
+        .control-label {
+            text-align: left !important;
+        }
 
-    .form-control {
-        display: block;
-        width: 100%;
-        height: 34px;
-        padding: 6px 12px;
-        font-size: 14px;
-        line-height: 1.42857143;
-        color: #555;
-        background-color: #fff;
-        background-image: none;
-        border: 1px solid #ccc;
-    }
+        .form-control {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+        }
 
-    .select2-container {
-        width: 100% !important;
-    }
+        .select2-container {
+            width: 100% !important;
+        }
     </style>
 </head>
 
@@ -231,11 +231,11 @@ if ($_POST['h1'] == 1) {
                                     <select name="city_id" id="city_id" class="form-control" required>
                                         <option value=""> Select City </option>
                                         <?php
-                                        $sqlb = "SELECT id,name FROM city";
+                                        $sqlb = "SELECT id,name FROM city ORDER BY name ASC";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                        <option <?php if ($row['city'] == $rowb['id']) {
+                                            <option <?php if ($row['city'] == $rowb['id']) {
                                                         echo "selected";
                                                     } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
@@ -271,7 +271,7 @@ if ($_POST['h1'] == 1) {
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                        <option <?php if (in_array($rowb['id'], $selected_country_ids)) {
+                                            <option <?php if (in_array($rowb['id'], $selected_country_ids)) {
                                                         echo "selected";
                                                     } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
@@ -290,7 +290,7 @@ if ($_POST['h1'] == 1) {
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                        <option <?php if (in_array($rowb['id'], $selected_visa_ids)) {
+                                            <option <?php if (in_array($rowb['id'], $selected_visa_ids)) {
                                                         echo "selected";
                                                     } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
@@ -309,7 +309,7 @@ if ($_POST['h1'] == 1) {
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
-                                        <option <?php if (in_array($rowb['id'], $selected_exam_ids)) {
+                                            <option <?php if (in_array($rowb['id'], $selected_exam_ids)) {
                                                         echo "selected";
                                                     } ?> value="<?= $rowb['id']; ?>"> <?= $rowb['name']; ?> </option>
                                         <?php } ?>
@@ -358,57 +358,57 @@ if ($_POST['h1'] == 1) {
     </div>
     <?php include("../includes/js-scripts.php"); ?>
     <script>
-    $(document).ready(function() {
-        //Select2
-        $(".select2").select2();
+        $(document).ready(function() {
+            //Select2
+            $(".select2").select2();
 
-        function toggleWhatsappField() {
-            if ($('#is_mou').is(':checked')) {
-                $('#whatsapp_group').show();
-                $('#whatsapp_number').attr('required', true);
-            } else {
-                $('#whatsapp_group').hide();
-                $('#whatsapp_number').removeAttr('required');
+            function toggleWhatsappField() {
+                if ($('#is_mou').is(':checked')) {
+                    $('#whatsapp_group').show();
+                    $('#whatsapp_number').attr('required', true);
+                } else {
+                    $('#whatsapp_group').hide();
+                    $('#whatsapp_number').removeAttr('required');
+                }
             }
-        }
 
-        $('#is_mou').change(toggleWhatsappField);
-        $('#courses_id').change(function() {
-            $('#country_id').attr('required', $(this).val() !== "");
+            $('#is_mou').change(toggleWhatsappField);
+            $('#courses_id').change(function() {
+                $('#country_id').attr('required', $(this).val() !== "");
+            });
+
+            // Call on page load
+            toggleWhatsappField();
+
         });
-
-        // Call on page load
-        toggleWhatsappField();
-
-    });
     </script>
     <script>
-    $(document).ready(function() {
-        //Select2
-        $(".select2").select2();
-        //bootstrap WYSIHTML5 - text editor
-        // $(".textarea").wysihtml5();
+        $(document).ready(function() {
+            //Select2
+            $(".select2").select2();
+            //bootstrap WYSIHTML5 - text editor
+            // $(".textarea").wysihtml5();
 
-    });
+        });
     </script>
     <script>
-    $(document).ready(function() {
-        $("#main_courses_id").change(function() {
-            var main_courses_id = $(this).find(":selected").val();
-            if (main_courses_id != "") {
-                $.ajax({
-                    type: "POST",
-                    url: "master/ajax/ajax-show-extra-course.php",
-                    data: {
-                        main_courses_id: main_courses_id
-                    },
-                    success: function(response) {
-                        $("#showextra").html(response);
-                    }
-                });
-            }
+        $(document).ready(function() {
+            $("#main_courses_id").change(function() {
+                var main_courses_id = $(this).find(":selected").val();
+                if (main_courses_id != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: "master/ajax/ajax-show-extra-course.php",
+                        data: {
+                            main_courses_id: main_courses_id
+                        },
+                        success: function(response) {
+                            $("#showextra").html(response);
+                        }
+                    });
+                }
+            });
         });
-    });
     </script>
 
 

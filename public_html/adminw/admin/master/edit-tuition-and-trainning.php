@@ -177,7 +177,7 @@ if ($_POST['h1'] == 1) {
                                     <select name="city_id" id="city_id" class="form-control" required>
                                         <option value=""> Select City </option>
                                         <?php
-                                        $sqlb = "SELECT id,name FROM city";
+                                        $sqlb = "SELECT id,name FROM city ORDER BY name ASC";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
@@ -207,7 +207,7 @@ if ($_POST['h1'] == 1) {
                             $selected_class_types = !empty($row['class_type']) ? explode(',', $row['class_type']) : [];
                             ?>
                             <div class="form-group">
-                                <label for="class_type_id" class="col-sm-2">Class Type :</label>
+                                <label for="class_type_id" class="col-sm-2">Class Mode :</label>
                                 <div class="col-sm-8">
                                     <select name="class_type_id[]" id="class_type_id" class="form-control select2"
                                         multiple required>
