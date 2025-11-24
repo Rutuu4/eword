@@ -218,12 +218,12 @@ class Project_control extends REST_Controller
                     'whatsappNumber'       => $row['whatsapp_number'],
                     'web application link' => $row['institute_web_url'],
                     'Job Type'           => !empty($row['job_type']) ? explode(',', $row['job_type']) : [],
-                    'Course Details'       => []
+                    'Category Details'       => []
                 ];
             }
 
             if (!empty($row['course_id'])) {
-                $formatted_list[$id]['Course Details'][$row['course_id']] = [
+                $formatted_list[$id]['Category Details'][$row['course_id']] = [
                     'id'   => $row['course_id'],
                     'name' => $row['course_name']
                 ];
@@ -231,7 +231,7 @@ class Project_control extends REST_Controller
         }
 
         $result = array_values(array_map(function ($item) {
-            $item['Course Details'] = array_values($item['Course Details']);
+            $item['Category Details'] = array_values($item['Category Details']);
             return $item;
         }, $formatted_list));
 
