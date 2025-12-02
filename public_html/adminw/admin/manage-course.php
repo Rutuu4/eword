@@ -64,8 +64,8 @@ include("../database.php");
     cd.extra_course_id,
     mmc.name AS main_course_name,
     mec.name AS extra_course_name,
-    GROUP_CONCAT(cv.video_name ORDER BY cv.id SEPARATOR ', ') AS video_name,  -- ✅ multiple names in one field
-    GROUP_CONCAT(cv.video_link ORDER BY cv.id SEPARATOR ', ') AS video_links   -- ✅ multiple links in one field
+    GROUP_CONCAT(cv.video_name ORDER BY cv.video_name ASC SEPARATOR ', ') AS video_name,
+    GROUP_CONCAT(cv.video_link ORDER BY cv.video_name ASC SEPARATOR ', ') AS video_links
 FROM courses_details cd
 LEFT JOIN m_main_courses mmc 
     ON mmc.id = cd.main_courses_id
@@ -75,15 +75,7 @@ LEFT JOIN course_videos cv
     ON cv.course_details_id = cd.id
 WHERE cd.is_hide = 0
 GROUP BY cd.id, cd.status, cd.main_courses_id, cd.extra_course_id, mmc.name, mec.name
-ORDER BY 
-    mmc.display_order ASC,
-    mec.name ASC,
-    CASE
-        WHEN cd.name REGEXP '^[઀-૿]' THEN 0
-        ELSE 1
-    END,
-    CONVERT(cd.name USING utf8mb4) ASC;
-";
+ORDER BY mmc.name ASC";
 
                     $result = $conn->query($qry);
 
