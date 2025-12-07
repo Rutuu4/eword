@@ -41,7 +41,6 @@ if ($_POST['h1'] == 1) {
   $qury1 = "UPDATE courses_details 
           SET main_courses_id='$main_courses_id',
               extra_course_id='$extra_course_id',
-              name='$name',
               details='$details',
               pdf_file='$pdf_file',
               status='$status'
