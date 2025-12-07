@@ -256,6 +256,7 @@ class College_control extends REST_Controller
             'results_type' => $data['results_type'] ?? null,
             'results_value' => $data['results_value'] ?? null,
             'passing_year' => $data['passing_year'] ?? null,
+            'whatsAppNumber' => $data['whatsAppNumber'] ?? null,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
