@@ -118,93 +118,180 @@ class Login_control extends REST_Controller
     public function user_details_post()
     {
         $data = $this->post();
+
         if ($this->form_validation->run('user_details') == FALSE) {
             $response['message'] = $this->lang->line('input_fields_required');
             $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
-            $response['errors']     = $this->form_validation->error_array();
-        } else {
-
-            $user_id = $data['user_id'];
-            $params = array(
-                'table' => TBL_REGISTRATION,
-                'where' => array('id' => $data['user_id']),
-                'compare_type' => '=',
-            );
-            $chkUser = $this->General_model->get_query_data($params);
-            if (!empty($chkUser)) {
-
-                if ($data['udid'] == $chkUser[0]['udid']) {
-
-
-                    $udata['device_type']   = !empty($data['device_type']) ? $data['device_type'] : '';
-                    $udata['device_token']  = !empty($data['device_token']) ? $data['device_token'] : '';
-
-                    if (empty($chkUser[0]['udid'])) {
-                        $udata['udid']  = !empty($data['udid']) ? $data['udid'] : '';
-                    }
-
-                    $where = array('id' => $user_id);
-                    $this->General_model->update(TBL_REGISTRATION, $udata, $where);
-
-
-                    $wherestring    = "registration.id='$user_id' GROUP BY registration.id";
-                    $fields         = ['registration.*', 'IFNULL(m_main_courses.name, "") AS main_course_name', 'IFNULL(GROUP_CONCAT(DISTINCT courses_details.name SEPARATOR ", "), "") AS interesting_courese_list_name', 'IFNULL(GROUP_CONCAT(DISTINCT m_city.name SEPARATOR ", "), "") AS interesting_city_list_name', 'IFNULL(chat_course.name, "") AS chat_course_name', 'IFNULL(m_exrta_course.name, "") AS exrta_course_name'];
-                    $params = array(
-                        'table'         => TBL_REGISTRATION . ' as registration',
-                        'fields'        => $fields,
-                        'wherestring'   => !empty($wherestring) ? $wherestring : '',
-                        'compare_type' => '=',
-                        'join_type'     => 'left',
-                        'join_tables'   => array(
-                            TBL_MAIN_COURSES . ' as m_main_courses' => 'm_main_courses.id = registration.interesting_main_course_id',
-                            TBL_COURSES_DETAILS . ' as courses_details'  => "FIND_IN_SET(courses_details.id, registration.course_details_ids) > 0",
-                            TBL_CITY . ' as m_city'  => "FIND_IN_SET(m_city.id, registration.interesting_city_ids) > 0",
-                            TBL_CHAT_COURSE . ' as chat_course' => 'chat_course.id = registration.chat_course_id',
-                            TBL_EXRTA_COURSE . ' as m_exrta_course' => 'm_exrta_course.id = registration.interesting_exrta_course_id'
-
-                        ),
-                    );
-                    $chkUser = $this->General_model->get_query_data($params);
-                    //prd($chkUser);
-
-                    if (!empty($chkUser)) {
-
-                        $user_id = $data['user_id'];
-                        $today_date = date('Y-m-d');
-                        $fields         = ['package_subscription_order.subscription_expire_date'];
-                        $wherestring    = "package_subscription_order.status=1 and package_subscription_order.user_id='$user_id' and package_subscription_order.subscription_expire_date>'$today_date' order by package_subscription_order.subscription_expire_date DESC";
-                        $params = array(
-                            'table'         => TBL_PACKAGE_SUBSCRIPTION_ORDER . ' as package_subscription_order',
-                            'fields'        => $fields,
-                            'wherestring'   => !empty($wherestring) ? $wherestring : ''
-                        );
-                        $chkUser[0]['package_details'] = $this->General_model->get_query_data($params);
-
-
-                        if (!empty($chkUser[0]['package_details'])) {
-                            $chkUser[0]['is_subscription_active'] = '1';
-                        } else {
-                            $chkUser[0]['is_subscription_active'] = '0';
-                        }
-
-                        $response['message']    = $this->lang->line('success');
-                        $response['code']       = REST_Controller::HTTP_OK;
-                        $response['data']       = $chkUser[0];
-                    } else {
-                        $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
-                        $response['message'] = $this->lang->line('no_record_found');
-                    }
-                } else {
-                    $response['code']    = 201;
-                    $response['message'] = 'You are not authorised to access this application';
-                }
-            } else {
-                $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
-                $response['message'] = $this->lang->line('no_record_found');
-            }
+            $response['errors']  = $this->form_validation->error_array();
+            return $this->response($response, 200);
         }
-        $this->response($response, 200);
+
+        $user_id = $data['user_id'];
+
+        // ================================================
+        // 🔍 CHECK USER EXISTS OR NOT
+        // ================================================
+        $params = [
+            'table'        => TBL_REGISTRATION,
+            'where'        => ['id' => $user_id],
+            'compare_type' => '=',
+        ];
+        $chkUser = $this->General_model->get_query_data($params);
+
+        // ==================================================================
+        // ❌ IF USER DOES NOT EXIST → USE SAME LOGIC FROM verify_otp_user_post
+        // ==================================================================
+        if (empty($chkUser)) {
+
+            // ---------- Generate unique refer code ----------
+            do {
+                $insert_refer_code = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'), 0, 10);
+                $cntParams = [
+                    'table'       => TBL_REGISTRATION . ' as register',
+                    'fields'      => ['register.id'],
+                    'wherestring' => "register.refer_code='" . $insert_refer_code . "'",
+                    'totalrow'    => '1',
+                ];
+                $refercount = $this->General_model->get_query_data($cntParams);
+                $codeExists = ($refercount >= 1);
+            } while ($codeExists);
+
+
+            // ---------- Insert new user (same as verify API) ----------
+            $iData = [
+                'username'      => !empty($data['username']) ? $data['username'] : '',
+                'password'      => !empty($data['password']) ? $data['password'] : '',
+                'device_type'   => !empty($data['device_type']) ? $data['device_type'] : '',
+                'device_token'  => !empty($data['device_token']) ? $data['device_token'] : '',
+                'udid'          => !empty($data['udid']) ? $data['udid'] : '',
+                'cmobile'       => !empty($data['username']) ? $data['username'] : '',
+                'datee'         => date('Y-m-d H:i:s'),
+                'status'        => 1,
+                'country_id'    => 1,
+                'refer_code'    => $insert_refer_code,
+            ];
+
+            // ---------- Refer Code Handling ----------
+            if (!empty($data['refer_code'])) {
+                $refer_code = $data['refer_code'];
+
+                $cntParams = [
+                    'table'       => TBL_REGISTRATION . ' as register',
+                    'fields'      => ['id', 'username'],
+                    'wherestring' => "register.username='" . $refer_code . "'",
+                ];
+                $referuser = $this->General_model->get_query_data($cntParams);
+
+                if (!empty($referuser)) {
+                    $iData['refer_username'] = $referuser[0]['username'];
+                    $iData['refer_user_id']  = $referuser[0]['id'];
+                }
+            }
+
+            // --------- Insert new user ---------
+            $insert_id = $this->General_model->insert(TBL_REGISTRATION, $iData);
+
+            // --------- Fetch user again ---------
+            $params = [
+                'table' => TBL_REGISTRATION,
+                'where' => ['id' => $insert_id],
+            ];
+            $tc_data = $this->General_model->get_query_data($params);
+            $tc_data = !empty($tc_data) ? $tc_data[0] : [];
+
+            // --------- Response same as verify API ---------
+            $response = [
+                'code'    => REST_Controller::HTTP_OK,
+                'message' => $this->lang->line('success'),
+                'data'    => [
+                    'id' => number_format($insert_id),
+                    'isFirstTimeUserLogin' => ($tc_data['isTermAndConditionApplied'] == 1 ? true : false),
+                ]
+            ];
+
+            return $this->response($response, 200);
+        }
+
+        // ==================================================================
+        // ✅ IF USER EXISTS → NORMAL USER DETAIL FLOW (unchanged)
+        // ==================================================================
+
+        if ($data['udid'] != $chkUser[0]['udid']) {
+            return $this->response([
+                'code'    => 201,
+                'message' => 'You are not authorised to access this application'
+            ], 200);
+        }
+
+        // -------- Update device details --------
+        $udata['device_type']  = !empty($data['device_type']) ? $data['device_type'] : '';
+        $udata['device_token'] = !empty($data['device_token']) ? $data['device_token'] : '';
+
+        if (empty($chkUser[0]['udid'])) {
+            $udata['udid'] = !empty($data['udid']) ? $data['udid'] : '';
+        }
+
+        $this->General_model->update(TBL_REGISTRATION, $udata, ['id' => $user_id]);
+
+
+        // -------- Get user complete profile --------
+        $wherestring = "registration.id='$user_id' GROUP BY registration.id";
+
+        $fields = [
+            'registration.*',
+            'IFNULL(m_main_courses.name, "") AS main_course_name',
+            'IFNULL(GROUP_CONCAT(DISTINCT courses_details.name SEPARATOR ", "), "") AS interesting_courese_list_name',
+            'IFNULL(GROUP_CONCAT(DISTINCT m_city.name SEPARATOR ", "), "") AS interesting_city_list_name',
+            'IFNULL(chat_course.name, "") AS chat_course_name',
+            'IFNULL(m_exrta_course.name, "") AS exrta_course_name'
+        ];
+
+        $params = [
+            'table'       => TBL_REGISTRATION . ' as registration',
+            'fields'      => $fields,
+            'wherestring' => $wherestring,
+            'join_type'   => 'left',
+            'join_tables' => [
+                TBL_MAIN_COURSES . ' as m_main_courses' => 'm_main_courses.id = registration.interesting_main_course_id',
+                TBL_COURSES_DETAILS . ' as courses_details' => "FIND_IN_SET(courses_details.id, registration.course_details_ids) > 0",
+                TBL_CITY . ' as m_city' => "FIND_IN_SET(m_city.id, registration.interesting_city_ids) > 0",
+                TBL_CHAT_COURSE . ' as chat_course' => 'chat_course.id = registration.chat_course_id',
+                TBL_EXRTA_COURSE . ' as m_exrta_course' => 'm_exrta_course.id = registration.interesting_exrta_course_id'
+            ],
+        ];
+
+        $chkUser = $this->General_model->get_query_data($params);
+
+        if (!empty($chkUser)) {
+
+            // -------- Check subscription --------
+            $today_date = date('Y-m-d');
+
+            $packageParams = [
+                'table'       => TBL_PACKAGE_SUBSCRIPTION_ORDER . ' as package_subscription_order',
+                'fields'      => ['package_subscription_order.subscription_expire_date'],
+                'wherestring' => "package_subscription_order.status=1 
+                              AND package_subscription_order.user_id='$user_id' 
+                              AND package_subscription_order.subscription_expire_date>'$today_date' 
+                              ORDER BY package_subscription_order.subscription_expire_date DESC",
+            ];
+            $chkUser[0]['package_details'] = $this->General_model->get_query_data($packageParams);
+
+            $chkUser[0]['is_subscription_active'] = !empty($chkUser[0]['package_details']) ? '1' : '0';
+
+            return $this->response([
+                'message' => $this->lang->line('success'),
+                'code'    => REST_Controller::HTTP_OK,
+                'data'    => $chkUser[0]
+            ], 200);
+        }
+
+        return $this->response([
+            'code'    => REST_Controller::HTTP_BAD_REQUEST,
+            'message' => $this->lang->line('no_record_found')
+        ], 200);
     }
+
 
     public function edit_user_post()
     {

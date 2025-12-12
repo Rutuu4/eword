@@ -186,51 +186,78 @@ class Education_control extends REST_Controller
         $offset  = ($page_no - 1) * PRODUCT_PAGINATION_SIZE;
         $limit   = PRODUCT_PAGINATION_SIZE;
 
-        // ✅ Base condition
+        // ================================
+        // ✅ BASE CONDITION
+        // ================================
         $wheres = ["foreign_education.status = 1"];
 
-        // ✅ Joins
+        // ================================
+        // ✅ EXTRACT FILTER INPUT
+        // ================================
+        $city     = isset($data['city']) ? trim($data['city']) : '';
+        $visa     = isset($data['visa_type']) ? trim($data['visa_type']) : '';
+        $exam     = isset($data['exam_type']) ? trim($data['exam_type']) : '';
+        $country  = isset($data['country']) ? trim($data['country']) : '';
+        $course   = isset($data['course']) ? trim($data['course']) : '';
+
+        // ================================
+        // 🚀 SAME LOGIC AS TUITION FILTER
+        // ================================
+
+        // 🔹 City filter (equal)
+        if ($city !== '') {
+            $city = $this->db->escape_str($city);
+            $wheres[] = "(city.name = '{$city}' OR foreign_education.city IS NULL)";
+        }
+
+        // 🔹 Visa filter (equal)
+        if ($visa !== '') {
+            $visa = $this->db->escape_str($visa);
+            $wheres[] = "(visa_type.name = '{$visa}' OR foreign_education_visa_types.visa_type_id IS NULL)";
+        }
+
+        // 🔹 Exam filter (equal)
+        if ($exam !== '') {
+            $exam = $this->db->escape_str($exam);
+            $wheres[] = "(exam_type.name = '{$exam}' OR foreign_education_exam_types.exam_type_id IS NULL)";
+        }
+
+        // 🔹 Country filter (equal)
+        if ($country !== '') {
+            $country = $this->db->escape_str($country);
+            $wheres[] = "(country.name = '{$country}' OR foreign_education_countries.country_id IS NULL)";
+        }
+
+        // 🔹 Course filter (LIKE f_courses.name) — EXACT SAME LOGIC AS TUITION
+        if ($course !== '') {
+            $courseLike = $this->db->escape_like_str($course);
+            $wheres[] = "(f_courses.name LIKE '%{$courseLike}%' OR foreign_education.course_ids IS NULL)";
+        }
+
+        $wherestring = implode(" AND ", $wheres);
+
+        // ================================
+        // ✅ JOINS
+        // ================================
         $join_tables = [
             'foreign_education_countries jointype left' => 'foreign_education_countries.foreign_education_id = foreign_education.id',
             'country jointype left' => 'country.id = foreign_education_countries.country_id',
+
             'foreign_education_visa_types jointype left' => 'foreign_education_visa_types.foreign_education_id = foreign_education.id',
             'visa_type jointype left' => 'visa_type.id = foreign_education_visa_types.visa_type_id',
+
             'foreign_education_exam_types jointype left' => 'foreign_education_exam_types.foreign_education_id = foreign_education.id',
             'exam_type jointype left' => 'exam_type.id = foreign_education_exam_types.exam_type_id',
+
             'city jointype left' => 'city.id = foreign_education.city',
+
+            // 🔹 NEW (needed for tuition-like course filter)
+            'f_courses jointype left' => 'FIND_IN_SET(f_courses.id, foreign_education.course_ids)'
         ];
 
-        // ✅ Filters
-        $filters = [
-            'city'       => ['column' => 'city.name', 'type' => 'equal'],
-            'visa_type'  => ['column' => 'visa_type.name', 'type' => 'equal'],
-            'exam_type'  => ['column' => 'exam_type.name', 'type' => 'equal'],
-            'country'    => ['column' => 'country.name', 'type' => 'equal'],
-            'course'     => ['column' => 'foreign_education.course_ids', 'type' => 'in'], // changed
-        ];
-
-        foreach ($filters as $key => $filter) {
-            if (!empty($data[$key])) {
-                $value = $this->db->escape_str($data[$key]);
-
-                if ($filter['type'] === 'like') {
-                    $wheres[] = "({$filter['column']} LIKE '%" . $this->db->escape_like_str($value) . "%')";
-                } elseif ($filter['type'] === 'in') {
-                    // ✅ Course filter supports multiple comma-separated IDs
-                    $ids = is_array($data[$key]) ? $data[$key] : explode(',', $data[$key]);
-                    $ids = array_map('intval', $ids);
-                    $ids = implode(',', $ids);
-                    $wheres[] = "(foreign_education.course_ids REGEXP '(^|,)(" . str_replace(',', '|', $ids) . ")(,|$)')";
-                } else {
-                    $wheres[] = "({$filter['column']} = '{$value}')";
-                }
-            }
-        }
-
-        $wherestring = implode(' AND ', $wheres);
-        $wherestring .= " GROUP BY foreign_education.id";
-
-        // ✅ Fields
+        // ================================
+        // ✅ FIELDS
+        // ================================
         $fields = [
             'foreign_education.id',
             'foreign_education.consultancy_name',
@@ -240,88 +267,84 @@ class Education_control extends REST_Controller
             'foreign_education.mou_present',
             'foreign_education.whats_app_number',
             'foreign_education.establishment_year',
-            // 'foreign_education.dob',
             'foreign_education.course_ids',
             'TIMESTAMPDIFF(YEAR, foreign_education.establishment_year, CURDATE()) AS total_years',
             'foreign_education.institute_url',
+
             'GROUP_CONCAT(DISTINCT CONCAT(country.id, ":", country.name)) AS countries',
             'GROUP_CONCAT(DISTINCT CONCAT(visa_type.id, ":", visa_type.name)) AS visa_types',
             'GROUP_CONCAT(DISTINCT CONCAT(exam_type.id, ":", exam_type.name)) AS exam_types'
         ];
 
-        // ✅ Get data
+        // ================================
+        // ✅ QUERY
+        // ================================
         $params = [
-            'table' => 'foreign_education',
-            'fields' => $fields,
+            'table'       => 'foreign_education',
+            'fields'      => $fields,
             'wherestring' => $wherestring,
             'join_tables' => $join_tables,
-            'groupby' => 'foreign_education.id',
-            'orderby' => 'foreign_education.consultancy_name',
-            'order'   => 'ASC'
-            // 'num' => $limit,
-            // 'offset' => $offset
+            'groupby'     => 'foreign_education.id',
+            'orderby'     => 'foreign_education.consultancy_name',
+            'order'       => 'ASC'
         ];
 
         $edu_list = $this->General_model->get_query_data($params);
 
-        // ✅ Format response
-        $formatted_list = [];
+        // ================================
+        // ✅ FORMAT RESULT (SAME STYLE)
+        // ================================
+        $formatted = [];
         foreach ($edu_list as $row) {
             $id = $row['id'];
 
-            // 🔹 fetch multiple courses based on comma-separated course_ids
+            // fetch multiple course names
             $courseDetails = [];
             if (!empty($row['course_ids'])) {
-                $courseIds = explode(',', $row['course_ids']);
-                $courseIds = array_filter($courseIds);
-                if (!empty($courseIds)) {
-                    $inIds = implode(',', array_map('intval', $courseIds));
-                    $courses = $this->db->query("SELECT id, name FROM f_courses WHERE id IN ($inIds)")->result_array();
-                    foreach ($courses as $c) {
-                        $courseDetails[] = [
-                            'id' => $c['id'],
-                            'name' => $c['name']
-                        ];
-                    }
+                $ids = implode(',', array_map('intval', explode(',', $row['course_ids'])));
+                $courses = $this->db->query("SELECT id, name FROM f_courses WHERE id IN ($ids)")->result_array();
+                foreach ($courses as $c) {
+                    $courseDetails[] = [
+                        'id'   => $c['id'],
+                        'name' => $c['name']
+                    ];
                 }
             }
 
-            $formatted_list[$id] = [
-                'id' => $id,
-                'Name' => $row['consultancy_name'],
-                // 'DOB' => $row['dob'],
-                'City' => $row['city_name'],
-                'Near By Area' => $row['nearby_area'],
-                'MOU' => (bool)$row['mou_present'],
-                'whatsappNumber' => $row['whats_app_number'],
-                'year' => $row['establishment_year'],
-                'total' => $row['total_years'],
+            $formatted[] = [
+                'id'                   => $id,
+                'Name'                 => $row['consultancy_name'],
+                'City'                 => $row['city_name'],
+                'Near By Area'         => $row['nearby_area'],
+                'MOU'                  => (bool)$row['mou_present'],
+                'whatsappNumber'       => $row['whats_app_number'],
+                'year'                 => $row['establishment_year'],
+                'total'                => $row['total_years'],
                 'web application link' => $row['institute_url'],
-                'Country' => $this->format_id_name_pairs($row['countries']),
-                'visaType' => $this->format_id_name_pairs($row['visa_types']),
-                'Course Details' => $courseDetails,
-                'Exam Type' => $this->format_id_name_pairs($row['exam_types'])
+                'Country'              => $this->format_id_name_pairs($row['countries']),
+                'visaType'             => $this->format_id_name_pairs($row['visa_types']),
+                'Course Details'       => $courseDetails,
+                'Exam Type'            => $this->format_id_name_pairs($row['exam_types']),
             ];
         }
 
-        $result = array_values($formatted_list);
-
-        // ✅ Response
-        if (!empty($result)) {
-            $response = [
-                'code' => REST_Controller::HTTP_OK,
+        // ================================
+        // ✅ RESPONSE
+        // ================================
+        if (!empty($formatted)) {
+            $this->response([
+                'code'    => REST_Controller::HTTP_OK,
                 'message' => $this->lang->line('success'),
-                'data' => $result
-            ];
+                'data'    => $formatted
+            ], 200);
         } else {
-            $response = [
-                'code' => REST_Controller::HTTP_BAD_REQUEST,
+            $this->response([
+                'code'    => REST_Controller::HTTP_BAD_REQUEST,
                 'message' => $this->lang->line('no_record_found')
-            ];
+            ], 200);
         }
-
-        $this->response($response, 200);
     }
+
 
 
     /**
