@@ -267,7 +267,7 @@ if ($_POST['h1'] == 1) {
                                     <select name="country_id[]" id="country_id" class="form-control select2" multiple>
                                         <option value="" disabled> Select Country </option>
                                         <?php
-                                        $sqlb = "SELECT id,name FROM country";
+                                        $sqlb = "SELECT id,name FROM country where status=1";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
