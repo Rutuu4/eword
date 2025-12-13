@@ -286,7 +286,7 @@ if ($_POST['h1'] == 1) {
 
                                         <option value="" disabled> Select Exam Type </option>
                                         <?php
-                                        $sqlb = "SELECT id,name FROM exam_type";
+                                        $sqlb = "SELECT id,name FROM exam_type where status=1";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
