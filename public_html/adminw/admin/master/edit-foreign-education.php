@@ -286,7 +286,7 @@ if ($_POST['h1'] == 1) {
                                         multiple>
                                         <option value="" disabled> Select Visa Type </option>
                                         <?php
-                                        $sqlb = "SELECT id,name FROM visa_type";
+                                        $sqlb = "SELECT id,name FROM visa_type where status=1";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
