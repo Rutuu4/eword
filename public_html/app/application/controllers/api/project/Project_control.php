@@ -40,7 +40,7 @@ class Project_control extends REST_Controller
             'project_and_internship.id',
             'project_and_internship.consultancy_name',
             'project_and_internship.city_id AS city_id',
-            'city.name AS city_name',
+            'city_project.name AS city_name',
             'project_and_internship.nearby_area',
             'project_and_internship.mou_is_present',
             'project_and_internship.whatsapp_number',
@@ -60,7 +60,7 @@ class Project_control extends REST_Controller
             'join_tables' => [
                 'project_and_internship_courses' => 'project_and_internship_courses.project_and_internship_id = project_and_internship.id',
                 'p_courses'                      => 'p_courses.id = project_and_internship_courses.course_id',
-                'city'                           => 'city.id = project_and_internship.city_id',
+                'city_project'                           => 'city_project.id = project_and_internship.city_id',
             ],
             'orderby' => 'project_and_internship.consultancy_name',
             'order'   => 'ASC'
@@ -158,7 +158,7 @@ class Project_control extends REST_Controller
         }
 
         if ($city !== '') {
-            $wheres[] = "(city.name = '" . $this->db->escape_str($city) . "' OR project_and_internship.city_id IS NULL)";
+            $wheres[] = "(city_project.name = '" . $this->db->escape_str($city) . "' OR project_and_internship.city_id IS NULL)";
         }
 
         $wherestring = implode(' AND ', $wheres);
@@ -167,7 +167,7 @@ class Project_control extends REST_Controller
             'project_and_internship.id',
             'project_and_internship.consultancy_name',
             'project_and_internship.city_id AS city_id',
-            'city.name AS city_name',
+            'city_project.name AS city_name',
             'project_and_internship.nearby_area',
             'project_and_internship.mou_is_present',
             'project_and_internship.whatsapp_number',
@@ -186,7 +186,7 @@ class Project_control extends REST_Controller
             'join_tables' => [
                 'project_and_internship_courses' => 'project_and_internship_courses.project_and_internship_id = project_and_internship.id',
                 'p_courses'                      => 'p_courses.id = project_and_internship_courses.course_id',
-                'city'                           => 'city.id = project_and_internship.city_id',
+                'city_project'                           => 'city_project.id = project_and_internship.city_id',
             ],
             'groupby'     => 'project_and_internship.id',
             'orderby' => 'project_and_internship.consultancy_name',

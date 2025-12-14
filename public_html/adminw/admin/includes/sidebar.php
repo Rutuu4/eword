@@ -220,6 +220,7 @@
 
 						<li><a href="manage-project-and-internship-course.php"><i class="fa fa-circle-o"></i> Project
 								Internship Course</a></li>
+						<li><a href="manage-city-project.php"><i class="fa fa-circle-o"></i> City</a></li>
 
 
 					</ul>
