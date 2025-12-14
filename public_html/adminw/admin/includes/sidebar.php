@@ -173,6 +173,7 @@
 
 						<li><a href="manage-foreign-education-course.php"><i class="fa fa-circle-o"></i> Foreign Education
 								Course</a></li>
+						<li><a href="manage-city-education.php"><i class="fa fa-circle-o"></i> City</a></li>
 						<li><a href="manage-country.php"><i class="fa fa-circle-o"></i> Country</a></li>
 						<li><a href="manage-exam-type.php"><i class="fa fa-circle-o"></i> Exam Type</a></li>
 						<li><a href="manage-visa-type.php"><i class="fa fa-circle-o"></i> Visa Type</a></li>

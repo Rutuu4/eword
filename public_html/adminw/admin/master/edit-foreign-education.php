@@ -231,7 +231,7 @@ if ($_POST['h1'] == 1) {
                                     <select name="city_id" id="city_id" class="form-control" required>
                                         <option value=""> Select City </option>
                                         <?php
-                                        $sqlb = "SELECT id,name FROM city ORDER BY name ASC";
+                                        $sqlb = "SELECT id,name FROM city_education where status=1 ORDER BY name ASC";
                                         $resultb = $conn->query($sqlb);
                                         while ($rowb = $resultb->fetch_array()) {
                                         ?>
