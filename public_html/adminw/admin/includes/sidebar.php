@@ -173,7 +173,7 @@
 
 						<li><a href="manage-foreign-education-course.php"><i class="fa fa-circle-o"></i> Foreign Education
 								Course</a></li>
-						<li><a href="manage-city-education.php"><i class="fa fa-circle-o"></i> City</a></li>
+						<li><a href="manage-city-education.php"><i class="fa fa-circle-o"></i>Foreign Education City</a></li>
 						<li><a href="manage-country.php"><i class="fa fa-circle-o"></i> Country</a></li>
 						<li><a href="manage-exam-type.php"><i class="fa fa-circle-o"></i> Exam Type</a></li>
 						<li><a href="manage-visa-type.php"><i class="fa fa-circle-o"></i> Visa Type</a></li>
@@ -198,7 +198,7 @@
 
 						<li><a href="manage-tuition-and-trainning-course.php"><i class="fa fa-circle-o"></i> Tuition
 								Training Course</a></li>
-						<li><a href="manage-city-tuition.php"><i class="fa fa-circle-o"></i> City</a></li>
+						<li><a href="manage-city-tuition.php"><i class="fa fa-circle-o"></i>Tuition Training City</a></li>
 
 
 					</ul>
@@ -220,7 +220,8 @@
 
 						<li><a href="manage-project-and-internship-course.php"><i class="fa fa-circle-o"></i> Project
 								Internship Course</a></li>
-						<li><a href="manage-city-project.php"><i class="fa fa-circle-o"></i> City</a></li>
+						<li><a href="manage-city-project.php"><i class="fa fa-circle-o"></i>Project
+								Internship City</a></li>
 
 
 					</ul>
@@ -260,7 +261,7 @@
 
 						<li><a href="manage-job-and-placement-openning.php"><i class="fa fa-circle-o"></i> Job Placement
 								Openning</a></li>
-						<li><a href="manage-city-job.php"><i class="fa fa-circle-o"></i> City</a></li>
+						<li><a href="manage-city-job.php"><i class="fa fa-circle-o"></i>Job Placement City</a></li>
 
 
 					</ul>

@@ -34,7 +34,7 @@ include("../database.php");
             -->
                             <div class="box-body">
                                 <h4>
-                                    Manage City List
+                                    Manage Tuition Training City List
                                     <a href="master/create-city-tuition.php"
                                         class="btn btn-primary pull-right">Create City </a>
                                 </h4>

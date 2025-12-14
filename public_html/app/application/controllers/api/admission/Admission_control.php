@@ -64,6 +64,7 @@ class Admission_control extends REST_Controller
                 'table'         => TBL_EXRTA_COURSE . ' as m_exrta_course',
                 'fields'        => $fields,
                 'wherestring'   => !empty($wherestring) ? $wherestring : '',
+                'orderby'     => 'm_exrta_course.name ASC',
                 "num"           => PRODUCT_PAGINATION_SIZE,
                 "offset"        => $per_page,
                 'join_type'     => 'left',
@@ -126,7 +127,7 @@ class Admission_control extends REST_Controller
             $params = array(
                 'table'         => TBL_ADMISSION_PROCESS . ' as admission_process',
                 'wherestring'   => !empty($wherestring) ? $wherestring : '',
-                'orderby'       => 'admission_process.name ASC',
+                // 'orderby'       => 'admission_process.name ASC',
 
             );
             $porductList = $this->General_model->get_query_data($params);

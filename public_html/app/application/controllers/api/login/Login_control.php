@@ -782,6 +782,7 @@ class Login_control extends REST_Controller
         $this->form_validation->set_rules('username', 'Username', 'trim|required');
         $this->form_validation->set_rules('user_id', 'User Id', 'trim|required|integer');
         $this->form_validation->set_rules('email', 'Email Address', 'trim|required|valid_email');
+        // ❌ No required validation for refer_code
 
         if ($this->form_validation->run() == false) {
             $response['message'] = strip_tags(validation_errors());
@@ -789,11 +790,34 @@ class Login_control extends REST_Controller
             return $this->response($response, 200);
         }
 
-        $userId   = (int) $data['user_id'];
-        $username = trim($data['username']);
-        $email    = trim($data['email']);
+        $userId    = (int) $data['user_id'];
+        $username  = trim($data['username']);
+        $email     = trim($data['email']);
+        $referCode = !empty($data['refer_code']) ? trim($data['refer_code']) : null;
 
-        // Check if email already exists for another user
+        /* =========================
+       REFER CODE CHECK (OPTIONAL)
+    ========================= */
+        if (!empty($referCode)) {
+
+            $referParams = [
+                'table' => TBL_REGISTRATION, // change table if refer master exists
+                'where' => ['refer_code' => "'$referCode'"],
+                'compare_type' => '='
+            ];
+
+            $referCheck = $this->General_model->get_query_data($referParams);
+
+            if (empty($referCheck)) {
+                $response['message'] = "Invalid refer code";
+                $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
+                return $this->response($response, 200);
+            }
+        }
+
+        /* =========================
+       CHECK EMAIL DUPLICATE
+    ========================= */
         $params = [
             'table' => TBL_REGISTRATION,
             'where' => ["email" => "'$email'"],
@@ -802,23 +826,29 @@ class Login_control extends REST_Controller
         $email_check = $this->General_model->get_query_data($params);
 
         if (!empty($email_check) && $email_check[0]['id'] != $userId) {
-            // Email is already taken by someone else
             $response['message'] = "Email already exists";
-            $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
+            $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
             return $this->response($response, 200);
         }
 
-        // Get user by ID
-        $params['where'] = ["id" => $userId];
+        /* =========================
+       GET USER BY ID
+    ========================= */
+        $params['where'] = ['id' => $userId];
         $chkUser = $this->General_model->get_query_data($params);
 
         if (!empty($chkUser)) {
-            // Safe to update now
+
             $udata = [
-                'fullname' => !empty($data['username']) ? $data['username'] : '',
+                'fullname' => $username,
                 'email'    => $email,
                 'isTermAndConditionApplied' => 1
             ];
+
+            // Save refer code only if provided
+            if (!empty($referCode)) {
+                $udata['refer_code'] = $referCode; // optional column
+            }
 
             $this->General_model->update(TBL_REGISTRATION, $udata, ['id' => $userId]);
 

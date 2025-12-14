@@ -181,11 +181,6 @@ class Education_control extends REST_Controller
     {
         $data = $this->post();
 
-        // ✅ Pagination
-        $page_no = !empty($data['page_no']) ? (int)$data['page_no'] : 1;
-        $offset  = ($page_no - 1) * PRODUCT_PAGINATION_SIZE;
-        $limit   = PRODUCT_PAGINATION_SIZE;
-
         // ================================
         // ✅ BASE CONDITION
         // ================================
@@ -201,34 +196,29 @@ class Education_control extends REST_Controller
         $course   = isset($data['course']) ? trim($data['course']) : '';
 
         // ================================
-        // 🚀 SAME LOGIC AS TUITION FILTER
+        // ✅ SAME LOGIC AS TUITION FILTER
         // ================================
 
-        // 🔹 City filter (equal)
         if ($city !== '') {
             $city = $this->db->escape_str($city);
             $wheres[] = "(city_education.name = '{$city}' OR foreign_education.city IS NULL)";
         }
 
-        // 🔹 Visa filter (equal)
         if ($visa !== '') {
             $visa = $this->db->escape_str($visa);
             $wheres[] = "(visa_type.name = '{$visa}' OR foreign_education_visa_types.visa_type_id IS NULL)";
         }
 
-        // 🔹 Exam filter (equal)
         if ($exam !== '') {
             $exam = $this->db->escape_str($exam);
             $wheres[] = "(exam_type.name = '{$exam}' OR foreign_education_exam_types.exam_type_id IS NULL)";
         }
 
-        // 🔹 Country filter (equal)
         if ($country !== '') {
             $country = $this->db->escape_str($country);
             $wheres[] = "(country.name = '{$country}' OR foreign_education_countries.country_id IS NULL)";
         }
 
-        // 🔹 Course filter (LIKE f_courses.name) — EXACT SAME LOGIC AS TUITION
         if ($course !== '') {
             $courseLike = $this->db->escape_like_str($course);
             $wheres[] = "(f_courses.name LIKE '%{$courseLike}%' OR foreign_education.course_ids IS NULL)";
@@ -250,8 +240,6 @@ class Education_control extends REST_Controller
             'exam_type jointype left' => 'exam_type.id = foreign_education_exam_types.exam_type_id',
 
             'city_education jointype left' => 'city_education.id = foreign_education.city',
-
-            // 🔹 NEW (needed for tuition-like course filter)
             'f_courses jointype left' => 'FIND_IN_SET(f_courses.id, foreign_education.course_ids)'
         ];
 
@@ -292,13 +280,17 @@ class Education_control extends REST_Controller
         $edu_list = $this->General_model->get_query_data($params);
 
         // ================================
-        // ✅ FORMAT RESULT (SAME STYLE)
+        // ✅ FORMAT RESULT (FIX APPLIED)
         // ================================
         $formatted = [];
-        foreach ($edu_list as $row) {
-            $id = $row['id'];
 
-            // fetch multiple course names
+        foreach ($edu_list as $row) {
+
+            // 🔴 IMPORTANT FIX: skip NULL fake row
+            if (empty($row['id'])) {
+                continue;
+            }
+
             $courseDetails = [];
             if (!empty($row['course_ids'])) {
                 $ids = implode(',', array_map('intval', explode(',', $row['course_ids'])));
@@ -312,7 +304,7 @@ class Education_control extends REST_Controller
             }
 
             $formatted[] = [
-                'id'                   => $id,
+                'id'                   => $row['id'],
                 'Name'                 => $row['consultancy_name'],
                 'City'                 => $row['city_name'],
                 'Near By Area'         => $row['nearby_area'],
@@ -344,6 +336,8 @@ class Education_control extends REST_Controller
             ], 200);
         }
     }
+
+
 
 
 

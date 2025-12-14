@@ -79,7 +79,7 @@ if ($_POST['h1'] == 1) {
 
         <div class="content-wrapper">
             <section class="content-header">
-                <h1>Update City</h1>
+                <h1>Update Job Placement City</h1>
             </section>
 
             <section class="content">
