@@ -36,7 +36,7 @@ class Tuition_control extends REST_Controller
             'tuition_and_training.id',
             'tuition_and_training.consultancy_name',
             'tuition_and_training.city AS city_id',
-            'city.name AS city_name',
+            'city_tuition.name AS city_name',
             'tuition_and_training.nearby_area',
             'tuition_and_training.mou_is_present',
             'tuition_and_training.whats_app_number',
@@ -55,7 +55,7 @@ class Tuition_control extends REST_Controller
             'join_tables' => [
                 'tuition_and_training_courses' => 'tuition_and_training_courses.tuition_and_training_id = tuition_and_training.id',
                 't_courses'                    => 't_courses.id = tuition_and_training_courses.course_id',
-                'city'                         => 'city.id = tuition_and_training.city',
+                'city_tuition'                         => 'city_tuition.id = tuition_and_training.city',
             ],
             'groupby'     => 'tuition_and_training.id',
             'orderby' => 'tuition_and_training.consultancy_name',
@@ -161,7 +161,7 @@ class Tuition_control extends REST_Controller
         }
 
         if ($city !== '') {
-            $wheres[] = "(city.name = '" . $this->db->escape_str($city) . "' OR tuition_and_training.city IS NULL)";
+            $wheres[] = "(city_tuition.name = '" . $this->db->escape_str($city) . "' OR tuition_and_training.city IS NULL)";
         }
 
         $wherestring = implode(' AND ', $wheres);
@@ -172,7 +172,7 @@ class Tuition_control extends REST_Controller
             'tuition_and_training.id',
             'tuition_and_training.consultancy_name',
             'tuition_and_training.city AS city_id',
-            'city.name AS city_name',
+            'city_tuition.name AS city_name',
             'tuition_and_training.nearby_area',
             'tuition_and_training.mou_is_present',
             'tuition_and_training.whats_app_number',
@@ -189,7 +189,7 @@ class Tuition_control extends REST_Controller
             'join_tables' => [
                 'tuition_and_training_courses jointype left' => 'tuition_and_training_courses.tuition_and_training_id = tuition_and_training.id',
                 't_courses jointype left'                    => 't_courses.id = tuition_and_training_courses.course_id',
-                'city jointype left'                         => 'city.id = tuition_and_training.city',
+                'city_tuition jointype left'                         => 'city_tuition.id = tuition_and_training.city',
             ],
             'groupby' => 'tuition_and_training.id',
             'orderby' => 'tuition_and_training.consultancy_name',

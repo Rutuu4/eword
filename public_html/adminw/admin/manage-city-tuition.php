@@ -34,14 +34,9 @@ include("../database.php");
             -->
                             <div class="box-body">
                                 <h4>
-                                    Tuition and Training List
-                                    <a href="master/export-tuition-and-trainning.php" class="btn btn-success pull-right"
-                                        style="margin-left:10px;">
-                                        <i class="fa fa-file-excel-o"></i> Export
-                                    </a>
-                                    <a href="master/create-tuition-and-trainning.php"
-                                        class="btn btn-primary pull-right">Create
-                                        Tuition and Training </a>
+                                    Manage City List
+                                    <a href="master/create-city-tuition.php"
+                                        class="btn btn-primary pull-right">Create City </a>
                                 </h4>
                             </div>
                         </div>
@@ -53,28 +48,19 @@ include("../database.php");
                                         <tr>
                                             <th>Sr No.</th>
                                             <th style="width:20%">Name</th>
-                                            <th style="width:20%">Course</th>
-                                            <th>Is mou</th>
-                                            <th>Whatsapp Number</th>
-                                            <th>City </th>
+                                            <!-- <th>Video Link</th> -->
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-
                                         $i = 0;
-                                        $qry = "SELECT tuition_and_training.*, COALESCE(NULLIF(tuition_and_training.whats_app_number, ''), '-') AS whats_app_number,city_tuition.name as city,
-               GROUP_CONCAT(DISTINCT t_courses.name ORDER BY t_courses.name ASC) AS course_names
-        FROM tuition_and_training
-        LEFT JOIN tuition_and_training_courses ON tuition_and_training_courses.tuition_and_training_id = tuition_and_training.id
-        LEFT JOIN t_courses ON t_courses.id = tuition_and_training_courses.course_id
-        LEFT JOIN city_tuition ON city_tuition.id = tuition_and_training.city
-        GROUP BY tuition_and_training.id
-        ORDER BY 
-          
-            tuition_and_training.consultancy_name ASC;";
+                                        $qry = "SELECT * FROM city_tuition  
+ORDER BY 
+ 
+  name ASC;
+";
 
                                         $result = $conn->query($qry);
                                         while ($row = $result->fetch_array()) {
@@ -85,31 +71,19 @@ include("../database.php");
                                             } else {
                                                 $statuss = "<span class=\"label label-warning\">Deactive</span>";
                                             }
-                                            $is_mou = $row['mou_is_present'];
-                                            if ($is_mou == 1) {
-                                                $is_mouu = "<span class=\"label label-success\">True</span>";
-                                            } else {
-                                                $is_mouu = "<span class=\"label label-danger\">False</span>";
-                                            }
                                         ?>
                                             <tr>
                                                 <td><?= $i; ?></td>
-                                                <td><?= $row['consultancy_name']; ?></td>
-                                                <td>
-                                                    <?= !empty($row['course_names']) ? $row['course_names'] : '<span class="text-danger">No Course Assigned</span>'; ?>
-                                                </td>
 
-                                                <td><?= $is_mouu; ?></td>
-                                                <td><?= $row['whats_app_number']; ?></td>
-                                                <td><?= $row['city']; ?></td>
+                                                <td><?= $row['name']; ?></td>
                                                 <td><?= $statuss; ?></td>
 
                                                 <td>
-                                                    <a href="master/edit-tuition-and-trainning.php?key=<?= base64_encode($row['id']) ?>"
+                                                    <a href="master/edit-city-tuition.php?key=<?= base64_encode($row['id']) ?>"
                                                         class="btn btn-warning"><i class="fa fa-edit"></i> Edit</a>
 
                                                     <a button class="btn btn-danger btn-sm"
-                                                        onClick="window.open('master/delete-tuition-and-trainning.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
+                                                        onClick="window.open('master/delete-city-tuition.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
                                                             class="fa fa-trash"></i> Delete </button></a>
 
                                                     <!--   <a button class="btn btn-danger btn-sm" onClick="window.open('master/delete-message-type.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i class="fa fa-trash"></i> Delete </button></a> -->

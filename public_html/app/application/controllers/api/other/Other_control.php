@@ -3611,14 +3611,41 @@ TEXT;
 
         $this->response($response, 200);
     }
-    public function districtName_get()
+    public function city_education_get()
     {
         $data = $this->get();
 
         $params = array(
-            'table'         => 'city',
+            'table'         => 'city_education',
+            'where'   => array(
+                'status' => 1
+            ),
+            'orderby'       => 'city_education.name ASC', // Assuming 'city_name' is the column for city names
+        );
 
-            'orderby'       => 'city.name ASC', // Assuming 'city_name' is the column for city names
+        $prayer_list = $this->General_model->get_query_data($params);
+        //prd($prayer_list);
+        if (!empty($prayer_list)) {
+            $response['message'] = $this->lang->line('success');
+            $response['code']    = REST_Controller::HTTP_OK;
+            $response['data']    = $prayer_list;
+        } else {
+            $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
+            $response['message'] = $this->lang->line('no_record_found');
+        }
+
+        $this->response($response, 200);
+    }
+    public function city_tuition_get()
+    {
+        $data = $this->get();
+
+        $params = array(
+            'table'         => 'city_tuition',
+            'where'   => array(
+                'status' => 1
+            ),
+            'orderby'       => 'city_tuition.name ASC', // Assuming 'city_name' is the column for city names
         );
 
         $prayer_list = $this->General_model->get_query_data($params);

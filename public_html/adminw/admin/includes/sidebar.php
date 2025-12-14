@@ -198,6 +198,7 @@
 
 						<li><a href="manage-tuition-and-trainning-course.php"><i class="fa fa-circle-o"></i> Tuition
 								Training Course</a></li>
+						<li><a href="manage-city-tuition.php"><i class="fa fa-circle-o"></i> City</a></li>
 
 
 					</ul>

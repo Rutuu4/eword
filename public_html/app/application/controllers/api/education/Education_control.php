@@ -43,7 +43,7 @@ class Education_control extends REST_Controller
             // 'foreign_education.dob',
             'TIMESTAMPDIFF(YEAR, foreign_education.establishment_year, CURDATE()) AS total_years',
             'foreign_education.city AS city_id',
-            'city.name AS city_name',
+            'city_education.name AS city_name',
             'foreign_education.nearby_area',
             'foreign_education.mou_present',
             'foreign_education.whats_app_number',
@@ -71,7 +71,7 @@ class Education_control extends REST_Controller
                 'visa_type' => 'visa_type.id = foreign_education_visa_types.visa_type_id',
                 'foreign_education_exam_types' => 'foreign_education_exam_types.foreign_education_id = foreign_education.id',
                 'exam_type' => 'exam_type.id = foreign_education_exam_types.exam_type_id',
-                'city' => 'city.id = foreign_education.city',
+                'city_education' => 'city_education.id = foreign_education.city',
             ],
             'orderby' => 'foreign_education.consultancy_name',
             'order'   => 'ASC'
@@ -207,7 +207,7 @@ class Education_control extends REST_Controller
         // 🔹 City filter (equal)
         if ($city !== '') {
             $city = $this->db->escape_str($city);
-            $wheres[] = "(city.name = '{$city}' OR foreign_education.city IS NULL)";
+            $wheres[] = "(city_education.name = '{$city}' OR foreign_education.city IS NULL)";
         }
 
         // 🔹 Visa filter (equal)
@@ -249,7 +249,7 @@ class Education_control extends REST_Controller
             'foreign_education_exam_types jointype left' => 'foreign_education_exam_types.foreign_education_id = foreign_education.id',
             'exam_type jointype left' => 'exam_type.id = foreign_education_exam_types.exam_type_id',
 
-            'city jointype left' => 'city.id = foreign_education.city',
+            'city_education jointype left' => 'city_education.id = foreign_education.city',
 
             // 🔹 NEW (needed for tuition-like course filter)
             'f_courses jointype left' => 'FIND_IN_SET(f_courses.id, foreign_education.course_ids)'
@@ -262,7 +262,7 @@ class Education_control extends REST_Controller
             'foreign_education.id',
             'foreign_education.consultancy_name',
             'foreign_education.city AS city_id',
-            'city.name AS city_name',
+            'city_education.name AS city_name',
             'foreign_education.nearby_area',
             'foreign_education.mou_present',
             'foreign_education.whats_app_number',
