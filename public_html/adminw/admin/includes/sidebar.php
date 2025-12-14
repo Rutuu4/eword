@@ -260,6 +260,7 @@
 
 						<li><a href="manage-job-and-placement-openning.php"><i class="fa fa-circle-o"></i> Job Placement
 								Openning</a></li>
+						<li><a href="manage-city-job.php"><i class="fa fa-circle-o"></i> City</a></li>
 
 
 					</ul>

@@ -342,7 +342,7 @@ class Job_control extends REST_Controller
             'job_placements.id',
             'job_placements.company_name',
             'job_placements.city_id',
-            'city.name AS city_name',
+            'city_job.name AS city_job_name',
             'job_placements.nearby_area',
             'job_placements.salary',
             'job_placements.required_experience',
@@ -364,7 +364,7 @@ class Job_control extends REST_Controller
             'join_tables'  => [
                 'job_placements_openings' => 'job_placements_openings.job_placement_id = job_placements.id',
                 'j_openings'              => 'j_openings.id = job_placements_openings.opening_id',
-                'city'                    => 'city.id = job_placements.city_id',
+                'city_job'                    => 'city_job.id = job_placements.city_id',
             ],
             'orderby' => 'job_placements.company_name',
             'order'   => 'ASC'
@@ -450,7 +450,7 @@ class Job_control extends REST_Controller
         $position_name  = isset($data['position_name']) ? trim($data['position_name']) : '';
 
         if ($city !== '') {
-            $wheres[] = "(city.name LIKE '%" . $this->db->escape_like_str($city) . "%' OR job_placements.city_id IS NULL)";
+            $wheres[] = "(city_job.name LIKE '%" . $this->db->escape_like_str($city) . "%' OR job_placements.city_id IS NULL)";
         }
 
         if ($company_name !== '') {
@@ -468,7 +468,7 @@ class Job_control extends REST_Controller
             'job_placements.id',
             'job_placements.company_name',
             'job_placements.city_id',
-            'city.name AS city_name',
+            'city_job.name AS city_name',
             'job_placements.nearby_area',
             'job_placements.salary',
             'job_placements.required_experience',
@@ -489,7 +489,7 @@ class Job_control extends REST_Controller
             'join_tables' => [
                 'job_placements_openings' => 'job_placements_openings.job_placement_id = job_placements.id',
                 'j_openings'              => 'j_openings.id = job_placements_openings.opening_id',
-                'city'                    => 'city.id = job_placements.city_id'
+                'city_job'                    => 'city_job.id = job_placements.city_id'
             ],
             'groupby'     => 'job_placements.id',
             'orderby' => 'job_placements.company_name',

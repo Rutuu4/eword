@@ -34,14 +34,9 @@ include("../database.php");
             -->
                             <div class="box-body">
                                 <h4>
-                                    Job and Placement List
-                                    <a href="master/export-job-and-placement.php" class="btn btn-success pull-right"
-                                        style="margin-left:10px;">
-                                        <i class="fa fa-file-excel-o"></i> Export
-                                    </a>
-                                    <a href="master/create-job-and-placement.php"
-                                        class="btn btn-primary pull-right">Create Job and Placement
-                                    </a>
+                                    Manage City List
+                                    <a href="master/create-city-job.php"
+                                        class="btn btn-primary pull-right">Create City </a>
                                 </h4>
                             </div>
                         </div>
@@ -53,28 +48,19 @@ include("../database.php");
                                         <tr>
                                             <th>Sr No.</th>
                                             <th style="width:20%">Name</th>
-                                            <th style="width:20%">Openning</th>
-                                            <th>Is mou</th>
-                                            <th>Whatsapp Number</th>
-                                            <th>City </th>
+                                            <!-- <th>Video Link</th> -->
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-
                                         $i = 0;
-                                        $qry = "SELECT job_placements.*,  COALESCE(NULLIF(job_placements.whatsapp_number, ''), '-') AS whatsapp_number, city_job.name as city,
-               GROUP_CONCAT(DISTINCT j_openings.position_name ORDER BY j_openings.position_name ASC) AS openning_names
-        FROM job_placements
-        LEFT JOIN job_placements_openings ON job_placements_openings.job_placement_id = job_placements.id
-        LEFT JOIN j_openings ON j_openings.id = job_placements_openings.opening_id
-        LEFT JOIN city_job ON city_job.id = job_placements.city_id
-        GROUP BY job_placements.id
-        ORDER BY 
-          
-            job_placements.company_name ASC;";
+                                        $qry = "SELECT * FROM city_job  
+ORDER BY 
+ 
+  name ASC;
+";
 
                                         $result = $conn->query($qry);
                                         while ($row = $result->fetch_array()) {
@@ -85,31 +71,19 @@ include("../database.php");
                                             } else {
                                                 $statuss = "<span class=\"label label-warning\">Deactive</span>";
                                             }
-                                            $is_mou = $row['is_mou'];
-                                            if ($is_mou == 1) {
-                                                $is_mouu = "<span class=\"label label-success\">True</span>";
-                                            } else {
-                                                $is_mouu = "<span class=\"label label-danger\">False</span>";
-                                            }
                                         ?>
                                             <tr>
                                                 <td><?= $i; ?></td>
-                                                <td><?= $row['company_name']; ?></td>
-                                                <td>
-                                                    <?= !empty($row['openning_names']) ? $row['openning_names'] : '<span class="text-danger">No Course Assigned</span>'; ?>
-                                                </td>
 
-                                                <td><?= $is_mouu; ?></td>
-                                                <td><?= $row['whatsapp_number']; ?></td>
-                                                <td><?= $row['city']; ?></td>
+                                                <td><?= $row['name']; ?></td>
                                                 <td><?= $statuss; ?></td>
 
                                                 <td>
-                                                    <a href="master/edit-job-and-placement.php?key=<?= base64_encode($row['id']) ?>"
+                                                    <a href="master/edit-city-job.php?key=<?= base64_encode($row['id']) ?>"
                                                         class="btn btn-warning"><i class="fa fa-edit"></i> Edit</a>
 
                                                     <a button class="btn btn-danger btn-sm"
-                                                        onClick="window.open('master/delete-job-and-placement.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
+                                                        onClick="window.open('master/delete-city-job.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i
                                                             class="fa fa-trash"></i> Delete </button></a>
 
                                                     <!--   <a button class="btn btn-danger btn-sm" onClick="window.open('master/delete-message-type.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i class="fa fa-trash"></i> Delete </button></a> -->
