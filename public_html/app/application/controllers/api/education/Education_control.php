@@ -462,4 +462,79 @@ class Education_control extends REST_Controller
 
         return $this->response($response, 200);
     }
+    public function country_get()
+    {
+        $data = $this->get();
+
+        $params = array(
+            'table'         => 'country',
+            'where'   => array(
+                'status' => 1
+            ),
+            'orderby'       => 'country.name ASC', // Assuming 'city_name' is the column for city names
+        );
+
+        $prayer_list = $this->General_model->get_query_data($params);
+        //prd($prayer_list);
+        if (!empty($prayer_list)) {
+            $response['message'] = $this->lang->line('success');
+            $response['code']    = REST_Controller::HTTP_OK;
+            $response['data']    = $prayer_list;
+        } else {
+            $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
+            $response['message'] = $this->lang->line('no_record_found');
+        }
+
+        $this->response($response, 200);
+    }
+    public function visa_type_get()
+    {
+        $data = $this->get();
+
+        $params = array(
+            'table'         => 'visa_type',
+            'where'   => array(
+                'status' => 1
+            ),
+            'orderby'       => 'visa_type.name ASC', // Assuming 'city_name' is the column for city names
+        );
+
+        $prayer_list = $this->General_model->get_query_data($params);
+        //prd($prayer_list);
+        if (!empty($prayer_list)) {
+            $response['message'] = $this->lang->line('success');
+            $response['code']    = REST_Controller::HTTP_OK;
+            $response['data']    = $prayer_list;
+        } else {
+            $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
+            $response['message'] = $this->lang->line('no_record_found');
+        }
+
+        $this->response($response, 200);
+    }
+    public function exam_type_get()
+    {
+        $data = $this->get();
+
+        $params = array(
+            'table'         => 'exam_type',
+            'where'   => array(
+                'status' => 1
+            ),
+            'orderby'       => 'exam_type.name ASC', // Assuming 'city_name' is the column for city names
+        );
+
+        $prayer_list = $this->General_model->get_query_data($params);
+        //prd($prayer_list);
+        if (!empty($prayer_list)) {
+            $response['message'] = $this->lang->line('success');
+            $response['code']    = REST_Controller::HTTP_OK;
+            $response['data']    = $prayer_list;
+        } else {
+            $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
+            $response['message'] = $this->lang->line('no_record_found');
+        }
+
+        $this->response($response, 200);
+    }
 }
