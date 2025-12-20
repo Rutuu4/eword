@@ -220,7 +220,7 @@ if ($_POST['h1'] == 1) {
 
                                     <textarea class="form-control textarea" placeholder="Enter near by area"
                                         style="width: 100%; height: 50px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"
-                                        name="near_by_area" id="near_by_area"><?= $row['near_by_area']; ?></textarea>
+                                        name="near_by_area" id="near_by_area"><?= $row['nearby_area']; ?></textarea>
 
                                 </div>
                             </div>

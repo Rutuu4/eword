@@ -65,14 +65,24 @@ include("../database.php");
                                         <?php
 
                                         $i = 0;
-                                        $qry = "SELECT foreign_education.*,   COALESCE(NULLIF(foreign_education.whats_app_number, ''), '-') AS whats_app_number, city_education.name as city,
-       COALESCE(f_courses.name, 'No Course Assigned') AS course_name 
-FROM foreign_education 
-LEFT JOIN f_courses ON f_courses.id = foreign_education.course_id 
-   LEFT JOIN city_education ON city_education.id = foreign_education.city
-ORDER BY 
-foreign_education.consultancy_name ASC;
+                                      $qry = "
+SELECT 
+    fe.*,
+    COALESCE(NULLIF(fe.whats_app_number, ''), '-') AS whats_app_number,
+    ce.name AS city,
+    COALESCE(
+        GROUP_CONCAT(fc.name ORDER BY fc.name SEPARATOR ', '),
+        'No Course Assigned'
+    ) AS course_name
+FROM foreign_education fe
+LEFT JOIN f_courses fc 
+    ON FIND_IN_SET(fc.id, fe.course_ids)
+LEFT JOIN city_education ce 
+    ON ce.id = fe.city
+GROUP BY fe.id
+ORDER BY fe.consultancy_name ASC
 ";
+
                                         $result = $conn->query($qry);
                                         while ($row = $result->fetch_array()) {
                                             $i++;
