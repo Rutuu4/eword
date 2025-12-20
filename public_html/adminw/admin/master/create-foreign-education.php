@@ -193,7 +193,7 @@ if ($_POST['h1'] == 1) {
                                 <div class="col-sm-8">
 
                                     <select name="courses_id[]" id="courses_id" class="form-control select2" multiple
-                                        required>
+                                        >
                                         <option value="" disabled>Select Course</option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM f_courses WHERE status=1";

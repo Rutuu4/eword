@@ -475,7 +475,7 @@ foreach ($messageData as $key => $value) {
 
                  $wpMessageData = [
         'message_id'   => $this->uuid_v4(), // function below
-        'phone_number' => $data['whatsapp_number'],
+        'phone_number' => $data['whatsAppNumber'],
         'message_text' => $messageText,
         'message_type' => 'text',
         'status'       => 'queued',
