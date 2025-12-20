@@ -82,9 +82,14 @@ if(($_SERVER['HTTP_HOST'] == (DOMAIN_NAME)) || $_SERVER['HTTP_HOST']==('www.'.DO
 	error_reporting(0);
 
 	$hostname = 'localhost';
-	$username = 'u260268217_eworld';
+$username = 'u260268217_eworld';
 	$password = 'Eworld@2024';
 	$database = 'u260268217_eworld';
+
+	$hostname2 = 'localhost';
+	$username2 = 'u260268217_mou';
+	$password2 = 'PrinceMalani@2025';
+	$database2 = 'u260268217_mou_connection';
 
 	//require '/home/textilesrt/public_html/app/Mysimplecrypt.php';
 }
@@ -100,7 +105,12 @@ else
 	$hostname = 'localhost';
 	$username = 'u260268217_eworld';
 	$password = 'Eworld@2024';
-	$database = 'u260268217_eworld';	
+	$database = 'u260268217_eworld';
+
+$hostname2 = 'localhost';
+	$username2 = 'u260268217_mou';
+	$password2 = 'PrinceMalani@2025';
+	$database2 = 'u260268217_mou_connection';
 
 	//require 'D:\server\textile-infomedia\app\Mysimplecrypt.php';
 }
@@ -127,3 +137,26 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE,
 );
+$db['wp_db'] = array(
+    'dsn'      => '',
+    'hostname' => 'localhost',
+    'username' => 'root',
+    'password' => '',
+    'database' => $database2,
+	'dbdriver' => 'mysqli',
+    'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8mb4',
+    'dbcollat' => 'utf8mb4_unicode_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE,
+
+);
+

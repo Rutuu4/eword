@@ -82,7 +82,6 @@ LEFT JOIN city_education ce
 GROUP BY fe.id
 ORDER BY fe.consultancy_name ASC
 ";
-
                                         $result = $conn->query($qry);
                                         while ($row = $result->fetch_array()) {
                                             $i++;

@@ -11,6 +11,7 @@ class College_control extends REST_Controller
     {
         parent::__construct();
         include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
+          $this->wp_db = $this->load->database('wp_db', TRUE);
         foreach (globalVars() as $key => $value) {
             if (is_array(${$value})) {
                 for ($i = 1; $i <= count(${$value}); $i++) {
@@ -234,66 +235,111 @@ class College_control extends REST_Controller
 
         $this->response($response, 200);
     }
+    function uuid_v4()
+{
+    return sprintf(
+        '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+        mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0x0fff) | 0x4000,
+        mt_rand(0, 0x3fff) | 0x8000,
+        mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+    );
+}
     public function college_application_post()
-    {
-        $data = $this->post();
+{
+    $data = $this->post();
 
-        // ✅ Validate only name and contact number as required
-        if (empty($data['name']) || empty($data['contact_number'])) {
-            $response = [
-                'code' => REST_Controller::HTTP_BAD_REQUEST,
-                'message' => "Name and contact number are required."
-            ];
-            return $this->response($response, 200);
-        }
-
-        // ✅ Prepare insert data (no email field)
-        $insertData = [
-            'name' => $data['name'],
-            'contact_number' => $data['contact_number'],
-            'course_type' => $data['course_type'] ?? null,
-            'sub_course_type' => $data['sub_course_type'] ?? null,
-            'results_type' => $data['results_type'] ?? null,
-            'results_value' => $data['results_value'] ?? null,
-            'passing_year' => $data['passing_year'] ?? null,
-            'whatsAppNumber' => $data['whatsAppNumber'] ?? null,
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+    // ✅ Validate only name and contact number as required
+    if (empty($data['name']) || empty($data['contact_number'])) {
+        $response = [
+            'code' => REST_Controller::HTTP_BAD_REQUEST,
+            'message' => "Name and contact number are required."
         ];
-
-        // ✅ Insert into database
-        $insert_id = $this->General_model->insert('college_application_form', $insertData);
-
-        if ($insert_id) {
-            // Optional: send WhatsApp or SMS notification if needed
-            if (!empty($data['contact_number'])) {
-                $msg = "Hello *{$data['name']}* 👋,\n\n"
-                    . "Your application has been successfully received.\n"
-                    . "Our team will contact you shortly. ✅\n\n"
-                    . "Thank you for applying to our college 🌟";
-
-                if (isset($this->twilio_lib)) {
-                    $this->twilio_lib->send_project_message(
-                        $data['contact_number'],
-                        $data['name'],
-                        'College Application',
-                        $msg
-                    );
-                }
-            }
-
-            $response = [
-                'code' => REST_Controller::HTTP_OK,
-                'message' => "Application submitted successfully.",
-                'data' => ['application_id' => $insert_id]
-            ];
-        } else {
-            $response = [
-                'code' => REST_Controller::HTTP_INTERNAL_ERROR,
-                'message' => "Failed to submit application."
-            ];
-        }
-
         return $this->response($response, 200);
     }
+
+    // ✅ Prepare insert data
+    $insertData = [
+        'name' => $data['name'],
+        'contact_number' => $data['contact_number'],
+        'course_type' => $data['course_type'] ?? null,
+        'sub_course_type' => $data['sub_course_type'] ?? null,
+        'results_type' => $data['results_type'] ?? null,
+        'results_value' => $data['results_value'] ?? null,
+        'passing_year' => $data['passing_year'] ?? null,
+        'whatsAppNumber' => $data['whatsAppNumber'] ?? null,
+        'created_at' => date('Y-m-d H:i:s'),
+        'updated_at' => date('Y-m-d H:i:s'),
+    ];
+
+    // ✅ Insert application
+    $insert_id = $this->General_model->insert('college_application_form', $insertData);
+
+    if ($insert_id) {
+
+        // ================================
+        // ✅ BUILD MESSAGE & INSERT
+        // ================================
+        if (!empty($data['contact_number'])) {
+
+            $excludeKeys = ['whatsAppNumber', 'id'];
+
+            $messageData = array_diff_key($data, array_flip($excludeKeys));
+
+            $messageText = "Hello,\n\n"
+                . "A new student application has been submitted through *Eword Education*.\n\n"
+                . "*Applicant Details:*\n\n";
+
+            foreach ($messageData as $key => $value) {
+
+                if (is_array($value)) {
+                    $value = implode(', ', $value);
+                }
+
+                $label = ucwords(str_replace(
+                    ['_', '-'],
+                    ' ',
+                    preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)
+                ));
+
+                $messageText .= "{$label}: {$value}\n";
+            }
+
+            $messageText .= "Please review the application and get in touch with the student.\n\n"
+                . "Thank you for your support.\n\n"
+                . "Regards,\n"
+                . "*Eword Education*";
+
+            // ================================
+            // ✅ INSERT INTO wp_messages
+            // ================================
+            $wpMessageData = [
+                'message_id'   => $this->uuid_v4(),
+                'phone_number' => $data['whatsAppNumber'],
+                'message_text' => $messageText,
+                'message_type' => 'text',
+                'status'       => 'queued',
+                'created_at'   => date('Y-m-d H:i:s'),
+                'updated_at'   => date('Y-m-d H:i:s'),
+            ];
+
+            $this->wp_db->insert('wp_messages', $wpMessageData);
+        }
+
+        $response = [
+            'code' => REST_Controller::HTTP_OK,
+            'message' => "Application submitted successfully.",
+            'data' => ['application_id' => $insert_id]
+        ];
+    } else {
+        $response = [
+            'code' => REST_Controller::HTTP_INTERNAL_ERROR,
+            'message' => "Failed to submit application."
+        ];
+    }
+
+    return $this->response($response, 200);
+}
+
 }
