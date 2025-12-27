@@ -390,14 +390,17 @@ class Education_control extends REST_Controller
     }
     function uuid_v4()
     {
-    return sprintf(
-        '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-        mt_rand(0, 0xffff),
-        mt_rand(0, 0x0fff) | 0x4000,
-        mt_rand(0, 0x3fff) | 0x8000,
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-    );
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
     }
 
     public function f_student_application_post()
@@ -444,46 +447,46 @@ class Education_control extends REST_Controller
         if ($insert_id) {
             // ✅ Send WhatsApp/SMS if phone number exists
             if (!empty($data['phoneNumber'])) {
-              // ❌ Fields to exclude from message
-$excludeKeys = ['whatsAppNumber', 'foreignEducationId', 'id'];
+                // ❌ Fields to exclude from message
+                $excludeKeys = ['whatsAppNumber', 'foreignEducationId', 'id'];
 
-// 🧹 Remove excluded fields
-$messageData = array_diff_key($data, array_flip($excludeKeys));
+                // 🧹 Remove excluded fields
+                $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-// 📝 Build readable message
-  $messageText = "Hello,\n\n"
-. "A new student application has been submitted through *Eword Education*.\n\n"
-. "*Applicant Details:*\n\n";
+                // 📝 Build readable message
+                $messageText = "*Student Lead To Safal Academy From E World Education*\n\n"
+                    . "Hello,\n\n"
+                    . "A new student inquiry has been submitted to you through  *E World Application*\n\n"
+                    . "*Student Details:*\n\n";
 
-foreach ($messageData as $key => $value) {
+                foreach ($messageData as $key => $value) {
 
-    if (is_array($value)) {
-        $value = implode(', ', $value);
-    }
+                    if (is_array($value)) {
+                        $value = implode(', ', $value);
+                    }
 
-    // Convert camelCase / snake_case to readable label
-    $label = ucwords(str_replace(['_', '-'], ' ', preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)));
+                    // Convert camelCase / snake_case to readable label
+                    $label = ucwords(str_replace(['_', '-'], ' ', preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)));
 
-    $messageText .= "{$label}: {$value}\n";
-}
+                    $messageText .= "{$label}: {$value}\n";
+                }
 
 
-        $messageText .= "Please review the application and get in touch with the student.\n\n"
-. "Thank you for your support.\n\n"
-. "Regards,\n"
-. "*Eword Education*";
+                $messageText .= "Please review the details and get in touch with the student.\n"
+                    . "Thank You.\n\n"
+                    . "*From*\n"
+                    . "*E World Education*";
 
-                 $wpMessageData = [
-        'message_id'   => $this->uuid_v4(), // function below
-        'phone_number' => $data['whatsAppNumber'],
-        'message_text' => $messageText,
-        'message_type' => 'text',
-        'status'       => 'queued',
-        'created_at'   => date('Y-m-d H:i:s'),
-        'updated_at'   => date('Y-m-d H:i:s'),
-    ];
-     $this->wp_db->insert('wp_messages', $wpMessageData);
-               
+                $wpMessageData = [
+                    'message_id'   => $this->uuid_v4(), // function below
+                    'phone_number' => $data['whatsAppNumber'],
+                    'message_text' => $messageText,
+                    'message_type' => 'text',
+                    'status'       => 'queued',
+                    'created_at'   => date('Y-m-d H:i:s'),
+                    'updated_at'   => date('Y-m-d H:i:s'),
+                ];
+                $this->wp_db->insert('wp_messages', $wpMessageData);
             }
 
             $response = [

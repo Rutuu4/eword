@@ -291,105 +291,108 @@ class Tuition_control extends REST_Controller
         $this->response($response, 200);
     }
     function uuid_v4()
-{
-    return sprintf(
-        '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-        mt_rand(0, 0xffff),
-        mt_rand(0, 0x0fff) | 0x4000,
-        mt_rand(0, 0x3fff) | 0x8000,
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-    );
-}
-   public function t_tuition_application_post()
-{
-    $data = $this->post();
-
-    // ✅ Validate only name and phoneNumber as required
-    if (empty($data['name']) || empty($data['phoneNumber'])) {
-        $response = [
-            'code' => REST_Controller::HTTP_BAD_REQUEST,
-            'message' => "Name and phone number are required."
-        ];
-        return $this->response($response, 200);
+    {
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
     }
+    public function t_tuition_application_post()
+    {
+        $data = $this->post();
 
-    // ✅ Prepare insert data
-    $insertData = [
-        'name' => $data['name'],
-        'email' => $data['email'] ?? null,
-        'phone_number' => $data['phoneNumber'],
-        'course_applying' => $data['courseForApplying'] ?? null,
-        'tuition_and_training_id' => $data['tuitionTrainingId'] ?? null,
-        'class_type' => $data['preferredClassType'] ?? null,
-        'whatsapp_number' => $data['whatsAppNumber'] ?? null,
-        'created_at' => date('Y-m-d H:i:s'),
-        'updated_at' => date('Y-m-d H:i:s'),
-    ];
-
-    // ✅ Insert application
-    $insert_id = $this->General_model->insert('t_student_application', $insertData);
-
-    if ($insert_id) {
-
-        // ✅ Build message & insert into wp_messages
-        if (!empty($data['phoneNumber'])) {
-
-            $excludeKeys = ['whatsAppNumber', 'id'];
-
-            $messageData = array_diff_key($data, array_flip($excludeKeys));
-
-            $messageText = "Hello,\n\n"
-                . "A new student application has been submitted through *Eword Education*.\n\n"
-                . "*Applicant Details:*\n\n";
-
-            foreach ($messageData as $key => $value) {
-
-                if (is_array($value)) {
-                    $value = implode(', ', $value);
-                }
-
-                $label = ucwords(str_replace(
-                    ['_', '-'],
-                    ' ',
-                    preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)
-                ));
-
-                $messageText .= "{$label}: {$value}\n";
-            }
-
-            $messageText .= "Please review the application and get in touch with the student.\n\n"
-                . "Thank you for your support.\n\n"
-                . "Regards,\n"
-                . "*Eword Education*";
-
-            // ✅ Insert into wp_messages
-            $wpMessageData = [
-                'message_id'   => $this->uuid_v4(),
-                'phone_number' => $data['whatsAppNumber'],
-                'message_text' => $messageText,
-                'message_type' => 'text',
-                'status'       => 'queued',
-                'created_at'   => date('Y-m-d H:i:s'),
-                'updated_at'   => date('Y-m-d H:i:s'),
+        // ✅ Validate only name and phoneNumber as required
+        if (empty($data['name']) || empty($data['phoneNumber'])) {
+            $response = [
+                'code' => REST_Controller::HTTP_BAD_REQUEST,
+                'message' => "Name and phone number are required."
             ];
-
-            $this->wp_db->insert('wp_messages', $wpMessageData);
+            return $this->response($response, 200);
         }
 
-        $response = [
-            'code' => REST_Controller::HTTP_OK,
-            'message' => "Application submitted successfully.",
-            'data' => ['application_id' => $insert_id]
+        // ✅ Prepare insert data
+        $insertData = [
+            'name' => $data['name'],
+            'email' => $data['email'] ?? null,
+            'phone_number' => $data['phoneNumber'],
+            'course_applying' => $data['courseForApplying'] ?? null,
+            'tuition_and_training_id' => $data['tuitionTrainingId'] ?? null,
+            'class_type' => $data['preferredClassType'] ?? null,
+            'whatsapp_number' => $data['whatsAppNumber'] ?? null,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
         ];
-    } else {
-        $response = [
-            'code' => REST_Controller::HTTP_INTERNAL_ERROR,
-            'message' => "Failed to submit application."
-        ];
+
+        // ✅ Insert application
+        $insert_id = $this->General_model->insert('t_student_application', $insertData);
+
+        if ($insert_id) {
+
+            // ✅ Build message & insert into wp_messages
+            if (!empty($data['phoneNumber'])) {
+
+                $excludeKeys = ['whatsAppNumber', 'id'];
+
+                $messageData = array_diff_key($data, array_flip($excludeKeys));
+
+                $messageText = "*Student Lead To Safal Academy From E World Education*\n\n"
+                    . "Hello,\n\n"
+                    . "A new student inquiry has been submitted to you through  *E World Application*\n\n"
+                    . "*Student Details:*\n\n";
+                foreach ($messageData as $key => $value) {
+
+                    if (is_array($value)) {
+                        $value = implode(', ', $value);
+                    }
+
+                    $label = ucwords(str_replace(
+                        ['_', '-'],
+                        ' ',
+                        preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)
+                    ));
+
+                    $messageText .= "{$label}: {$value}\n";
+                }
+
+                $messageText .= "Please review the details and get in touch with the student.\n"
+                    . "Thank You.\n\n"
+                    . "*From*\n"
+                    . "*E World Education*";
+
+
+                // ✅ Insert into wp_messages
+                $wpMessageData = [
+                    'message_id'   => $this->uuid_v4(),
+                    'phone_number' => $data['whatsAppNumber'],
+                    'message_text' => $messageText,
+                    'message_type' => 'text',
+                    'status'       => 'queued',
+                    'created_at'   => date('Y-m-d H:i:s'),
+                    'updated_at'   => date('Y-m-d H:i:s'),
+                ];
+
+                $this->wp_db->insert('wp_messages', $wpMessageData);
+            }
+
+            $response = [
+                'code' => REST_Controller::HTTP_OK,
+                'message' => "Application submitted successfully.",
+                'data' => ['application_id' => $insert_id]
+            ];
+        } else {
+            $response = [
+                'code' => REST_Controller::HTTP_INTERNAL_ERROR,
+                'message' => "Failed to submit application."
+            ];
+        }
+
+        return $this->response($response, 200);
     }
-
-    return $this->response($response, 200);
-}
-
 }

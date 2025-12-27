@@ -11,7 +11,7 @@ class Project_control extends REST_Controller
     {
         parent::__construct();
         include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
-         $this->wp_db = $this->load->database('wp_db', TRUE);
+        $this->wp_db = $this->load->database('wp_db', TRUE);
         foreach (globalVars() as $key => $value) {
             if (is_array(${$value})) {
                 for ($i = 1; $i <= count(${$value}); $i++) {
@@ -278,16 +278,19 @@ class Project_control extends REST_Controller
         $this->response($response, 200);
     }
     function uuid_v4()
-{
-    return sprintf(
-        '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-        mt_rand(0, 0xffff),
-        mt_rand(0, 0x0fff) | 0x4000,
-        mt_rand(0, 0x3fff) | 0x8000,
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-    );
-}
+    {
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
+    }
     public function p_project_application_post()
     {
         $data = $this->post();
@@ -324,46 +327,48 @@ class Project_control extends REST_Controller
             if (!empty($data['phoneNumber'])) {
                 $excludeKeys = ['whatsappNumber', 'id'];
 
-        $messageData = array_diff_key($data, array_flip($excludeKeys));
+                $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-        $messageText = "Hello,\n\n"
-. "A new student application has been submitted through *Eword Education*.\n\n"
-. "*Applicant Details:*\n\n";
+                $messageText = "*Student Lead To Safal Academy From E World Education*\n\n"
+                    . "Hello,\n\n"
+                    . "A new student inquiry has been submitted to you through  *E World Application*\n\n"
+                    . "*Student Details:*\n\n";
 
-        foreach ($messageData as $key => $value) {
+                foreach ($messageData as $key => $value) {
 
-            if (is_array($value)) {
-                $value = implode(', ', $value);
-            }
+                    if (is_array($value)) {
+                        $value = implode(', ', $value);
+                    }
 
-            $label = ucwords(str_replace(
-                ['_', '-'],
-                ' ',
-                preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)
-            ));
+                    $label = ucwords(str_replace(
+                        ['_', '-'],
+                        ' ',
+                        preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)
+                    ));
 
-            $messageText .= "{$label}: {$value}\n";
-        }
+                    $messageText .= "{$label}: {$value}\n";
+                }
 
-        $messageText .= "Please review the application and get in touch with the student.\n\n"
-. "Thank you for your support.\n\n"
-. "Regards,\n"
-. "*Eword Education*";
+                $messageText .= "Please review the details and get in touch with the student.\n"
+                    . "Thank You.\n\n"
+                    . "*From*\n"
+                    . "*E World Education*";
 
-        // ================================
-        // ✅ INSERT INTO wp_messages
-        // ================================
-        $wpMessageData = [
-            'message_id'   => $this->uuid_v4(),
-            'phone_number' => $data['whatsappNumber'],
-            'message_text' => $messageText,
-            'message_type' => 'text',
-            'status'       => 'queued',
-            'created_at'   => date('Y-m-d H:i:s'),
-            'updated_at'   => date('Y-m-d H:i:s'),
-        ];
 
-        $this->wp_db->insert('wp_messages', $wpMessageData);
+                // ================================
+                // ✅ INSERT INTO wp_messages
+                // ================================
+                $wpMessageData = [
+                    'message_id'   => $this->uuid_v4(),
+                    'phone_number' => $data['whatsappNumber'],
+                    'message_text' => $messageText,
+                    'message_type' => 'text',
+                    'status'       => 'queued',
+                    'created_at'   => date('Y-m-d H:i:s'),
+                    'updated_at'   => date('Y-m-d H:i:s'),
+                ];
+
+                $this->wp_db->insert('wp_messages', $wpMessageData);
             }
 
             $response = [
