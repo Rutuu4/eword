@@ -1,0 +1,311 @@
+<?php
+include("../database.php");
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title><?= $softtitle ?></title>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <?php include("includes/css-scripts.php"); ?>
+
+    <style>
+        /* SIMPLE TAB STYLE */
+        .simple-tabs {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px 0;
+            display: flex;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .simple-tabs li {
+            padding: 10px 18px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            background: #f4f6f9;
+            margin-right: 5px;
+            font-weight: 600;
+        }
+
+        .simple-tabs li.active {
+            background: #fff;
+            color: #3c8dbc;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body class="<?= $bodyclass ?>">
+    <div class="wrapper">
+
+        <?php include("includes/header.php"); ?>
+        <?php include("includes/sidebar.php"); ?>
+
+        <div class="content-wrapper">
+            <section class="content">
+
+                <!-- ================= TABS ================= -->
+                <ul class="simple-tabs">
+                    <li class="active" data-tab="tab1">Foreign Education</li>
+                    <li data-tab="tab2">Job Placement</li>
+                    <li data-tab="tab3">College</li>
+                    <li data-tab="tab4">Project Internship</li>
+                    <li data-tab="tab5">Tuition Training</li>
+                </ul>
+
+                <!-- ================= TAB 1 ================= -->
+                <div id="tab1" class="tab-content active">
+
+                    <h4>
+                        Foreign Education List
+                        <a href="master/export-applications.php?type=foreign" class="btn btn-success pull-right" style="margin-bottom: 10px;">
+                            <i class="fa fa-file-excel-o"></i> Export
+                        </a>
+                    </h4>
+
+                    <table id="datatable1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Course</th>
+                                <th>Country</th>
+                                <th>Whatsapp</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $i = 0;
+                            $res = $conn->query("SELECT name,course_for_applying,preferred_country,whatsapp_number,created_at FROM f_student_application ORDER BY id DESC");
+                            while ($row = $res->fetch_assoc()) {
+                                $i++; ?>
+                                <tr>
+                                    <td><?= $i ?></td>
+                                    <td><?= $row['name'] ?></td>
+                                    <td><?= $row['course_for_applying'] ?></td>
+                                    <td><?= $row['preferred_country'] ?></td>
+                                    <td><?= $row['whatsapp_number'] ?: '-' ?></td>
+                                    <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- ================= TAB 2 ================= -->
+                <div id="tab2" class="tab-content">
+
+                    <h4>
+                        Job Placement List
+                        <a href="master/export-applications.php?type=job" class="btn btn-success pull-right" style="margin-bottom: 10px;">
+                            <i class="fa fa-file-excel-o"></i> Export
+                        </a>
+                    </h4>
+
+                    <table id="datatable2" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>Experience</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $i = 0;
+                            $res = $conn->query("SELECT name,phone_number,role_applying_for,year_of_experience,created_at FROM job_application ORDER BY id DESC");
+                            while ($row = $res->fetch_assoc()) {
+                                $i++; ?>
+                                <tr>
+                                    <td><?= $i ?></td>
+                                    <td><?= $row['name'] ?></td>
+                                    <td><?= $row['phone_number'] ?></td>
+                                    <td><?= $row['role_applying_for'] ?></td>
+                                    <td><?= $row['year_of_experience'] ?></td>
+                                    <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- ================= TAB 3 ================= -->
+                <div id="tab3" class="tab-content">
+
+                    <h4>
+                        College List
+                        <a href="master/export-applications.php?type=college" class="btn btn-success pull-right" style="margin-bottom: 10px;">
+                            <i class="fa fa-file-excel-o"></i> Export
+                        </a>
+                    </h4>
+
+                    <table id="datatable3" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Course</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $i = 0;
+                            $res = $conn->query("SELECT name,contact_number,course_type,created_at FROM college_application_form ORDER BY id DESC");
+                            while ($row = $res->fetch_assoc()) {
+                                $i++; ?>
+                                <tr>
+                                    <td><?= $i ?></td>
+                                    <td><?= $row['name'] ?></td>
+                                    <td><?= $row['contact_number'] ?></td>
+                                    <td><?= $row['course_type'] ?></td>
+                                    <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+
+                </div>
+                <div id="tab4" class="tab-content">
+
+                    <h4>
+                        Project Internship List
+                        <a href="master/export-applications.php?type=internship" class="btn btn-success pull-right" style="margin-bottom: 10px;">
+                            <i class="fa fa-file-excel-o"></i> Export
+                        </a>
+                    </h4>
+
+                    <table id="datatable4" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Domain</th>
+                                <th>Job Type</th>
+                                <th>Whatsapp</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $i = 0;
+                            $res = $conn->query("SELECT name,phone_number,domain,job_type,whatsapp_number,created_at FROM p_student_application ORDER BY id DESC");
+                            while ($row = $res->fetch_assoc()) {
+                                $i++; ?>
+                                <tr>
+                                    <td><?= $i ?></td>
+                                    <td><?= $row['name'] ?></td>
+                                    <td><?= $row['phone_number'] ?></td>
+                                    <td><?= $row['domain'] ?></td>
+                                    <td><?= $row['job_type'] ?></td>
+                                    <td><?= $row['whatsapp_number'] ?></td>
+                                    <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+
+                </div>
+                <div id="tab5" class="tab-content">
+
+                    <h4>
+                        Tuition Training List
+                        <a href="master/export-applications.php?type=tuition" class="btn btn-success pull-right" style="margin-bottom: 10px;">
+                            <i class="fa fa-file-excel-o"></i> Export
+                        </a>
+                    </h4>
+
+                    <table id="datatable5" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Course</th>
+                                <th>Class Type</th>
+                                <th>Whatsapp</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $i = 0;
+                            $res = $conn->query("SELECT name,phone_number,course_applying,class_type,whatsapp_number,created_at FROM t_student_application ORDER BY id DESC");
+                            while ($row = $res->fetch_assoc()) {
+                                $i++; ?>
+                                <tr>
+                                    <td><?= $i ?></td>
+                                    <td><?= $row['name'] ?></td>
+                                    <td><?= $row['phone_number'] ?></td>
+                                    <td><?= $row['course_applying'] ?></td>
+                                    <td><?= $row['class_type'] ?></td>
+                                    <td><?= $row['whatsapp_number'] ?></td>
+                                    <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </section>
+        </div>
+
+        <?php include("includes/footer.php"); ?>
+    </div>
+
+    <?php include("includes/js-scripts.php"); ?>
+
+    <script>
+        $(document).ready(function() {
+
+            console.log('Simple tabs loaded');
+
+            // Init DataTables
+            $('#datatable1,#datatable2,#datatable3,#datatable4,#datatable5').DataTable({
+                pageLength: 25
+            });
+
+            // Simple tab click
+            $('.simple-tabs li').click(function() {
+
+                let tabId = $(this).data('tab');
+
+                $('.simple-tabs li').removeClass('active');
+                $(this).addClass('active');
+
+                $('.tab-content').removeClass('active');
+                $('#' + tabId).addClass('active');
+
+                // Fix datatable width
+                $.fn.dataTable.tables({
+                    visible: true,
+                    api: true
+                }).columns.adjust();
+
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

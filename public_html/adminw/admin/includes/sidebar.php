@@ -155,9 +155,15 @@
 
 					</ul>
 				</li>
+				<li class="">
+					<a href="manage-mou-table.php"> <i class="fa fa-table"></i> <span>Mou Listing</span></a>
+				</li>
+				<li class="">
+					<a href="manage-mou-person.php"> <i class="fa fa-user"></i> <span>Mou Person Data</span></a>
+				</li>
 				<li class="treeview">
 					<a href="#">
-						<i class="fa fa-graduation-cap"></i>
+						<i class="fa fa-globe"></i>
 						<span>Foreign Education </span>
 						<span class="pull-right-container">
 							<i class="fa fa-angle-left pull-right"></i>
@@ -205,7 +211,7 @@
 				</li>
 				<li class="treeview">
 					<a href="#">
-						<i class="fa fa-graduation-cap"></i>
+						<i class="fa fa-briefcase"></i>
 						<span> Project Internship </span>
 						<span class="pull-right-container">
 							<i class="fa fa-angle-left pull-right"></i>
@@ -247,7 +253,7 @@
 
 				<li class="treeview">
 					<a href="#">
-						<i class="fa fa-graduation-cap"></i>
+						<i class="fa fa-briefcase"></i>
 						<span> Job Placement </span>
 						<span class="pull-right-container">
 							<i class="fa fa-angle-left pull-right"></i>
