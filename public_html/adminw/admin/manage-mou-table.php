@@ -87,7 +87,7 @@ include("../database.php");
                         <tbody>
                             <?php
                             $i = 0;
-                            $res = $conn->query("SELECT name,course_for_applying,preferred_country,whatsapp_number,created_at FROM  ORDER BY id DESC");
+                            $res = $conn->query("SELECT name,course_for_applying,preferred_country,whatsapp_number,created_at FROM f_student_application ORDER BY id DESC");
                             while ($row = $res->fetch_assoc()) {
                                 $i++; ?>
                                 <tr>
