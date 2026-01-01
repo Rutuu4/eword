@@ -12,6 +12,7 @@ class Job_control extends REST_Controller
         parent::__construct();
         include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
         $this->wp_db = $this->load->database('wp_db', TRUE);
+        $this->load->helper('common_helper');
         foreach (globalVars() as $key => $value) {
             if (is_array(${$value})) {
                 for ($i = 1; $i <= count(${$value}); $i++) {
@@ -356,11 +357,12 @@ class Job_control extends REST_Controller
                     . "Thank You.\n\n"
                     . "*From*\n"
                     . "*{$jobPlacementName}*";
-
+                $mou_phone_number = get_phone_number_by_type('job');
                 // ✅ Insert into wp_messages
                 $wpMessageData = [
                     'message_id'   => $this->uuid_v4(),
                     'phone_number' => $jobcompany_whatsapp_number,
+                    'mou_phone_number' => $mou_phone_number,
                     'website_link' => base_url($resume_file_path),
                     'message_text' => $messageText,
                     'message_type' => 'text',

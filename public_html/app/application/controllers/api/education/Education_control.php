@@ -12,6 +12,8 @@ class Education_control extends REST_Controller
         parent::__construct();
         include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
         $this->wp_db = $this->load->database('wp_db', TRUE);
+        $this->load->helper('common_helper');
+
         foreach (globalVars() as $key => $value) {
             if (is_array(${$value})) {
                 for ($i = 1; $i <= count(${$value}); $i++) {
@@ -485,6 +487,8 @@ class Education_control extends REST_Controller
                     $messageText .= "{$label}: {$value}\n";
                 }
 
+                // Get WhatsApp number dynamically based on type
+                $mou_phone_number = get_phone_number_by_type('foreign');
 
                 $messageText .= "Please review the details and get in touch with the student.\n"
                     . "Thank You.\n\n"
@@ -494,6 +498,7 @@ class Education_control extends REST_Controller
                 $wpMessageData = [
                     'message_id'   => $this->uuid_v4(), // function below
                     'phone_number' => $data['whatsAppNumber'],
+                    'mou_phone_number' => $mou_phone_number,
                     'message_text' => $messageText,
                     'message_type' => 'text',
                     'status'       => 'queued',
