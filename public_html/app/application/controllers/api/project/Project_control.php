@@ -324,7 +324,7 @@ class Project_control extends REST_Controller
         $insert_id = $this->General_model->insert('p_student_application', $insertData);
 
         if ($insert_id) {
-            $projectInternshipName = 'E World Education'; // fallback
+            $projectInternshipName = 'generated'; // fallback
 
             if (!empty($data['projectPlacementId'])) {
                 $fe = $this->db

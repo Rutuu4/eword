@@ -447,7 +447,7 @@ class Education_control extends REST_Controller
         $insert_id = $this->General_model->insert('f_student_application', $insertData);
 
         if ($insert_id) {
-            $foreignEducationName = 'E World Education'; // fallback
+            $foreignEducationName = 'generated'; // fallback
 
             if (!empty($data['foreignEducationId'])) {
                 $fe = $this->db

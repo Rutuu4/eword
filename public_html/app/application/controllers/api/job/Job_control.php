@@ -321,7 +321,7 @@ class Job_control extends REST_Controller
                     'expectedCTC' => $job['expected_ctc']
                     // 'resumeUrl' => base_url($resume_file_path)
                 ];
-                $jobPlacementName = 'E World Education'; // fallback
+                $jobPlacementName = 'generated'; // fallback
 
                 if (!empty($job['name'])) {
 

@@ -282,7 +282,7 @@ class College_control extends REST_Controller
         $insert_id = $this->General_model->insert('college_application_form', $insertData);
 
         if ($insert_id) {
-            $collegeName = 'E World Education'; // fallback
+            $collegeName = 'generated'; // fallback
 
             if (!empty($data['collegeId'])) {
                 $fe = $this->db

@@ -335,7 +335,7 @@ class Tuition_control extends REST_Controller
         $insert_id = $this->General_model->insert('t_student_application', $insertData);
 
         if ($insert_id) {
-            $tuitionTrainingName = 'E World Education'; // fallback
+            $tuitionTrainingName = 'generated'; // fallback
 
             if (!empty($data['tuitionTrainingId'])) {
                 $fe = $this->db
