@@ -368,7 +368,7 @@ class Project_control extends REST_Controller
                     . "Thank You.\n\n"
                     . "*From*\n"
                     . "*E World Education*";
-                $mou_phone_number = get_phone_number_by_type('project');
+                $mou_phone_number = get_phone_number_by_type('internship');
 
                 // ================================
                 // ✅ INSERT INTO wp_messages
