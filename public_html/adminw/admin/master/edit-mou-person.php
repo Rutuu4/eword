@@ -7,6 +7,19 @@ if ($_POST['h1'] == 1) {
     $phone_number = mysqli_real_escape_string($conn, $_POST['phone_number']);
     $type = mysqli_real_escape_string($conn, $_POST['type']);
     $status = mysqli_real_escape_string($conn, $_POST['status']);
+    // ❌ Prevent duplicate type on update
+    $check = mysqli_query(
+        $conn,
+        "SELECT id FROM mou_person WHERE type = '$type' AND id != '$id' LIMIT 1"
+    );
+
+    if (mysqli_num_rows($check) > 0) {
+        echo "<script>
+        alert('This type is already assigned to another record.');
+        window.history.back();
+    </script>";
+        exit;
+    }
 
     // Update query
     $query = "UPDATE mou_person 
@@ -69,6 +82,15 @@ if ($_POST['h1'] == 1) {
         $result = $conn->query($qry);
         $row = $result->fetch_assoc();
         $status = $row['status'];
+        $usedTypes = [];
+        $typeQuery = mysqli_query(
+            $conn,
+            "SELECT type FROM mou_person WHERE id != '$id'"
+        );
+
+        while ($t = mysqli_fetch_assoc($typeQuery)) {
+            $usedTypes[] = $t['type'];
+        }
     }
     ?>
 
@@ -113,12 +135,38 @@ if ($_POST['h1'] == 1) {
                                 <div class="col-sm-8">
                                     <select name="type" class="form-control select2" required>
                                         <option value="">-- Select Type --</option>
-                                        <option value="Foreign" <?= ($row['type'] == 'foreign') ? 'selected' : '' ?>>Foreign Education</option>
-                                        <option value="College" <?= ($row['type'] == 'college') ? 'selected' : '' ?>>College</option>
-                                        <option value="Tuition" <?= ($row['type'] == 'tuition') ? 'selected' : '' ?>>Tuition Training</option>
-                                        <option value="Project" <?= ($row['type'] == 'project') ? 'selected' : '' ?>>Project Internship</option>
-                                        <option value="Job" <?= ($row['type'] == 'job') ? 'selected' : '' ?>>Job Placement</option>
+
+                                        <option value="foreign"
+                                            <?= ($row['type'] == 'foreign') ? 'selected' : '' ?>
+                                            <?= (in_array('foreign', $usedTypes) && $row['type'] != 'foreign') ? 'disabled' : '' ?>>
+                                            Foreign Education
+                                        </option>
+
+                                        <option value="college"
+                                            <?= ($row['type'] == 'college') ? 'selected' : '' ?>
+                                            <?= (in_array('college', $usedTypes) && $row['type'] != 'college') ? 'disabled' : '' ?>>
+                                            College
+                                        </option>
+
+                                        <option value="tuition"
+                                            <?= ($row['type'] == 'tuition') ? 'selected' : '' ?>
+                                            <?= (in_array('tuition', $usedTypes) && $row['type'] != 'tuition') ? 'disabled' : '' ?>>
+                                            Tuition Training
+                                        </option>
+
+                                        <option value="internship"
+                                            <?= ($row['type'] == 'internship') ? 'selected' : '' ?>
+                                            <?= (in_array('internship', $usedTypes) && $row['type'] != 'internship') ? 'disabled' : '' ?>>
+                                            Project Internship
+                                        </option>
+
+                                        <option value="job"
+                                            <?= ($row['type'] == 'job') ? 'selected' : '' ?>
+                                            <?= (in_array('job', $usedTypes) && $row['type'] != 'job') ? 'disabled' : '' ?>>
+                                            Job Placement
+                                        </option>
                                     </select>
+
                                 </div>
                             </div>
 

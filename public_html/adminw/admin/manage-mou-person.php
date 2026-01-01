@@ -82,7 +82,7 @@ ORDER BY name ASC;
                                                 case 'tuition':
                                                     $type_label = "Tuition Training";
                                                     break;
-                                                case 'project':
+                                                case 'internship':
                                                     $type_label = "Project Internship";
                                                     break;
                                                 case 'job':

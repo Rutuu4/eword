@@ -1,11 +1,28 @@
 <?php
 include("../../database.php");
+$existingTypes = [];
+
+$typeQuery = mysqli_query($conn, "SELECT type FROM mou_person");
+while ($row = mysqli_fetch_assoc($typeQuery)) {
+    $existingTypes[] = $row['type'];
+}
+
 
 if ($_POST['h1'] == 1) {
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $type = mysqli_real_escape_string($conn, $_POST['type']);
     $phone_number = mysqli_real_escape_string($conn, $_POST['phone_number']);
     $status = mysqli_real_escape_string($conn, $_POST['status']);
+    // ❌ Prevent duplicate type insertion
+    $check = mysqli_query($conn, "SELECT id FROM mou_person WHERE type = '$type' LIMIT 1");
+
+    if (mysqli_num_rows($check) > 0) {
+        echo "<script>
+        alert('This type already exists. Only one entry per type is allowed.');
+        window.history.back();
+    </script>";
+        exit;
+    }
 
     // Insert query
     $query = "INSERT INTO mou_person(name, phone_number, type, status) 
@@ -95,12 +112,33 @@ if ($_POST['h1'] == 1) {
                                 <div class="col-sm-8">
                                     <select name="type" class="form-control select2" required>
                                         <option value="">-- Select Type --</option>
-                                        <option value="foreign">Foreign Education</option>
-                                        <option value="college">College</option>
-                                        <option value="tuition">Tuition Training</option>
-                                        <option value="project">Project Internship</option>
-                                        <option value="job">Job Placement</option>
+
+                                        <option value="foreign"
+                                            <?= in_array('foreign', $existingTypes) ? 'disabled' : '' ?>>
+                                            Foreign Education
+                                        </option>
+
+                                        <option value="college"
+                                            <?= in_array('college', $existingTypes) ? 'disabled' : '' ?>>
+                                            College
+                                        </option>
+
+                                        <option value="tuition"
+                                            <?= in_array('tuition', $existingTypes) ? 'disabled' : '' ?>>
+                                            Tuition Training
+                                        </option>
+
+                                        <option value="internship"
+                                            <?= in_array('internship', $existingTypes) ? 'disabled' : '' ?>>
+                                            Project Internship
+                                        </option>
+
+                                        <option value="job"
+                                            <?= in_array('job', $existingTypes) ? 'disabled' : '' ?>>
+                                            Job Placement
+                                        </option>
                                     </select>
+
                                 </div>
                             </div>
 
