@@ -11,6 +11,7 @@ class Job_control extends REST_Controller
     {
         parent::__construct();
         include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
+        $this->wp_db = $this->load->database('wp_db', TRUE);
         foreach (globalVars() as $key => $value) {
             if (is_array(${$value})) {
                 for ($i = 1; $i <= count(${$value}); $i++) {
@@ -22,9 +23,22 @@ class Job_control extends REST_Controller
         }
         $this->globalVars         = $final;
     }
+    function uuid_v4()
+    {
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
+    }
     public function job_application_post()
     {
-
         $data = $this->post();
 
         // ✅ Validate required fields
@@ -35,12 +49,10 @@ class Job_control extends REST_Controller
             ], 200);
         }
 
-        // ❌ Removed duplicate email validation — duplicates and null are allowed
-
-        // ✅ Prepare data (no file)
+        // ✅ Prepare data
         $insertData = [
             'name' => $data['name'],
-            'email' => $data['email'] ?? null, // can be duplicate or null
+            'email' => $data['email'] ?? null,
             'phone_number' => $data['phoneNumber'],
             'year_of_experience' => $data['yearofExperience'] ?? null,
             'relevant_experience' => $data['relevantExperience'] ?? null,
@@ -56,18 +68,23 @@ class Job_control extends REST_Controller
         $insert_id = $this->General_model->insert('job_application', $insertData);
 
         if ($insert_id) {
+
+            // ✅ SEND WHATSAPP MESSAGE (same pattern as foreign education)
+
+
             return $this->response([
                 'code' => REST_Controller::HTTP_OK,
                 'message' => "Job application submitted successfully. Please upload your resume.",
                 'data' => ['application_id' => $insert_id]
             ], 200);
-        } else {
-            return $this->response([
-                'code' => REST_Controller::HTTP_INTERNAL_ERROR,
-                'message' => "Failed to submit job application."
-            ], 200);
         }
+
+        return $this->response([
+            'code' => REST_Controller::HTTP_INTERNAL_ERROR,
+            'message' => "Failed to submit job application."
+        ], 200);
     }
+
 
     // public function job_application_resume_post()
     // {
@@ -192,7 +209,7 @@ class Job_control extends REST_Controller
                     'message' => "Job application not found."
                 ], REST_Controller::HTTP_OK);
             }
-
+            $job = $checkApplication[0];
             // 4) Check file present
             if (empty($_FILES['resumeFile']['name'])) {
                 return $this->response([
@@ -283,6 +300,82 @@ class Job_control extends REST_Controller
                 'resume_file' => $resume_file_path,
                 'updated_at' => date('Y-m-d H:i:s')
             ], ['id' => $job_id]);
+            // ======================================================
+            // ✅ SEND WHATSAPP MESSAGE AFTER RESUME UPLOAD
+            // ======================================================
+            $jobcompany_whatsapp_number = $job['company_whatsapp_number'];
+
+
+            if (!empty($jobcompany_whatsapp_number)) {
+
+                // 🧾 Build data array EXACT like submit API
+                $messageData = [
+                    'name' => $job['name'],
+                    'email' => $job['email'],
+                    'phoneNumber' => $job['phone_number'],
+                    'yearOfExperience' => $job['year_of_experience'],
+                    'relevantExperience' => $job['relevant_experience'],
+                    'roleApplyingFor' => $job['role_applying_for'],
+                    'currentCTC' => $job['current_ctc'],
+                    'expectedCTC' => $job['expected_ctc']
+                    // 'resumeUrl' => base_url($resume_file_path)
+                ];
+                $jobPlacementName = 'E World Education'; // fallback
+
+                if (!empty($job['name'])) {
+
+                    $jobPlacementName = $job['name'];
+                }
+
+                // 📝 Build message (FORMAT UNCHANGED)
+                $messageText = "*Student Lead To Safal Academy From {$jobPlacementName}*\n\n"
+                    . "Hello,\n\n"
+                    . "A new student inquiry has been submitted to you through  *{$jobPlacementName}*\n\n"
+                    . "*Student Details:*\n\n";
+
+                foreach ($messageData as $key => $value) {
+
+                    if (empty($value)) {
+                        continue;
+                    }
+
+                    if (is_array($value)) {
+                        $value = implode(', ', $value);
+                    }
+
+                    $label = ucwords(str_replace(
+                        ['_', '-'],
+                        ' ',
+                        preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)
+                    ));
+
+                    $messageText .= "{$label}: {$value}\n";
+                }
+
+                $messageText .= "Please review the details and get in touch with the student.\n"
+                    . "Thank You.\n\n"
+                    . "*From*\n"
+                    . "*{$jobPlacementName}*";
+
+                // ✅ Insert into wp_messages
+                $wpMessageData = [
+                    'message_id'   => $this->uuid_v4(),
+                    'phone_number' => $jobcompany_whatsapp_number,
+                    'website_link' => base_url($resume_file_path),
+                    'message_text' => $messageText,
+                    'message_type' => 'text',
+                    'status'       => 'queued',
+                    'created_at'   => date('Y-m-d H:i:s'),
+                    'updated_at'   => date('Y-m-d H:i:s'),
+                ];
+
+                $this->wp_db->insert('wp_messages', $wpMessageData);
+
+                if ($this->wp_db->affected_rows() == 0) {
+                    log_message('error', 'WP Message insert failed: ' . json_encode($wpMessageData));
+                }
+            }
+
 
             // 12) Final success
             return $this->response([
