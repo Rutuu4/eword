@@ -344,9 +344,9 @@ class Project_control extends REST_Controller
 
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-                $messageText = "*Student Lead To Safal Academy From {$projectInternshipName}*\n\n"
+                $messageText = "*Student Lead To {$projectInternshipName} From E World Education*\n\n"
                     . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *{$projectInternshipName}*\n\n"
+                    . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
                     . "*Student Details:*\n\n";
 
                 foreach ($messageData as $key => $value) {
@@ -367,7 +367,7 @@ class Project_control extends REST_Controller
                 $messageText .= "Please review the details and get in touch with the student.\n"
                     . "Thank You.\n\n"
                     . "*From*\n"
-                    . "*{$projectInternshipName}*";
+                    . "*E World Education*";
                 $mou_phone_number = get_phone_number_by_type('project');
 
                 // ================================

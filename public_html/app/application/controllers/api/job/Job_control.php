@@ -329,9 +329,9 @@ class Job_control extends REST_Controller
                 }
 
                 // 📝 Build message (FORMAT UNCHANGED)
-                $messageText = "*Student Lead To Safal Academy From {$jobPlacementName}*\n\n"
+                $messageText = "*Student Lead To {$jobPlacementName} From E World Education*\n\n"
                     . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *{$jobPlacementName}*\n\n"
+                    . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
                     . "*Student Details:*\n\n";
 
                 foreach ($messageData as $key => $value) {
@@ -356,7 +356,7 @@ class Job_control extends REST_Controller
                 $messageText .= "Please review the details and get in touch with the student.\n"
                     . "Thank You.\n\n"
                     . "*From*\n"
-                    . "*{$jobPlacementName}*";
+                    . "*E World Education*";
                 $mou_phone_number = get_phone_number_by_type('job');
                 // ✅ Insert into wp_messages
                 $wpMessageData = [

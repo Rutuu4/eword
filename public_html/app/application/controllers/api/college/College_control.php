@@ -305,9 +305,9 @@ class College_control extends REST_Controller
 
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-                $messageText = "*Student Lead To Safal Academy From {$collegeName}*\n\n"
+                $messageText = "*Student Lead To {$collegeName} From E World Education*\n\n"
                     . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *{$collegeName}*\n\n"
+                    . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
                     . "*Student Details:*\n\n";
 
                 foreach ($messageData as $key => $value) {
@@ -328,7 +328,7 @@ class College_control extends REST_Controller
                 $messageText .= "Please review the details and get in touch with the student.\n"
                     . "Thank You.\n\n"
                     . "*From*\n"
-                    . "*{$collegeName}*";
+                    . "*E World Education*";
                 $mou_phone_number = get_phone_number_by_type('job');
                 // ================================
                 // ✅ INSERT INTO wp_messages

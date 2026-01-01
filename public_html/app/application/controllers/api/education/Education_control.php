@@ -470,9 +470,9 @@ class Education_control extends REST_Controller
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
                 // 📝 Build readable message
-                $messageText = "*Student Lead To Safal Academy From {$foreignEducationName}*\n\n"
+                $messageText = "*Student Lead To {$foreignEducationName} From E World Education*\n\n"
                     . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *{$foreignEducationName}*\n\n"
+                    . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
                     . "*Student Details:*\n\n";
 
                 foreach ($messageData as $key => $value) {
@@ -493,7 +493,7 @@ class Education_control extends REST_Controller
                 $messageText .= "Please review the details and get in touch with the student.\n"
                     . "Thank You.\n\n"
                     . "*From*\n"
-                    . "*{$foreignEducationName}*";
+                    . "*E World Education*";
 
                 $wpMessageData = [
                     'message_id'   => $this->uuid_v4(), // function below

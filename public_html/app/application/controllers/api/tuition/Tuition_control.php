@@ -357,9 +357,9 @@ class Tuition_control extends REST_Controller
 
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-                $messageText = "*Student Lead To Safal Academy From {$tuitionTrainingName}*\n\n"
+                $messageText = "*Student Lead To {$tuitionTrainingName} From E World Education*\n\n"
                     . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *{$tuitionTrainingName}*\n\n"
+                    . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
                     . "*Student Details:*\n\n";
                 foreach ($messageData as $key => $value) {
 
@@ -379,7 +379,7 @@ class Tuition_control extends REST_Controller
                 $messageText .= "Please review the details and get in touch with the student.\n"
                     . "Thank You.\n\n"
                     . "*From*\n"
-                    . "*{$tuitionTrainingName}*";
+                    . "*E World Education*";
                 $mou_phone_number = get_phone_number_by_type('tuition');
 
                 // ✅ Insert into wp_messages
