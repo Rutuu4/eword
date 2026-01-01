@@ -124,7 +124,7 @@ if ($_POST['h1'] == 1) {
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Phone Number :</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="phone_number"
+                                    <input type="text" class="form-control" name="phone_number" maxlength="10"
                                         value="<?= htmlspecialchars($row['phone_number']); ?>" required>
                                 </div>
                             </div>
