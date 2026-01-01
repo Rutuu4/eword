@@ -335,7 +335,7 @@ class Tuition_control extends REST_Controller
         $insert_id = $this->General_model->insert('t_student_application', $insertData);
 
         if ($insert_id) {
-            $tuitionTrainingName = 'generated'; // fallback
+            $tuitionTrainingName = 'Generated'; // fallback
 
             if (!empty($data['tuitionTrainingId'])) {
                 $fe = $this->db
@@ -346,7 +346,7 @@ class Tuition_control extends REST_Controller
                     ->row();
 
                 if ($fe && !empty($fe->consultancy_name)) {
-                    $tuitionTrainingName = $fe->consultancy_name;
+                    $tuitionTrainingName = "To " . $fe->consultancy_name;
                 }
             }
 
@@ -357,7 +357,7 @@ class Tuition_control extends REST_Controller
 
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-                $messageText = "*Student Lead To {$tuitionTrainingName} From E World Education*\n\n"
+                $messageText = "*Student Lead {$tuitionTrainingName} From E World Education*\n\n"
                     . "Hello,\n\n"
                     . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
                     . "*Student Details:*\n\n";

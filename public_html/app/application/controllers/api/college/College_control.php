@@ -282,7 +282,7 @@ class College_control extends REST_Controller
         $insert_id = $this->General_model->insert('college_application_form', $insertData);
 
         if ($insert_id) {
-            $collegeName = 'generated'; // fallback
+            $collegeName = 'Generated'; // fallback
 
             if (!empty($data['collegeId'])) {
                 $fe = $this->db
@@ -293,7 +293,7 @@ class College_control extends REST_Controller
                     ->row();
 
                 if ($fe && !empty($fe->name)) {
-                    $collegeName = $fe->name;
+                    $collegeName = "To " . $fe->name;
                 }
             }
             // ================================
@@ -305,7 +305,7 @@ class College_control extends REST_Controller
 
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-                $messageText = "*Student Lead To {$collegeName} From E World Education*\n\n"
+                $messageText = "*Student Lead {$collegeName} From E World Education*\n\n"
                     . "Hello,\n\n"
                     . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
                     . "*Student Details:*\n\n";

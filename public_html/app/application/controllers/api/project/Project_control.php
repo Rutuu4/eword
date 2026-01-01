@@ -324,7 +324,7 @@ class Project_control extends REST_Controller
         $insert_id = $this->General_model->insert('p_student_application', $insertData);
 
         if ($insert_id) {
-            $projectInternshipName = 'generated'; // fallback
+            $projectInternshipName = 'Generated'; // fallback
 
             if (!empty($data['projectPlacementId'])) {
                 $fe = $this->db
@@ -335,7 +335,7 @@ class Project_control extends REST_Controller
                     ->row();
 
                 if ($fe && !empty($fe->consultancy_name)) {
-                    $projectInternshipName = $fe->consultancy_name;
+                    $projectInternshipName = "To " . $fe->consultancy_name;
                 }
             }
             // ✅ Send WhatsApp Message
@@ -344,7 +344,7 @@ class Project_control extends REST_Controller
 
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-                $messageText = "*Student Lead To {$projectInternshipName} From E World Education*\n\n"
+                $messageText = "*Student Lead {$projectInternshipName} From E World Education*\n\n"
                     . "Hello,\n\n"
                     . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
                     . "*Student Details:*\n\n";

@@ -447,7 +447,7 @@ class Education_control extends REST_Controller
         $insert_id = $this->General_model->insert('f_student_application', $insertData);
 
         if ($insert_id) {
-            $foreignEducationName = 'generated'; // fallback
+            $foreignEducationName = 'Generated'; // fallback
 
             if (!empty($data['foreignEducationId'])) {
                 $fe = $this->db
@@ -458,7 +458,7 @@ class Education_control extends REST_Controller
                     ->row();
 
                 if ($fe && !empty($fe->consultancy_name)) {
-                    $foreignEducationName = $fe->consultancy_name;
+                    $foreignEducationName = "To " . $fe->consultancy_name;
                 }
             }
             // ✅ Send WhatsApp/SMS if phone number exists
@@ -470,7 +470,7 @@ class Education_control extends REST_Controller
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
                 // 📝 Build readable message
-                $messageText = "*Student Lead To {$foreignEducationName} From E World Education*\n\n"
+                $messageText = "*Student Lead  {$foreignEducationName} From E World Education*\n\n"
                     . "Hello,\n\n"
                     . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
                     . "*Student Details:*\n\n";

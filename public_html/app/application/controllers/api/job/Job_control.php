@@ -321,15 +321,15 @@ class Job_control extends REST_Controller
                     'expectedCTC' => $job['expected_ctc']
                     // 'resumeUrl' => base_url($resume_file_path)
                 ];
-                $jobPlacementName = 'generated'; // fallback
+                $jobPlacementName = 'Generated'; // fallback
 
                 if (!empty($job['name'])) {
 
-                    $jobPlacementName = $job['name'];
+                    $jobPlacementName = "To " . $job['name'];
                 }
 
                 // 📝 Build message (FORMAT UNCHANGED)
-                $messageText = "*Student Lead To {$jobPlacementName} From E World Education*\n\n"
+                $messageText = "*Student Lead  {$jobPlacementName} From E World Education*\n\n"
                     . "Hello,\n\n"
                     . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
                     . "*Student Details:*\n\n";
