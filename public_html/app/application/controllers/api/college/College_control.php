@@ -273,6 +273,7 @@ class College_control extends REST_Controller
             'passing_year' => $data['passing_year'] ?? null,
             'whatsAppNumber' => $data['whatsAppNumber'] ?? null,
             'created_at' => date('Y-m-d H:i:s'),
+            'college_id' => $data['collegeId'] ?? null,
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
@@ -280,7 +281,20 @@ class College_control extends REST_Controller
         $insert_id = $this->General_model->insert('college_application_form', $insertData);
 
         if ($insert_id) {
+            $collegeName = 'E World Education'; // fallback
 
+            if (!empty($data['collegeId'])) {
+                $fe = $this->db
+                    ->select('name')
+                    ->from('college_university_details')
+                    ->where('id', $data['collegeId'])
+                    ->get()
+                    ->row();
+
+                if ($fe && !empty($fe->name)) {
+                    $collegeName = $fe->name;
+                }
+            }
             // ================================
             // ✅ BUILD MESSAGE & INSERT
             // ================================
@@ -290,9 +304,9 @@ class College_control extends REST_Controller
 
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-                $messageText = "*Student Lead To Safal Academy From E World Education*\n\n"
+                $messageText = "*Student Lead To Safal Academy From {$collegeName}*\n\n"
                     . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *E World Application*\n\n"
+                    . "A new student inquiry has been submitted to you through  *{$collegeName}*\n\n"
                     . "*Student Details:*\n\n";
 
                 foreach ($messageData as $key => $value) {
@@ -313,7 +327,7 @@ class College_control extends REST_Controller
                 $messageText .= "Please review the details and get in touch with the student.\n"
                     . "Thank You.\n\n"
                     . "*From*\n"
-                    . "*E World Education*";
+                    . "*{$collegeName}*";
 
                 // ================================
                 // ✅ INSERT INTO wp_messages

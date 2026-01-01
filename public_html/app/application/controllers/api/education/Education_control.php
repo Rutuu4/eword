@@ -445,6 +445,20 @@ class Education_control extends REST_Controller
         $insert_id = $this->General_model->insert('f_student_application', $insertData);
 
         if ($insert_id) {
+            $foreignEducationName = 'E World Education'; // fallback
+
+            if (!empty($data['foreignEducationId'])) {
+                $fe = $this->db
+                    ->select('consultancy_name')
+                    ->from('foreign_education')
+                    ->where('id', $data['foreignEducationId'])
+                    ->get()
+                    ->row();
+
+                if ($fe && !empty($fe->consultancy_name)) {
+                    $foreignEducationName = $fe->consultancy_name;
+                }
+            }
             // ✅ Send WhatsApp/SMS if phone number exists
             if (!empty($data['phoneNumber'])) {
                 // ❌ Fields to exclude from message
@@ -454,9 +468,9 @@ class Education_control extends REST_Controller
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
                 // 📝 Build readable message
-                $messageText = "*Student Lead To Safal Academy From E World Education*\n\n"
+                $messageText = "*Student Lead To Safal Academy From {$foreignEducationName}*\n\n"
                     . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *E World Application*\n\n"
+                    . "A new student inquiry has been submitted to you through  *{$foreignEducationName}*\n\n"
                     . "*Student Details:*\n\n";
 
                 foreach ($messageData as $key => $value) {
@@ -475,7 +489,7 @@ class Education_control extends REST_Controller
                 $messageText .= "Please review the details and get in touch with the student.\n"
                     . "Thank You.\n\n"
                     . "*From*\n"
-                    . "*E World Education*";
+                    . "*{$foreignEducationName}*";
 
                 $wpMessageData = [
                     'message_id'   => $this->uuid_v4(), // function below

@@ -334,6 +334,20 @@ class Tuition_control extends REST_Controller
         $insert_id = $this->General_model->insert('t_student_application', $insertData);
 
         if ($insert_id) {
+            $tuitionTrainingName = 'E World Education'; // fallback
+
+            if (!empty($data['tuitionTrainingId'])) {
+                $fe = $this->db
+                    ->select('consultancy_name')
+                    ->from('tuition_and_training')
+                    ->where('id', $data['tuitionTrainingId'])
+                    ->get()
+                    ->row();
+
+                if ($fe && !empty($fe->consultancy_name)) {
+                    $tuitionTrainingName = $fe->consultancy_name;
+                }
+            }
 
             // ✅ Build message & insert into wp_messages
             if (!empty($data['phoneNumber'])) {
@@ -342,9 +356,9 @@ class Tuition_control extends REST_Controller
 
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-                $messageText = "*Student Lead To Safal Academy From E World Education*\n\n"
+                $messageText = "*Student Lead To Safal Academy From {$tuitionTrainingName}*\n\n"
                     . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *E World Application*\n\n"
+                    . "A new student inquiry has been submitted to you through  *{$tuitionTrainingName}*\n\n"
                     . "*Student Details:*\n\n";
                 foreach ($messageData as $key => $value) {
 
@@ -364,7 +378,7 @@ class Tuition_control extends REST_Controller
                 $messageText .= "Please review the details and get in touch with the student.\n"
                     . "Thank You.\n\n"
                     . "*From*\n"
-                    . "*E World Education*";
+                    . "*{$tuitionTrainingName}*";
 
 
                 // ✅ Insert into wp_messages
