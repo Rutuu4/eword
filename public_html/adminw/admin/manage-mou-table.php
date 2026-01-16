@@ -68,7 +68,9 @@ include("../database.php");
 
                     <h4>
                         Foreign Education List
-                        <a href="master/export-applications.php?type=foreign" class="btn btn-success pull-right" style="margin-bottom: 10px;">
+                        <a href="master/export-applications.php?type=foreign"
+                            class="btn btn-success pull-right"
+                            style="margin-bottom: 10px;">
                             <i class="fa fa-file-excel-o"></i> Export
                         </a>
                     </h4>
@@ -80,22 +82,42 @@ include("../database.php");
                                 <th>Name</th>
                                 <th>Course</th>
                                 <th>Country</th>
+                                <th>Institute</th>
                                 <th>Whatsapp</th>
                                 <th>Date</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             <?php
                             $i = 0;
-                            $res = $conn->query("SELECT name,course_for_applying,preferred_country,whatsapp_number,created_at FROM f_student_application ORDER BY id DESC");
+
+                            $sql = "
+                                SELECT 
+                                    fsa.name,
+                                    fsa.course_for_applying,
+                                    fsa.preferred_country,
+                                    fsa.whatsapp_number,
+                                    fsa.created_at,
+                                    fe.consultancy_name
+                                FROM f_student_application AS fsa
+                                LEFT JOIN foreign_education AS fe
+                                    ON fsa.foreign_education_id = fe.id
+                                ORDER BY fsa.id DESC
+                            ";
+
+                            $res = $conn->query($sql);
+
                             while ($row = $res->fetch_assoc()) {
-                                $i++; ?>
+                                $i++;
+                            ?>
                                 <tr>
                                     <td><?= $i ?></td>
-                                    <td><?= $row['name'] ?></td>
-                                    <td><?= $row['course_for_applying'] ?></td>
-                                    <td><?= $row['preferred_country'] ?></td>
-                                    <td><?= $row['whatsapp_number'] ?: '-' ?></td>
+                                    <td><?= htmlspecialchars($row['name']) ?></td>
+                                    <td><?= htmlspecialchars($row['course_for_applying']) ?></td>
+                                    <td><?= htmlspecialchars($row['preferred_country']) ?></td>
+                                    <td><?= $row['consultancy_name'] ? htmlspecialchars($row['consultancy_name']) : '-' ?></td>
+                                    <td><?= $row['whatsapp_number'] ? htmlspecialchars($row['whatsapp_number']) : '-' ?></td>
                                     <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
                                 </tr>
                             <?php } ?>
@@ -103,6 +125,7 @@ include("../database.php");
                     </table>
 
                 </div>
+
 
                 <!-- ================= TAB 2 ================= -->
                 <div id="tab2" class="tab-content">
@@ -120,6 +143,7 @@ include("../database.php");
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Phone</th>
+                                <th>Company Name</th>
                                 <th>Role</th>
                                 <th>Experience</th>
                                 <th>Date</th>
@@ -128,13 +152,24 @@ include("../database.php");
                         <tbody>
                             <?php
                             $i = 0;
-                            $res = $conn->query("SELECT name,phone_number,role_applying_for,year_of_experience,created_at FROM job_application ORDER BY id DESC");
+                            $res = $conn->query(" SELECT 
+                ja.name,
+                ja.phone_number,
+                jp.company_name,
+                ja.role_applying_for,
+                ja.year_of_experience,
+                ja.created_at
+            FROM job_application ja
+            LEFT JOIN job_placements jp 
+                ON jp.id = ja.company_id
+            ORDER BY ja.id DESC");
                             while ($row = $res->fetch_assoc()) {
                                 $i++; ?>
                                 <tr>
                                     <td><?= $i ?></td>
                                     <td><?= $row['name'] ?></td>
                                     <td><?= $row['phone_number'] ?></td>
+                                    <td><?= $row['company_name'] ?? '-' ?></td>
                                     <td><?= $row['role_applying_for'] ?></td>
                                     <td><?= $row['year_of_experience'] ?></td>
                                     <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
@@ -183,11 +218,15 @@ include("../database.php");
                     </table>
 
                 </div>
+
+                <!-- ========================================== -->
                 <div id="tab4" class="tab-content">
 
                     <h4>
                         Project Internship List
-                        <a href="master/export-applications.php?type=internship" class="btn btn-success pull-right" style="margin-bottom: 10px;">
+                        <a href="master/export-applications.php?type=internship"
+                            class="btn btn-success pull-right"
+                            style="margin-bottom: 10px;">
                             <i class="fa fa-file-excel-o"></i> Export
                         </a>
                     </h4>
@@ -197,33 +236,58 @@ include("../database.php");
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
-                                <th>Phone</th>
+                                <th>Student Number</th>
                                 <th>Domain</th>
                                 <th>Job Type</th>
-                                <th>Whatsapp</th>
+                                <th>Institute Name</th>
+                                <th>Mou Number</th>
                                 <th>Date</th>
                             </tr>
                         </thead>
                         <tbody>
+
                             <?php
                             $i = 0;
-                            $res = $conn->query("SELECT name,phone_number,domain,job_type,whatsapp_number,created_at FROM p_student_application ORDER BY id DESC");
+
+                            $sql = "
+                        SELECT 
+                            psa.name,
+                            psa.phone_number,
+                            psa.domain,
+                            psa.job_type,
+                            psa.whatsapp_number,
+                            psa.created_at,
+                            pai.consultancy_name
+                        FROM p_student_application psa
+                        LEFT JOIN project_and_internship pai
+                            ON psa.project_and_internship_id = pai.id
+                        ORDER BY psa.id DESC
+                    ";
+
+                            $res = $conn->query($sql);
+
                             while ($row = $res->fetch_assoc()) {
-                                $i++; ?>
+                                $i++;
+                            ?>
                                 <tr>
                                     <td><?= $i ?></td>
-                                    <td><?= $row['name'] ?></td>
-                                    <td><?= $row['phone_number'] ?></td>
-                                    <td><?= $row['domain'] ?></td>
-                                    <td><?= $row['job_type'] ?></td>
-                                    <td><?= $row['whatsapp_number'] ?></td>
+                                    <td><?= htmlspecialchars($row['name']) ?></td>
+                                    <td><?= htmlspecialchars($row['phone_number']) ?></td>
+                                    <td><?= htmlspecialchars($row['domain']) ?></td>
+                                    <td><?= htmlspecialchars($row['job_type']) ?></td>
+                                    <td><?= htmlspecialchars($row['consultancy_name'] ?? 'N/A') ?></td>
+                                    <td><?= htmlspecialchars($row['whatsapp_number']) ?></td>
                                     <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
                                 </tr>
                             <?php } ?>
+
                         </tbody>
                     </table>
 
                 </div>
+
+                <!--=====================================-->
+
                 <div id="tab5" class="tab-content">
 
                     <h4>
@@ -241,6 +305,7 @@ include("../database.php");
                                 <th>Phone</th>
                                 <th>Course</th>
                                 <th>Class Type</th>
+                                <th>Institute Name</th>
                                 <th>Whatsapp</th>
                                 <th>Date</th>
                             </tr>
@@ -248,16 +313,33 @@ include("../database.php");
                         <tbody>
                             <?php
                             $i = 0;
-                            $res = $conn->query("SELECT name,phone_number,course_applying,class_type,whatsapp_number,created_at FROM t_student_application ORDER BY id DESC");
+
+                            $res = $conn->query("
+                            SELECT 
+                                tsa.name,
+                                tsa.phone_number,
+                                tsa.course_applying,
+                                tsa.class_type,
+                                tsa.whatsapp_number,
+                                tsa.created_at,
+                                tat.consultancy_name
+                            FROM t_student_application AS tsa
+                            LEFT JOIN tuition_and_training AS tat
+                                ON tsa.tuition_and_training_id = tat.id
+                            ORDER BY tsa.id DESC
+                        ");
+
                             while ($row = $res->fetch_assoc()) {
-                                $i++; ?>
+                                $i++;
+                            ?>
                                 <tr>
                                     <td><?= $i ?></td>
-                                    <td><?= $row['name'] ?></td>
-                                    <td><?= $row['phone_number'] ?></td>
-                                    <td><?= $row['course_applying'] ?></td>
-                                    <td><?= $row['class_type'] ?></td>
-                                    <td><?= $row['whatsapp_number'] ?></td>
+                                    <td><?= htmlspecialchars($row['name']) ?></td>
+                                    <td><?= htmlspecialchars($row['phone_number']) ?></td>
+                                    <td><?= htmlspecialchars($row['course_applying']) ?></td>
+                                    <td><?= htmlspecialchars($row['class_type']) ?></td>
+                                    <td><?= htmlspecialchars($row['consultancy_name'] ?? 'N/A') ?></td>
+                                    <td><?= htmlspecialchars($row['whatsapp_number']) ?></td>
                                     <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
                                 </tr>
                             <?php } ?>
@@ -265,6 +347,7 @@ include("../database.php");
                     </table>
 
                 </div>
+
 
             </section>
         </div>
