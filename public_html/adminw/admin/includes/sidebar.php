@@ -380,8 +380,10 @@
 									Notification</span></a> </li>
 						<li><a href="citywise-notification.php"><i class="fa fa-circle-o"></i> <span>Citywise
 									Notification</span></a> </li>
-						<li><a href="register-user-notification"><i class="fa fa-circle-o"></i> <span>Register User
+						<li><a href="register-user-notification.php"><i class="fa fa-circle-o"></i> <span>Register User
 									Notification</span></a> </li>
+						<!-- <li><a href="register-user-notification"><i class="fa fa-circle-o"></i> <span>Register User
+													Notification</span></a> </li> -->
 
 					</ul>
 				</li>
