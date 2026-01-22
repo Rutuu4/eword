@@ -256,6 +256,9 @@ define('TBL_EXRTA_COURSE', 'm_exrta_course');
 
 define('TBL_ADMISION_PROCESS_WEBSITE_LINK_TXN', 'admission_process_website_link_txn');
 
+// define('TBL_CHAT_COURSE', 'joining_links');
+// define('TBL_JOIN_LINKS', 'chat_course');
+
 define('TBL_CHAT_COURSE', 'chat_course');
 define('TBL_JOIN_LINKS', 'joining_links');
 
@@ -269,3 +272,5 @@ define('CHAT_GROUP_MEMBER_PAGINATION_SIZE', 50);
 define('CHAT_MESSAGE_PAGINATION_SIZE', 20);
 define('TBL_NOTIFICATION', 'mobile_notification');
 define('TBL_VIEW_NOTIFICATION_TXN', 'view_notification_txn');
+
+

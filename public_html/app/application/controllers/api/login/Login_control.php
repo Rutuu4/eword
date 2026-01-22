@@ -688,13 +688,14 @@ class Login_control extends REST_Controller
         }
         $this->response($response, 200);
     }
+    
     public function verify_user_login_post()
     {
         $data = $this->post();
 
         // Validation
         $this->form_validation->set_rules('username', 'Username', 'trim|required');
-        $this->form_validation->set_rules('user_id', 'User Id', 'trim|required|integer');
+        $this->form_validation->set_rules('user_id', 'User Id', 'trim|required');
         $this->form_validation->set_rules('email', 'Email Address', 'trim|required|valid_email');
         // ❌ No required validation for refer_code
 
@@ -704,7 +705,10 @@ class Login_control extends REST_Controller
             return $this->response($response, 200);
         }
 
-        $userId    = (int) $data['user_id'];
+        $userIdRaw = trim($data['user_id']);   // "1,023"
+        $userIdRaw = str_replace(',', '', $userIdRaw);
+        $userId    = (int) $userIdRaw;
+        
         $username  = trim($data['username']);
         $email     = trim($data['email']);
         $referCode = !empty($data['refer_code']) ? trim($data['refer_code']) : null;

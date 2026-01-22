@@ -101,7 +101,7 @@ if ($_POST['h1'] == 1) {
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Phone Number :</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="phone_number" id="phone_number" maxlength="10"
+                                    <input type="text" class="form-control" name="phone_number" id="phone_number" maxlength="13"
                                         placeholder="Enter Phone Number" required>
                                 </div>
                             </div>

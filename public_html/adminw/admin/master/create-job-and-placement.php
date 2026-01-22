@@ -154,6 +154,7 @@ if ($_POST['h1'] == 1) {
                                     </select>
                                 </div>
                             </div>
+                            
                             <!-- Salary Range -->
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Salary :</label>
@@ -164,23 +165,39 @@ if ($_POST['h1'] == 1) {
                                 </div>
                             </div>
 
+
                             <!-- Required Experience -->
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Required Experience :</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="required_experience" id="required_experience">
-                                        <option value="">Select Experience</option>
-                                        <option value="Fresher">Fresher</option>
-                                        <option value="0-1 Years">0 - 1 Year</option>
-                                        <option value="1-2 Years">1 - 2 Years</option>
-                                        <option value="2-3 Years">2 - 3 Years</option>
-                                        <option value="3-5 Years">3 - 5 Years</option>
-                                        <option value="5-8 Years">5 - 8 Years</option>
-                                        <option value="8-10 Years">8 - 10 Years</option>
-                                        <option value="10+ Years">10+ Years</option>
-                                    </select>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        name="required_experience" 
+                                        id="required_experience"
+                                        placeholder="Enter experience (e.g., Fresher, 1-3 Years)">
                                 </div>
                             </div>
+
+                            <!-- Required Experience -->
+                            <!--<div class="form-group">-->
+                            <!--    <label class="control-label col-sm-2">Required Experience :</label>-->
+                            <!--    <div class="col-sm-8">-->
+                            <!--        <select class="form-control" name="required_experience" id="required_experience">-->
+                            <!--            <option value="">Select Experience</option>-->
+                            <!--            <option value="Fresher">Fresher</option>-->
+                            <!--            <option value="0-1 Years">0 - 1 Year</option>-->
+                            <!--            <option value="1-2 Years">1 - 2 Years</option>-->
+                            <!--            <option value="2-3 Years">2 - 3 Years</option>-->
+                            <!--            <option value="3-5 Years">3 - 5 Years</option>-->
+                            <!--            <option value="5-8 Years">5 - 8 Years</option>-->
+                            <!--            <option value="8-10 Years">8 - 10 Years</option>-->
+                            <!--            <option value="10+ Years">10+ Years</option>-->
+                            <!--        </select>-->
+                            <!--    </div>-->
+                            <!--</div>-->
+                            
+                            
                             <div class="form-group">
                                 <label for="city_id" class="col-sm-2">City :</label>
                                 <div class="col-sm-8">

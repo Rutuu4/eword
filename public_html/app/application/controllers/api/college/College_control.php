@@ -263,6 +263,19 @@ class College_control extends REST_Controller
             return $this->response($response, 200);
         }
 
+        if (!empty($data['collegeId'])) {
+            $fe = $this->db
+                ->select('whatsapp_number')
+                ->from('college_university_details')
+                ->where('id', $data['collegeId'])
+                ->get()
+                ->row();
+
+            if ($fe && !empty($fe->whatsapp_number)) {
+                $whatsAppNumber = $fe->whatsapp_number ?? null;
+            }
+        }
+
         // ✅ Prepare insert data
         $insertData = [
             'name' => $data['name'],
@@ -272,7 +285,7 @@ class College_control extends REST_Controller
             'results_type' => $data['results_type'] ?? null,
             'results_value' => $data['results_value'] ?? null,
             'passing_year' => $data['passing_year'] ?? null,
-            'whatsAppNumber' => $data['whatsAppNumber'] ?? null,
+            'whatsAppNumber' => $whatsAppNumber ?? null,
             'created_at' => date('Y-m-d H:i:s'),
             'college_id' => $data['collegeId'] ?? null,
             'updated_at' => date('Y-m-d H:i:s'),
@@ -329,13 +342,13 @@ class College_control extends REST_Controller
                     . "Thank You.\n\n"
                     . "*From*\n"
                     . "*E World Education*";
-                $mou_phone_number = get_phone_number_by_type('job');
+                $mou_phone_number = get_phone_number_by_type('college');
                 // ================================
                 // ✅ INSERT INTO wp_messages
                 // ================================
                 $wpMessageData = [
                     'message_id'   => $this->uuid_v4(),
-                    'phone_number' => $data['whatsAppNumber'],
+                    'phone_number' => $whatsAppNumber,
                     'mou_phone_number' => $mou_phone_number,
                     'message_text' => $messageText,
                     'message_type' => 'text',

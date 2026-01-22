@@ -1,5 +1,5 @@
 <?php
-require_once FCPATH . 'vendor/autoload.php';
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 
@@ -1084,5 +1084,3 @@ $config['image_path']                   = $config['base_path']."images/";
 
 $config['admin_base_url']              	= $config['base_url']."admin/";
 $config['text_base_url']           		= "https://www.demanddeal.in/";
-$config['twilio_sid'] = getenv('TWILIO_SID');
-$config['twilio_token'] = getenv('TWILIO_TOKEN');

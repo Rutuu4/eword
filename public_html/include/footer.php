@@ -121,7 +121,7 @@ Document  </a>                                </li>
                                 <li>
                                     <span class="footer-widget__info__icon"><i class="icon-location"></i></span>
                                     <a href="#">
-B 505, Avadh Pride, Opp.Mtero Pillar 140, Nr.Nirant Cross Road,Vastral,Ahmedabad.</a>                                </li>
+B 505, Avadh Pride, Opp.Metro Pillar 140, Nr.Nirant Cross Road,Vastral,Ahmedabad.</a>                                </li>
                                 <li>
                                     <span class="footer-widget__info__icon"><i class="icon-email"></i></span>
                                     <a href="mailto:info@eworldeducation.in">info@eworldeducation.in</a>                                </li>

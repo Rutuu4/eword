@@ -4066,16 +4066,16 @@ a:hover .instructor-card-two__social__icon {
   }
 }
 .main-header__btn {
-  margin-left: 80px;
+  margin-left: 10px;
 }
 @media (max-width: 1599px) {
   .main-header__btn {
-    margin-left: 60px;
+    margin-left:10px;
   }
 }
 @media (max-width: 1399px) {
   .main-header__btn {
-    margin-left: 40px;
+    margin-left: 10px;
   }
 }
 @media (max-width: 767px) {
@@ -6793,7 +6793,7 @@ li:hover .contact-page__info__icon__inner {
   position: relative;
   margin-bottom: 25px;
   font-weight: 700;
-  font-size: 70px;
+  font-size: 59px;
   line-height: 1.257;
   letter-spacing: var(--eduhive-letter-space, -0.03em);
   text-transform: capitalize;
@@ -6803,12 +6803,12 @@ li:hover .contact-page__info__icon__inner {
 }
 @media (max-width: 1599px) {
   .main-slider-one__title {
-    font-size: 60px;
+    font-size: 59px;
   }
 }
 @media (max-width: 1399px) {
   .main-slider-one__title {
-    font-size: 50px;
+    font-size: 59px;
   }
 }
 @media (max-width: 1199px) {

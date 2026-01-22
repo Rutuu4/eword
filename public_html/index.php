@@ -68,10 +68,20 @@
                             <div class="main-slider-one__col-content">
                                 <div class="main-slider-one__content">
                                     <img src="images/shapes/main-slider-shape-1-1.png" alt="shape" class="main-slider-one__content__shape slider-image">
-                                    <p class="main-slider-one__sub-title"> The Pathway to Education</p><!-- /.sub-title -->
-                                    <h2 class="main-slider-one__title"> Your Gateway to a <span class="main-slider-one__title__text">Bright Future</span>                                    </h2><!-- /.title -->
+                                    <p class="main-slider-one__sub-title"> E-World Education </p><!-- /.sub-title -->
+                                    <h2 class="main-slider-one__title"   style="font-size: 59px;"> Empowering Students with  <span class="main-slider-one__title__text">Complete Solutions</span>                                    </h2><!-- /.title -->
                                     <div class="main-slider-one__description">
-                                        <p class="main-slider-one__text">Explore Top Colleges and Your Admission with eWorldEducation</p><!-- /.text -->
+                                        <p class="main-slider-one__text" style="margin-bottom:10px;">Application On Play Store For - Carrier Guidance / Courses and Colleges Information / Admission Process / Cut Off / Foreign Education / Project Training & Tuition Classes / Placement & Many More <br>
+                                        </p>
+                                        <p class="main-slider-one__text" style="margin-bottom:10px;">All Courses Colleges Admissions In Gujarat On Regular/External and Online Mode.(Only College Fees, No Any Extra Charge)
+                                        </p>
+                                        <p class="main-slider-one__text" style="margin-bottom:10px;">
+                                            MBBS Admissions In India And Abroad - Russia /  Georgia / Phillippines / Belarus / Nepal / Kazakhstan / Uzbekistan / Kyrgyzstan.
+                                        </p>
+                                        <p class="main-slider-one__text">
+                                            Student Visa / Visitor Visa / Coaching
+                                        </p>
+                                        
                                     </div><!-- /.description -->
                                     <div class="main-slider-one__button">
                                         <a href="contact.php" class="main-slider-one__btn-1 eduhive-btn">
@@ -343,7 +353,7 @@
                 <div class="online-class__content">
                     <div class="sec-title sec-title--center wow fadeInUp" data-wow-duration="1500ms" data-wow-delay="00ms">
                         <h6 class="sec-title__tagline">Eworld Education</h6><!-- /.sec-title__tagline -->
-                        <h3 class="sec-title__title"><span>Download the free  Eworld Education mobile app </span>  </h3><!-- /.sec-title__title -->
+                        <h3 class="sec-title__title"><span>Download the Eworld Education mobile app </span>  </h3><!-- /.sec-title__title -->
                     </div><!-- /.sec-title -->
                     <div class="online-class__description wow fadeInUp" data-wow-duration="1500ms">
                         
@@ -351,7 +361,7 @@
                     <div class="online-class__class-wrapper">
                         <div class="online-class__class wow fadeInUp" data-wow-duration="1500ms" data-wow-delay="00ms">
                              <!-- /.online-class__class__icon -->
-                            <h4 class="online-class__class__title"><img src="images/android.png" class="img-responsive" alt="" style="width:148px;"></h4><!-- /.online-class__class__title -->
+                            <h4 class="online-class__class__title"> <a href="https://play.google.com/store/apps/details?id=com.app.eworldapp"> <img src="images/android.png" class="img-responsive" alt="" style="width:148px;"> </a></h4><!-- /.online-class__class__title --> 
                         </div><!-- /.online-class__class -->
                         <div class="online-class__class wow fadeInUp" data-wow-duration="1500ms" data-wow-delay="100ms">
                              <!-- /.online-class__class__icon -->
@@ -811,15 +821,16 @@
                     <div class="item wow fadeInUp" data-wow-duration="1500ms" data-wow-delay="00ms">
                         <div class="testimonial-card-three">
                             <div class="testimonial-card-three__image">
-                                <img src="images/testimonials/testimonial-3-1.jpg" alt="Michael G. Ware">                            </div>
+                                <img src="images/testimonials/g-image.jpg" alt="Michael G. Ware">                            </div>
                             <div class="testimonial-card-three__content">
                                 <div class="testimonial-card-three__icon">
                                     <span class="icon-quote"></span>                                </div><!-- /.testimonial-card-three__icon -->
                                 <div class="testimonial-card-three__identity">
-                                    <h5 class="testimonial-card-three__name">Riya Sharma</h5>
-                                    <p class="testimonial-card-three__designation">Admitted to Delhi University (B.Com Honors)</p>
+                                    <h5 class="testimonial-card-three__name">Shruti Vaghela</h5>
+                                    <p class="testimonial-card-three__designation"> Student </p>
                                 </div><!-- /.testimonial-card-three__identity -->
-                                <p class="testimonial-card-three__quote">eWorldEducation made the overwhelming process of college admissions so easy for me. </p><!-- /.testimonial-card-three__quote -->
+                                <p class="testimonial-card-three__quote"> This application is wonderful..
+They given all of information colleges nd course..  </p><!-- /.testimonial-card-three__quote -->
                                  <!-- /.product-ratings -->
                             </div><!-- /.testimonial-card-three__content -->
                         </div><!-- /.testimonial-card-three -->
@@ -827,15 +838,15 @@
                     <div class="item wow fadeInUp" data-wow-duration="1500ms" data-wow-delay="100ms">
                         <div class="testimonial-card-three">
                             <div class="testimonial-card-three__image">
-                                <img src="images/testimonials/testimonial-3-2.jpg" alt="Sarah Albert">                            </div>
+                                <img src="images/testimonials/g-image.jpg" alt="Sarah Albert">                            </div>
                             <div class="testimonial-card-three__content">
                                 <div class="testimonial-card-three__icon">
                                     <span class="icon-quote"></span>                                </div><!-- /.testimonial-card-three__icon -->
                                 <div class="testimonial-card-three__identity">
-                                    <h5 class="testimonial-card-three__name">Arjun Patel</h5>
-                                    <p class="testimonial-card-three__designation">Studying in University of Toronto (Computer Science)</p>
+                                    <h5 class="testimonial-card-three__name"> Vidhi Patel </h5>
+                                    <p class="testimonial-card-three__designation">Student </p>
                                 </div><!-- /.testimonial-card-three__identity -->
-                                <p class="testimonial-card-three__quote">Applying to international universities was daunting, but eWorldEducation made it a breeze.  </p><!-- /.testimonial-card-three__quote -->
+                                <p class="testimonial-card-three__quote"> Best guidance ever received.... The interaction was efficient as well as humble  </p><!-- /.testimonial-card-three__quote -->
                                  <!-- /.product-ratings -->
                             </div><!-- /.testimonial-card-three__content -->
                         </div><!-- /.testimonial-card-three -->
@@ -843,15 +854,15 @@
                     <div class="item wow fadeInUp" data-wow-duration="1500ms" data-wow-delay="200ms">
                         <div class="testimonial-card-three">
                             <div class="testimonial-card-three__image">
-                                <img src="images/testimonials/testimonial-3-3.jpg" alt="Kevin Martin">                            </div>
+                                <img src="images/testimonials/g-image.jpg" alt="Kevin Martin">                            </div>
                             <div class="testimonial-card-three__content">
                                 <div class="testimonial-card-three__icon">
                                     <span class="icon-quote"></span>                                </div><!-- /.testimonial-card-three__icon -->
                                 <div class="testimonial-card-three__identity">
-                                    <h5 class="testimonial-card-three__name">Meera Joshi</h5>
-                                    <p class="testimonial-card-three__designation">Pursuing MBA at IIM Bangalore</p>
+                                    <h5 class="testimonial-card-three__name">patel jigar</h5>
+                                    <p class="testimonial-card-three__designation">Student </p>
                                 </div><!-- /.testimonial-card-three__identity -->
-                                <p class="testimonial-card-three__quote">The team at eWorldEducation was instrumental in helping me crack the admission process for IIM Bangalore. </p><!-- /.testimonial-card-three__quote -->
+                                <p class="testimonial-card-three__quote"> The experience was so friendly and felt like talking to a family member. </p><!-- /.testimonial-card-three__quote -->
                                  <!-- /.product-ratings -->
                             </div><!-- /.testimonial-card-three__content -->
                         </div><!-- /.testimonial-card-three -->

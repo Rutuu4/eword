@@ -70,11 +70,18 @@
                                 <span></span>
                             </div><!-- /.mobile-nav__toggler -->
                             
-                           
                             <a href="https://apps.apple.com/in/app/e-worldeducation/id6742198981" target="_blank" class="main-header__btn eduhive-btn eduhive-btn--border">
                                 <span>Available On Appstore</span>
                                 <span class="eduhive-btn__icon" style="background-color:#000000;">
                                     <span class="eduhive-btn__icon__inner"><i class="fab fa-app-store" style="font-size:26px;"></i></span>
+                                </span>
+                            </a><!-- /.main-header__btn eduhive-btn -->
+                            
+                           
+                            <a href="https://play.google.com/store/apps/details?id=com.app.eworldapp"   target="_blank" class="main-header__btn eduhive-btn eduhive-btn--border"   style="margin-left: 20px;">
+                                <span>Available On Play store</span>
+                                <span class="eduhive-btn__icon" style="background-color:#000000;">
+                                    <span class="eduhive-btn__icon__inner"><i class="fab fa-google" style="font-size:26px;"></i></span>
                                 </span>
                             </a><!-- /.main-header__btn eduhive-btn -->
                         </div><!-- /.main-header__right -->

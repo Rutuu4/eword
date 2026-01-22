@@ -318,14 +318,23 @@ class Job_control extends REST_Controller
                     'relevantExperience' => $job['relevant_experience'],
                     'roleApplyingFor' => $job['role_applying_for'],
                     'currentCTC' => $job['current_ctc'],
+
                     'expectedCTC' => $job['expected_ctc']
                     // 'resumeUrl' => base_url($resume_file_path)
                 ];
                 $jobPlacementName = 'Generated'; // fallback
+                if (!empty($job['company_id'])) {
 
-                if (!empty($job['name'])) {
+                    $fe = $this->db
+                        ->select('company_name')
+                        ->from('job_placements')
+                        ->where('id', $job['company_id'])
+                        ->get()
+                        ->row();
 
-                    $jobPlacementName = "To " . $job['name'];
+                    if ($fe && !empty($fe->company_name)) {
+                        $jobPlacementName = "To " . $fe->company_name;
+                    }
                 }
 
                 // 📝 Build message (FORMAT UNCHANGED)

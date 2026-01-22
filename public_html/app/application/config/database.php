@@ -81,12 +81,12 @@ if(($_SERVER['HTTP_HOST'] == (DOMAIN_NAME)) || $_SERVER['HTTP_HOST']==('www.'.DO
 
 	error_reporting(0);
 
-	$hostname = 'localhost';
-$username = 'u260268217_eworld';
-	$password = 'Eworld@2024';
+    $hostname = 'localhost';
+    $username = 'u260268217_eworld';
+    $password = 'PrinceMalani@2025';
 	$database = 'u260268217_eworld';
-
-	$hostname2 = 'localhost';
+	
+    $hostname2 = '193.203.184.144';
 	$username2 = 'u260268217_mou';
 	$password2 = 'PrinceMalani@2025';
 	$database2 = 'u260268217_mou_connection';
@@ -102,25 +102,26 @@ else
 
 	error_reporting(0);
 	
-	$hostname = 'localhost';
-	$username = 'u260268217_eworld';
-	$password = 'Eworld@2024';
+    $hostname = 'localhost';
+    $username = 'u260268217_eworld';
+    $password = 'PrinceMalani@2025';
 	$database = 'u260268217_eworld';
-
-$hostname2 = 'localhost';
+	
+    $hostname2 = '193.203.184.144';
 	$username2 = 'u260268217_mou';
 	$password2 = 'PrinceMalani@2025';
 	$database2 = 'u260268217_mou_connection';
-
 	//require 'D:\server\textile-infomedia\app\Mysimplecrypt.php';
 }
 
 
+
+
 $db['default'] = array(
     'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '',
+	'hostname' => $hostname,
+	'username' => $username,
+	'password' => $password,
 	'database' => $database,
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
@@ -139,9 +140,9 @@ $db['default'] = array(
 );
 $db['wp_db'] = array(
     'dsn'      => '',
-    'hostname' => 'localhost',
-    'username' => 'root',
-    'password' => '',
+    'hostname' => $hostname2,
+    'username' => $username2,
+    'password' => $password2,
     'database' => $database2,
 	'dbdriver' => 'mysqli',
     'dbprefix' => '',
@@ -159,4 +160,3 @@ $db['wp_db'] = array(
 	'save_queries' => TRUE,
 
 );
-

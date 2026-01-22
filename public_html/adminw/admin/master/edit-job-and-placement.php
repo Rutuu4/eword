@@ -172,38 +172,55 @@ if ($_POST['h1'] == 1) {
                             </div>
 
                             <!-- Required Experience -->
+                            
+                            <!-- Required Experience -->
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Required Experience :</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" name="required_experience" id="required_experience">
-                                        <option value="">Select Experience</option>
-                                        <option value="Fresher"
-                                            <?= ($row['required_experience'] == 'Fresher') ? 'selected' : '' ?>>Fresher
-                                        </option>
-                                        <option value="0-1 Years"
-                                            <?= ($row['required_experience'] == '0-1 Years') ? 'selected' : '' ?>>0 - 1
-                                            Year</option>
-                                        <option value="1-2 Years"
-                                            <?= ($row['required_experience'] == '1-2 Years') ? 'selected' : '' ?>>1 - 2
-                                            Years</option>
-                                        <option value="2-3 Years"
-                                            <?= ($row['required_experience'] == '2-3 Years') ? 'selected' : '' ?>>2 - 3
-                                            Years</option>
-                                        <option value="3-5 Years"
-                                            <?= ($row['required_experience'] == '3-5 Years') ? 'selected' : '' ?>>3 - 5
-                                            Years</option>
-                                        <option value="5-8 Years"
-                                            <?= ($row['required_experience'] == '5-8 Years') ? 'selected' : '' ?>>5 - 8
-                                            Years</option>
-                                        <option value="8-10 Years"
-                                            <?= ($row['required_experience'] == '8-10 Years') ? 'selected' : '' ?>>8 -
-                                            10 Years</option>
-                                        <option value="10+ Years"
-                                            <?= ($row['required_experience'] == '10+ Years') ? 'selected' : '' ?>>10+
-                                            Years</option>
-                                    </select>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        name="required_experience" 
+                                        id="required_experience"
+                                        placeholder="Enter experience (e.g., Fresher, 1-3 Years)"
+                                        value="<?= htmlspecialchars($row['required_experience'] ?? '') ?>">
                                 </div>
                             </div>
+
+                            <!--<div class="form-group">-->
+                            <!--    <label class="control-label col-sm-2">Required Experience :</label>-->
+                            <!--    <div class="col-sm-8">-->
+                            <!--        <select class="form-control" name="required_experience" id="required_experience">-->
+                            <!--            <option value="">Select Experience</option>-->
+                            <!--            <option value="Fresher"-->
+                            <!--                <?= ($row['required_experience'] == 'Fresher') ? 'selected' : '' ?>>Fresher-->
+                            <!--            </option>-->
+                            <!--            <option value="0-1 Years"-->
+                            <!--                <?= ($row['required_experience'] == '0-1 Years') ? 'selected' : '' ?>>0 - 1-->
+                            <!--                Year</option>-->
+                            <!--            <option value="1-2 Years"-->
+                            <!--                <?= ($row['required_experience'] == '1-2 Years') ? 'selected' : '' ?>>1 - 2-->
+                            <!--                Years</option>-->
+                            <!--            <option value="2-3 Years"-->
+                            <!--                <?= ($row['required_experience'] == '2-3 Years') ? 'selected' : '' ?>>2 - 3-->
+                            <!--                Years</option>-->
+                            <!--            <option value="3-5 Years"-->
+                            <!--                <?= ($row['required_experience'] == '3-5 Years') ? 'selected' : '' ?>>3 - 5-->
+                            <!--                Years</option>-->
+                            <!--            <option value="5-8 Years"-->
+                            <!--                <?= ($row['required_experience'] == '5-8 Years') ? 'selected' : '' ?>>5 - 8-->
+                            <!--                Years</option>-->
+                            <!--            <option value="8-10 Years"-->
+                            <!--                <?= ($row['required_experience'] == '8-10 Years') ? 'selected' : '' ?>>8 --->
+                            <!--                10 Years</option>-->
+                            <!--            <option value="10+ Years"-->
+                            <!--                <?= ($row['required_experience'] == '10+ Years') ? 'selected' : '' ?>>10+-->
+                            <!--                Years</option>-->
+                            <!--        </select>-->
+                            <!--    </div>-->
+                            <!--</div>-->
+                            
+                            
                             <div class="form-group">
                                 <label for="usernamee" class="col-sm-2">City :</label>
                                 <div class="col-sm-8">
