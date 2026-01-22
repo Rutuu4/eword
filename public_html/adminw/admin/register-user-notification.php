@@ -124,7 +124,8 @@ include("../database.php");
                         <td><?php if (!empty($row['img'])) { ?> <img src="../../<?= $row['img'] ?>" style="height: 70px"> <?php } ?></td>
                         <td><?= $row['website_link']; ?></td>
                         <!-- <td><?= $statuss; ?></td> -->
-                        <td><a href="master/edit-register-user-notification?key=<?= base64_encode($row['id']) ?>" class="btn btn-warning"><i class="fa fa-eye"></i> </a> </td>
+                        <!-- <td><a href="master/edit-register-user-notification?key=<?= base64_encode($row['id']) ?>" class="btn btn-warning"><i class="fa fa-eye"></i> </a> </td> -->
+                        <!-- <td><a href="master/edit-register-user-notification.php?key=<?= base64_encode($row['id']) ?>" class="btn btn-warning"><i class="fa fa-eye"></i> </a> </td> -->
                         <td>
                           <a button class="btn btn-danger btn-sm" onClick="window.open('master/delete-notification.php?id=<?= $row['id']; ?>',   'win1','width=950, height=800, menubar=no ,scrollbars=yes,top=50,left=100')"><i class="fa fa-trash"></i> Delete </button></a>
                         </td>
