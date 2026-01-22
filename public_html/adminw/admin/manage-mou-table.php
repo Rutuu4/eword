@@ -12,33 +12,32 @@ include("../database.php");
 
     <style>
         /* SIMPLE TAB STYLE */
-       /* SIMPLE TAB STYLE */
-.simple-tabs {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 15px 0;
-    display: flex;
-    overflow-x: auto;
-    white-space: nowrap;
-    border-bottom: 2px solid #ddd;
-    -webkit-overflow-scrolling: touch;
-}
+        .simple-tabs {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px 0;
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            border-bottom: 2px solid #ddd;
+            -webkit-overflow-scrolling: touch;
+        }
 
-.simple-tabs li {
-    padding: 10px 18px;
-    cursor: pointer;
-    border: 1px solid #ddd;
-    border-bottom: none;
-    background: #f4f6f9;
-    margin-right: 5px;
-    font-weight: 600;
-    flex-shrink: 0;
-}
+        .simple-tabs li {
+            padding: 10px 18px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            background: #f4f6f9;
+            margin-right: 5px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
 
-.simple-tabs li.active {
-    background: #fff;
-    color: #3c8dbc;
-}
+        .simple-tabs li.active {
+            background: #fff;
+            color: #3c8dbc;
+        }
 
         .tab-content {
             display: none;
@@ -46,6 +45,28 @@ include("../database.php");
 
         .tab-content.active {
             display: block;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100% !important;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            h4 {
+                font-size: 16px;
+            }
+
+            .btn {
+                margin-top: 10px;
+                float: none !important;
+                display: inline-block;
+            }
         }
     </style>
 </head>
@@ -70,34 +91,34 @@ include("../database.php");
 
                 <!-- ================= TAB 1 ================= -->
                 <div id="tab1" class="tab-content active">
-                
+
                     <h4>
                         Foreign Education List
                         <a href="master/export-applications.php?type=foreign"
-                           class="btn btn-success pull-right"
-                           style="margin-bottom: 10px;">
+                            class="btn btn-success pull-right"
+                            style="margin-bottom: 10px;">
                             <i class="fa fa-file-excel-o"></i> Export
                         </a>
                     </h4>
-                
-                    <table id="datatable1" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Course</th>
-                                <th>Country</th>
-                                <th>Institute</th>
-                                <th>Whatsapp</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                
-                        <tbody>
-                            <?php
-                            $i = 0;
-                
-                            $sql = "
+                    <div class="table-responsive">
+                        <table id="datatable1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Course</th>
+                                    <th>Country</th>
+                                    <th>Institute</th>
+                                    <th>Whatsapp</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php
+                                $i = 0;
+
+                                $sql = "
                                 SELECT 
                                     fsa.name,
                                     fsa.course_for_applying,
@@ -110,25 +131,26 @@ include("../database.php");
                                     ON fsa.foreign_education_id = fe.id
                                 ORDER BY fsa.id DESC
                             ";
-                
-                            $res = $conn->query($sql);
-                
-                            while ($row = $res->fetch_assoc()) {
-                                $i++;
-                            ?>
-                                <tr>
-                                    <td><?= $i ?></td>
-                                    <td><?= htmlspecialchars($row['name']) ?></td>
-                                    <td><?= htmlspecialchars($row['course_for_applying']) ?></td>
-                                    <td><?= htmlspecialchars($row['preferred_country']) ?></td>
-                                    <td><?= $row['consultancy_name'] ? htmlspecialchars($row['consultancy_name']) : '-' ?></td>
-                                    <td><?= $row['whatsapp_number'] ? htmlspecialchars($row['whatsapp_number']) : '-' ?></td>
-                                    <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                
+
+                                $res = $conn->query($sql);
+
+                                while ($row = $res->fetch_assoc()) {
+                                    $i++;
+                                ?>
+                                    <tr>
+                                        <td><?= $i ?></td>
+                                        <td><?= htmlspecialchars($row['name']) ?></td>
+                                        <td><?= htmlspecialchars($row['course_for_applying']) ?></td>
+                                        <td><?= htmlspecialchars($row['preferred_country']) ?></td>
+                                        <td><?= $row['consultancy_name'] ? htmlspecialchars($row['consultancy_name']) : '-' ?></td>
+                                        <td><?= $row['whatsapp_number'] ? htmlspecialchars($row['whatsapp_number']) : '-' ?></td>
+                                        <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
 
 
@@ -141,24 +163,24 @@ include("../database.php");
                             <i class="fa fa-file-excel-o"></i> Export
                         </a>
                     </h4>
-
-                    <table id="datatable2" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Company Name</th>
-                                <th>Company WhatsApp Name</th>
-                                <th>Role</th>
-                                <th>Experience</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $i = 0;
-                            $res = $conn->query(" SELECT 
+                    <div class="table-responsive">
+                        <table id="datatable2" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Company Name</th>
+                                    <th>Company WhatsApp Name</th>
+                                    <th>Role</th>
+                                    <th>Experience</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $i = 0;
+                                $res = $conn->query(" SELECT 
                 ja.name,
                 ja.phone_number,
                 jp.company_name,
@@ -170,22 +192,23 @@ include("../database.php");
             LEFT JOIN job_placements jp 
                 ON jp.id = ja.company_id
             ORDER BY ja.id DESC");
-                            while ($row = $res->fetch_assoc()) {
-                                $i++; ?>
-                                <tr>
-                                    <td><?= $i ?></td>
-                                    <td><?= $row['name'] ?></td>
-                                    <td><?= $row['phone_number'] ?></td>
-                                    <td><?= $row['company_name'] ?? '-' ?></td>
-                                    <td><?= $row['company_whatsapp_number'] ?? '-' ?></td>
-                                    <td><?= $row['role_applying_for'] ?></td>
-                                    <td><?= $row['year_of_experience'] ?></td>
-                                    <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
+                                while ($row = $res->fetch_assoc()) {
+                                    $i++; ?>
+                                    <tr>
+                                        <td><?= $i ?></td>
+                                        <td><?= $row['name'] ?></td>
+                                        <td><?= $row['phone_number'] ?></td>
+                                        <td><?= $row['company_name'] ?? '-' ?></td>
+                                        <td><?= $row['company_whatsapp_number'] ?? '-' ?></td>
+                                        <td><?= $row['role_applying_for'] ?></td>
+                                        <td><?= $row['year_of_experience'] ?></td>
+                                        <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
 
+                    </div>
                 </div>
 
                 <!-- ================= TAB 3 ================= -->
@@ -197,23 +220,23 @@ include("../database.php");
                             <i class="fa fa-file-excel-o"></i> Export
                         </a>
                     </h4>
-
-                    <table id="datatable3" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>College Name</th>
-                                <th>Phone</th>
-                                <th>Course</th>
-                                <th>Whatsapp Number</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $i = 0;
-                            $res = $conn->query("
+                    <div class="table-responsive">
+                        <table id="datatable3" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>College Name</th>
+                                    <th>Phone</th>
+                                    <th>Course</th>
+                                    <th>Whatsapp Number</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $i = 0;
+                                $res = $conn->query("
                                 SELECT 
                                     caf.name,
                                     caf.contact_number,
@@ -227,54 +250,56 @@ include("../database.php");
                                 ORDER BY caf.id DESC
                             ");
 
-                            while ($row = $res->fetch_assoc()) {
-                                $i++; ?>
-                                <tr>
-                                    <td><?= $i ?></td>
-                                    <td><?= $row['name'] ?></td>
-                                    <td><?= $row['college_name'] ?></td>
-                                    <td><?= $row['contact_number'] ?></td>
-                                    <td><?= $row['course_type'] ?></td>
-                                    <td><?= $row['whatsapp_number'] ?></td>
-                                    <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
+                                while ($row = $res->fetch_assoc()) {
+                                    $i++; ?>
+                                    <tr>
+                                        <td><?= $i ?></td>
+                                        <td><?= $row['name'] ?></td>
+                                        <td><?= $row['college_name'] ?></td>
+                                        <td><?= $row['contact_number'] ?></td>
+                                        <td><?= $row['course_type'] ?></td>
+                                        <td><?= $row['whatsapp_number'] ?></td>
+                                        <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
 
+                    </div>
                 </div>
-                
+
                 <!-- ========================================== -->
                 <div id="tab4" class="tab-content">
 
-                <h4>
-                    Project Internship List
-                    <a href="master/export-applications.php?type=internship"
-                       class="btn btn-success pull-right"
-                       style="margin-bottom: 10px;">
-                        <i class="fa fa-file-excel-o"></i> Export
-                    </a>
-                </h4>
-            
-                <table id="datatable4" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Student Number</th>
-                            <th>Domain</th>
-                            <th>Job Type</th>
-                            <th>Institute Name</th>
-                            <th>Mou Number</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            
-                    <?php
-                    $i = 0;
-            
-                    $sql = "
+                    <h4>
+                        Project Internship List
+                        <a href="master/export-applications.php?type=internship"
+                            class="btn btn-success pull-right"
+                            style="margin-bottom: 10px;">
+                            <i class="fa fa-file-excel-o"></i> Export
+                        </a>
+                    </h4>
+                    <div class="table-responsive">
+
+                        <table id="datatable4" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Student Number</th>
+                                    <th>Domain</th>
+                                    <th>Job Type</th>
+                                    <th>Institute Name</th>
+                                    <th>Mou Number</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <?php
+                                $i = 0;
+
+                                $sql = "
                         SELECT 
                             psa.name,
                             psa.phone_number,
@@ -288,58 +313,59 @@ include("../database.php");
                             ON psa.project_and_internship_id = pai.id
                         ORDER BY psa.id DESC
                     ";
-            
-                    $res = $conn->query($sql);
-            
-                    while ($row = $res->fetch_assoc()) {
-                        $i++;
-                    ?>
-                        <tr>
-                            <td><?= $i ?></td>
-                            <td><?= htmlspecialchars($row['name']) ?></td>
-                            <td><?= htmlspecialchars($row['phone_number']) ?></td>
-                            <td><?= htmlspecialchars($row['domain']) ?></td>
-                            <td><?= htmlspecialchars($row['job_type']) ?></td>
-                            <td><?= htmlspecialchars($row['consultancy_name'] ?? 'N/A') ?></td>
-                            <td><?= htmlspecialchars($row['whatsapp_number']) ?></td>
-                            <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
-                        </tr>
-                    <?php } ?>
-            
-                    </tbody>
-                </table>
-            
+
+                                $res = $conn->query($sql);
+
+                                while ($row = $res->fetch_assoc()) {
+                                    $i++;
+                                ?>
+                                    <tr>
+                                        <td><?= $i ?></td>
+                                        <td><?= htmlspecialchars($row['name']) ?></td>
+                                        <td><?= htmlspecialchars($row['phone_number']) ?></td>
+                                        <td><?= htmlspecialchars($row['domain']) ?></td>
+                                        <td><?= htmlspecialchars($row['job_type']) ?></td>
+                                        <td><?= htmlspecialchars($row['consultancy_name'] ?? 'N/A') ?></td>
+                                        <td><?= htmlspecialchars($row['whatsapp_number']) ?></td>
+                                        <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                    </tr>
+                                <?php } ?>
+
+                            </tbody>
+                        </table>
+
+                    </div>
                 </div>
-                
+
                 <!--=====================================-->
-                
+
                 <div id="tab5" class="tab-content">
 
-                <h4>
-                    Tuition Training List
-                    <a href="master/export-applications.php?type=tuition" class="btn btn-success pull-right" style="margin-bottom: 10px;">
-                        <i class="fa fa-file-excel-o"></i> Export
-                    </a>
-                </h4>
-            
-                <table id="datatable5" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Course</th>
-                            <th>Class Type</th>
-                            <th>Institute Name</th>
-                            <th>Whatsapp</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $i = 0;
-            
-                        $res = $conn->query("
+                    <h4>
+                        Tuition Training List
+                        <a href="master/export-applications.php?type=tuition" class="btn btn-success pull-right" style="margin-bottom: 10px;">
+                            <i class="fa fa-file-excel-o"></i> Export
+                        </a>
+                    </h4>
+                    <div class="table-responsive">
+                        <table id="datatable5" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Course</th>
+                                    <th>Class Type</th>
+                                    <th>Institute Name</th>
+                                    <th>Whatsapp</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $i = 0;
+
+                                $res = $conn->query("
                             SELECT 
                                 tsa.name,
                                 tsa.phone_number,
@@ -353,25 +379,26 @@ include("../database.php");
                                 ON tsa.tuition_and_training_id = tat.id
                             ORDER BY tsa.id DESC
                         ");
-            
-                        while ($row = $res->fetch_assoc()) {
-                            $i++;
-                        ?>
-                            <tr>
-                                <td><?= $i ?></td>
-                                <td><?= htmlspecialchars($row['name']) ?></td>
-                                <td><?= htmlspecialchars($row['phone_number']) ?></td>
-                                <td><?= htmlspecialchars($row['course_applying']) ?></td>
-                                <td><?= htmlspecialchars($row['class_type']) ?></td>
-                                <td><?= htmlspecialchars($row['consultancy_name'] ?? 'N/A') ?></td>
-                                <td><?= htmlspecialchars($row['whatsapp_number']) ?></td>
-                                <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
-                            </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-            
-            </div>
+
+                                while ($row = $res->fetch_assoc()) {
+                                    $i++;
+                                ?>
+                                    <tr>
+                                        <td><?= $i ?></td>
+                                        <td><?= htmlspecialchars($row['name']) ?></td>
+                                        <td><?= htmlspecialchars($row['phone_number']) ?></td>
+                                        <td><?= htmlspecialchars($row['course_applying']) ?></td>
+                                        <td><?= htmlspecialchars($row['class_type']) ?></td>
+                                        <td><?= htmlspecialchars($row['consultancy_name'] ?? 'N/A') ?></td>
+                                        <td><?= htmlspecialchars($row['whatsapp_number']) ?></td>
+                                        <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
 
 
             </section>
@@ -389,7 +416,10 @@ include("../database.php");
 
             // Init DataTables
             $('#datatable1,#datatable2,#datatable3,#datatable4,#datatable5').DataTable({
-                pageLength: 25
+                pageLength: 25,
+                scrollX: true,
+                autoWidth: false,
+                responsive: false
             });
 
             // Simple tab click
