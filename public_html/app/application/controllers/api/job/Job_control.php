@@ -497,7 +497,7 @@ class Job_control extends REST_Controller
                 $formatted_list[$id] = [
                     'id'                => $id,
                     'Company Name'      => $row['company_name'],
-                    'City'              => $row['city_name'],
+                    'City'              => $row['city_job_name'],
                     'Nearby Area'       => $row['nearby_area'],
                     'Salary'       => $row['salary'],
                     'required_experience'       => $row['required_experience'],
