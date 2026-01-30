@@ -199,7 +199,7 @@ if ($_POST['h1'] == 1) {
                                 <label class="control-label col-sm-2">WhatsApp Number:</label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control" name="whatsapp_number" id="whatsapp_number"
-                                        maxlength="10" value="<?= $row['whatsapp_number']; ?>"
+                                        maxlength="15" value="<?= $row['whatsapp_number']; ?>"
                                         placeholder="Enter WhatsApp Number">
                                 </div>
                             </div>

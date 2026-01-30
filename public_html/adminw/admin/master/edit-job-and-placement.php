@@ -172,15 +172,15 @@ if ($_POST['h1'] == 1) {
                             </div>
 
                             <!-- Required Experience -->
-                            
+
                             <!-- Required Experience -->
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Required Experience :</label>
                                 <div class="col-sm-8">
-                                    <input 
-                                        type="text" 
-                                        class="form-control" 
-                                        name="required_experience" 
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="required_experience"
                                         id="required_experience"
                                         placeholder="Enter experience (e.g., Fresher, 1-3 Years)"
                                         value="<?= htmlspecialchars($row['required_experience'] ?? '') ?>">
@@ -219,8 +219,8 @@ if ($_POST['h1'] == 1) {
                             <!--        </select>-->
                             <!--    </div>-->
                             <!--</div>-->
-                            
-                            
+
+
                             <div class="form-group">
                                 <label for="usernamee" class="col-sm-2">City :</label>
                                 <div class="col-sm-8">
@@ -261,7 +261,7 @@ if ($_POST['h1'] == 1) {
                                 <label class="control-label col-sm-2">WhatsApp Number:</label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control" name="whatsapp_number" id="whatsapp_number"
-                                        maxlength="10" value="<?= $row['whatsapp_number']; ?>"
+                                        maxlength="15" value="<?= $row['whatsapp_number']; ?>"
                                         placeholder="Enter WhatsApp Number">
                                 </div>
                             </div>

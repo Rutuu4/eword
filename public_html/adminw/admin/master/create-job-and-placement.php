@@ -154,7 +154,7 @@ if ($_POST['h1'] == 1) {
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <!-- Salary Range -->
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Salary :</label>
@@ -170,10 +170,10 @@ if ($_POST['h1'] == 1) {
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Required Experience :</label>
                                 <div class="col-sm-8">
-                                    <input 
-                                        type="text" 
-                                        class="form-control" 
-                                        name="required_experience" 
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="required_experience"
                                         id="required_experience"
                                         placeholder="Enter experience (e.g., Fresher, 1-3 Years)">
                                 </div>
@@ -196,8 +196,8 @@ if ($_POST['h1'] == 1) {
                             <!--        </select>-->
                             <!--    </div>-->
                             <!--</div>-->
-                            
-                            
+
+
                             <div class="form-group">
                                 <label for="city_id" class="col-sm-2">City :</label>
                                 <div class="col-sm-8">
@@ -232,7 +232,7 @@ if ($_POST['h1'] == 1) {
                             </div>
                             <div class="form-group" id="whatsapp_group" style="display: none;"> <label
                                     class="control-label col-sm-2">WhatsApp Number:</label>
-                                <div class="col-sm-8"> <input type="text" class="form-control" maxlength="10"
+                                <div class="col-sm-8"> <input type="text" class="form-control" maxlength="15"
                                         name="whatsapp_number" id="whatsapp_number" placeholder="Enter WhatsApp Number">
                                 </div>
                             </div>

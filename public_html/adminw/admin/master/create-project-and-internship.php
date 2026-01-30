@@ -185,7 +185,7 @@ if ($_POST['h1'] == 1) {
                             </div>
                             <div class="form-group" id="whatsapp_group" style="display: none;"> <label
                                     class="control-label col-sm-2">WhatsApp Number:</label>
-                                <div class="col-sm-8"> <input type="text" class="form-control" maxlength="10"
+                                <div class="col-sm-8"> <input type="text" class="form-control" maxlength="15"
                                         name="whatsapp_number" id="whatsapp_number" placeholder="Enter WhatsApp Number">
                                 </div>
                             </div>

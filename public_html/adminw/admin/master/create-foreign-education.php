@@ -192,8 +192,7 @@ if ($_POST['h1'] == 1) {
                                 <label for="usernamee" class="col-sm-2">Course :</label>
                                 <div class="col-sm-8">
 
-                                    <select name="courses_id[]" id="courses_id" class="form-control select2" multiple
-                                        >
+                                    <select name="courses_id[]" id="courses_id" class="form-control select2" multiple>
                                         <option value="" disabled>Select Course</option>
                                         <?php
                                         $sqlb = "SELECT id,name FROM f_courses WHERE status=1";
@@ -238,7 +237,7 @@ if ($_POST['h1'] == 1) {
                             </div>
                             <div class="form-group" id="whatsapp_group" style="display: none;"> <label
                                     class="control-label col-sm-2">WhatsApp Number:</label>
-                                <div class="col-sm-8"> <input type="text" class="form-control" maxlength="10"
+                                <div class="col-sm-8"> <input type="text" class="form-control" maxlength="15"
                                         name="whatsapp_number" id="whatsapp_number" placeholder="Enter WhatsApp Number">
                                 </div>
                             </div>
