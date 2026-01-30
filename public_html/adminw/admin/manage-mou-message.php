@@ -1,6 +1,40 @@
 <?php
 include("../database.php");
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'retry') {
+
+    if (!isset($_POST['id'])) {
+        echo "INVALID";
+        exit;
+    }
+
+    $id = intval($_POST['id']);
+
+    // Check current status
+    $check = $conn2->query("SELECT status FROM wp_messages WHERE id = $id");
+    if (!$check || $check->num_rows === 0) {
+        echo "NOT_FOUND";
+        exit;
+    }
+
+    $row = $check->fetch_assoc();
+
+    if ($row['status'] !== 'failed') {
+        echo "NOT_ALLOWED";
+        exit;
+    }
+
+    $update = $conn2->query("
+        UPDATE wp_messages 
+        SET status = 'queued', updated_at = NOW()
+        WHERE id = $id
+    ");
+
+    echo $update ? "SUCCESS" : "ERROR";
+    exit;
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -11,6 +45,26 @@ include("../database.php");
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     <?php include("includes/css-scripts.php"); ?>
+    <style>
+        .retry-loader {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
 
 </head>
 
@@ -46,12 +100,12 @@ include("../database.php");
                                     <thead>
                                         <tr>
                                             <th>Sr No.</th>
-                                            <th style="width:20%">Message Id</th>
+                                            <th style="width:10%">Message Id</th>
                                             <!-- <th style="width:20%">Salary</th> -->
                                             <!-- <th>Video Link</th> -->
                                             <th>Phone Number </th>
                                             <th>MOU Phone Number </th>
-                                            <th>Website Link</th>
+                                            <!-- <th>Website Link</th> -->
                                             <th>Message Text</th>
                                             <th>Status</th>
                                             <th>Failure Reason</th>
@@ -78,8 +132,8 @@ ORDER BY id DESC;
 
                                                 <td><?= $row['message_id']; ?></td>
                                                 <td><?= $row['phone_number']; ?></td>
-                                                <td><?= $row['mou_phone_number']; ?></td>
-                                                <td><?= $row['website_link']; ?></td>
+                                                <td><?= !empty($row['mou_phone_number']) ? $row['mou_phone_number'] : '-'; ?></td>
+                                                <!-- <td><?= $row['website_link']; ?></td> -->
                                                 <td><?= $row['message_text']; ?></td>
                                                 <td>
                                                     <?php
@@ -172,20 +226,32 @@ ORDER BY id DESC;
             if (!confirm('Change status from FAILED to QUEUED?')) return;
 
             let btn = $(this);
-            btn.text('Retrying...').css('pointer-events', 'none');
+            let originalText = btn.text();
+
+            btn
+                .html('<span class="retry-loader"></span>Retrying...')
+                .css('pointer-events', 'none');
 
             $.ajax({
-                url: 'master/ajax/update-message-status.php',
+                url: window.location.href, // ✅ SAME PAGE
                 type: 'POST',
                 data: {
+                    action: 'retry',
                     id: btn.data('id')
                 },
+                timeout: 5000,
                 success: function(res) {
-                    if (res === 'SUCCESS') {
-                        location.reload();
+
+                    if (res.trim() === 'SUCCESS') {
+                        btn
+                            .removeClass('label-danger')
+                            .addClass('label-info')
+                            .html('Queued');
                     } else {
-                        alert('Status update failed!');
-                        btn.css('pointer-events', 'auto');
+                        btn
+                            .html(originalText)
+                            .css('pointer-events', 'auto');
+                        alert('Status update failed: ' + res);
                     }
                 }
             });

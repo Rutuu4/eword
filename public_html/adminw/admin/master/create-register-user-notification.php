@@ -49,7 +49,7 @@ if ($_POST['h1'] == 1) {
 
     $flag = 'custom';
     $serviceAccountPath = 'e-world-education-b737a-firebase-adminsdk-fbsvc-1bd2575c21.json';
-    $projectId = 'e-world-education-b737a';
+    $projectId = 'e-world-android';
     function getAccessToken($serviceAccountPath)
     {
 
@@ -188,10 +188,12 @@ if ($_POST['h1'] == 1) {
           $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
           if (curl_errno($ch)) {
-            //echo "cURL Error: " . curl_error($ch);
+            echo "cURL Error: " . curl_error($ch);
+            exit;
           } else {
-            //echo "Response Code: $httpCode\n";
-            //echo "Response: $response\n";
+            echo "Response Code: $httpCode\n";
+            echo "Response: $response\n";
+            exit;
           }
         }
         if (!empty($divice_token_iphone)) {
@@ -267,10 +269,12 @@ if ($_POST['h1'] == 1) {
           $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
           if (curl_errno($ch)) {
-            //echo "cURL Error: " . curl_error($ch);
+            echo "cURL Error: " . curl_error($ch);
+            exit;
           } else {
-            //echo "Response Code: $httpCode\n";
-            //echo "Response: $response\n";
+            echo "Response Code: $httpCode\n";
+            echo "Response: $response\n";
+            exit;
           }
         }
       }
