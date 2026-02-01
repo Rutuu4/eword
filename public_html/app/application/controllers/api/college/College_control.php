@@ -86,11 +86,11 @@ class College_control extends REST_Controller
 
         if ($data['college_university_type_id'] == 1 || $data['college_university_type_id'] == 2) {
             $wherestring .= " ORDER BY
-                            CASE
-                                WHEN college_university_details.name REGEXP '^[઀-૿]' THEN 0
-                                ELSE 1
-                            END,
-                            CONVERT(college_university_details.name USING utf8mb4) ASC";
+    CASE
+        WHEN college_university_details.name REGEXP '^[A-Za-z]' THEN 0
+        ELSE 1
+    END,
+    college_university_details.name ASC";
         }
 
         // ✅ Main fields + GROUP_CONCAT for course/sub-main course info
