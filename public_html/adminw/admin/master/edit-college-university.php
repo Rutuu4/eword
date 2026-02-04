@@ -208,14 +208,14 @@ if ($_POST['h1'] == 1) {
                                 <label class="control-label col-sm-2">Is MOU Present?</label>
                                 <div class="col-sm-8">
                                     <label><input type="checkbox" name="is_mou" id="is_mou" value="1"
-                                            <?php echo ($row['mou_present'] == 1) ? 'checked' : ''; ?>> Yes</label>
+                                            <?php echo ($row['is_mou'] == 1) ? 'checked' : ''; ?>> Yes</label>
                                 </div>
                             </div>
                             <div class="form-group" id="whatsapp_group" style="display: none;">
                                 <label class="control-label col-sm-2">WhatsApp Number:</label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control" name="whatsapp_number" id="whatsapp_number"
-                                        maxlength="15" value="<?= $row['whats_app_number']; ?>"
+                                        maxlength="15" value="<?= $row['whatsapp_number']; ?>"
                                         placeholder="Enter WhatsApp Number">
                                 </div>
                             </div>
