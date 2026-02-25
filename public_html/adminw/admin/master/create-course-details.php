@@ -225,7 +225,14 @@ if ($_POST['h1'] == 1) {
                 </div>
               </div>
 
+              <div class="form-group">
+                <label for="passwrod" class="col-sm-2">Description :</label>
+                <div class="col-sm-8">
 
+                  <textarea class="form-control textarea" placeholder="Description" style="width: 100%; height: 250px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" name="details" id="details"></textarea>
+
+                </div>
+              </div>
 
 
 
