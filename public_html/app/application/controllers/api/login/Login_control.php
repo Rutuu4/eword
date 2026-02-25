@@ -688,7 +688,7 @@ class Login_control extends REST_Controller
         }
         $this->response($response, 200);
     }
-    
+
     public function verify_user_login_post()
     {
         $data = $this->post();
@@ -708,7 +708,7 @@ class Login_control extends REST_Controller
         $userIdRaw = trim($data['user_id']);   // "1,023"
         $userIdRaw = str_replace(',', '', $userIdRaw);
         $userId    = (int) $userIdRaw;
-        
+
         $username  = trim($data['username']);
         $email     = trim($data['email']);
         $referCode = !empty($data['refer_code']) ? trim($data['refer_code']) : null;
@@ -716,11 +716,12 @@ class Login_control extends REST_Controller
         /* =========================
        REFER CODE CHECK (OPTIONAL)
     ========================= */
+
         if (!empty($referCode)) {
 
             $referParams = [
                 'table' => TBL_REGISTRATION, // change table if refer master exists
-                'where' => ['refer_code' => "'$referCode'"],
+                'where' => ['username' => "'$referCode'"],
                 'compare_type' => '='
             ];
 
