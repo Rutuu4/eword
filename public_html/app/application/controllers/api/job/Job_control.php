@@ -13,6 +13,8 @@ class Job_control extends REST_Controller
         include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
         $this->wp_db = $this->load->database('wp_db', TRUE);
         $this->load->helper('common_helper');
+        $this->load->helper('job_whatsapp');
+        $this->load->helper('whatsapp_number');
         foreach (globalVars() as $key => $value) {
             if (is_array(${$value})) {
                 for ($i = 1; $i <= count(${$value}); $i++) {
@@ -322,7 +324,7 @@ class Job_control extends REST_Controller
                     'expectedCTC' => $job['expected_ctc']
                     // 'resumeUrl' => base_url($resume_file_path)
                 ];
-                $jobPlacementName = 'Generated'; // fallback
+                $jobPlacementName = ''; // fallback
                 if (!empty($job['company_id'])) {
 
                     $fe = $this->db
@@ -333,15 +335,15 @@ class Job_control extends REST_Controller
                         ->row();
 
                     if ($fe && !empty($fe->company_name)) {
-                        $jobPlacementName = "To " . $fe->company_name;
+                        $jobPlacementName = $fe->company_name;
                     }
                 }
 
                 // 📝 Build message (FORMAT UNCHANGED)
-                $messageText = "*Student Lead  {$jobPlacementName} From E World Education*\n\n"
-                    . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
-                    . "*Student Details:*\n\n";
+                // $messageText = "*Student Lead  {$jobPlacementName} From E World Education*\n\n"
+                //     . "Hello,\n\n"
+                //     . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
+                //     . "*Student Details:*\n\n";
 
                 foreach ($messageData as $key => $value) {
 
@@ -361,30 +363,64 @@ class Job_control extends REST_Controller
 
                     $messageText .= "{$label}: {$value}\n";
                 }
+                $whatsAppNumber = ($jobcompany_whatsapp_number ?? $data['phone_number']);
 
-                $messageText .= "Please review the details and get in touch with the student.\n"
-                    . "Thank You.\n\n"
-                    . "*From*\n"
-                    . "*E World Education*";
+                $value1      = !empty($jobPlacementName) ? $jobPlacementName : '-';
+                $name        = !empty($job['name']) ? $job['name'] : '-';
+                $email       = !empty($job['email']) ? $job['email'] : '-';
+                $phoneno     = !empty($job['phone_number']) ? $job['phone_number'] : '-';
+                $role      = !empty($job['role_applying_for']) ? $job['role_applying_for'] : '-';
+                $url = !empty(base_url($resume_file_path)) ? base_url($resume_file_path) : '-';
+
+                // $collegeid = $data['collegeId'] ?? '';
+
+                $response = send_whatsapp_template(
+                    format_whatsapp_number($whatsAppNumber),
+                    $value1,
+                    $name,
+                    $email,
+                    $phoneno,
+                    $role,
+                    $url
+
+                );
                 $mou_phone_number = get_phone_number_by_type('job');
-                // ✅ Insert into wp_messages
-                $wpMessageData = [
-                    'message_id'   => $this->uuid_v4(),
-                    'phone_number' => $jobcompany_whatsapp_number,
-                    'mou_phone_number' => $mou_phone_number,
-                    'website_link' => base_url($resume_file_path),
-                    'message_text' => $messageText,
-                    'message_type' => 'text',
-                    'status'       => 'queued',
-                    'created_at'   => date('Y-m-d H:i:s'),
-                    'updated_at'   => date('Y-m-d H:i:s'),
-                ];
+                if ($mou_phone_number) {
+                    $response = send_whatsapp_template(
+                        format_whatsapp_number($mou_phone_number),
+                        $value1,
+                        $name,
+                        $email,
+                        $phoneno,
+                        $role,
+                        $url
 
-                $this->wp_db->insert('wp_messages', $wpMessageData);
-
-                if ($this->wp_db->affected_rows() == 0) {
-                    log_message('error', 'WP Message insert failed: ' . json_encode($wpMessageData));
+                    );
                 }
+
+                // $messageText .= "Please review the details and get in touch with the student.\n"
+                //     . "Thank You.\n\n"
+                //     . "*From*\n"
+                //     . "*E World Education*";
+
+                // ✅ Insert into wp_messages
+                // $wpMessageData = [
+                //     'message_id'   => $this->uuid_v4(),
+                //     'phone_number' => $jobcompany_whatsapp_number,
+                //     'mou_phone_number' => $mou_phone_number,
+                //     'website_link' => base_url($resume_file_path),
+                //     'message_text' => $messageText,
+                //     'message_type' => 'text',
+                //     'status'       => 'queued',
+                //     'created_at'   => date('Y-m-d H:i:s'),
+                //     'updated_at'   => date('Y-m-d H:i:s'),
+                // ];
+
+                // $this->wp_db->insert('wp_messages', $wpMessageData);
+
+                // if ($this->wp_db->affected_rows() == 0) {
+                //     log_message('error', 'WP Message insert failed: ' . json_encode($wpMessageData));
+                // }
             }
 
 

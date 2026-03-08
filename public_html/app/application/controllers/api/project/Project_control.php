@@ -13,6 +13,8 @@ class Project_control extends REST_Controller
         include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
         $this->wp_db = $this->load->database('wp_db', TRUE);
         $this->load->helper('common_helper');
+        $this->load->helper('project_whatsapp');
+        $this->load->helper('whatsapp_number');
         foreach (globalVars() as $key => $value) {
             if (is_array(${$value})) {
                 for ($i = 1; $i <= count(${$value}); $i++) {
@@ -324,7 +326,7 @@ class Project_control extends REST_Controller
         $insert_id = $this->General_model->insert('p_student_application', $insertData);
 
         if ($insert_id) {
-            $projectInternshipName = 'Generated'; // fallback
+            $projectInternshipName = ''; // fallback
 
             if (!empty($data['projectPlacementId'])) {
                 $fe = $this->db
@@ -335,57 +337,67 @@ class Project_control extends REST_Controller
                     ->row();
 
                 if ($fe && !empty($fe->consultancy_name)) {
-                    $projectInternshipName = "To " . $fe->consultancy_name;
+                    $projectInternshipName = $fe->consultancy_name;
                 }
             }
             // ✅ Send WhatsApp Message
             if (!empty($data['phoneNumber'])) {
-                $excludeKeys = ['whatsappNumber', 'id'];
 
+                $excludeKeys = ['whatsAppNumber', 'id'];
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-                $messageText = "*Student Lead {$projectInternshipName} From E World Education*\n\n"
-                    . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
-                    . "*Student Details:*\n\n";
+                $studentData = "";
 
-                foreach ($messageData as $key => $value) {
+                foreach ($data as $key => $value) {
 
                     if (is_array($value)) {
                         $value = implode(', ', $value);
                     }
 
-                    $label = ucwords(str_replace(
-                        ['_', '-'],
-                        ' ',
-                        preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)
-                    ));
+                    $label = ucwords(str_replace('_', ' ', $key));
 
-                    $messageText .= "{$label}: {$value}\n";
+                    $studentData .= "{$label}: {$value}, ";
                 }
 
-                $messageText .= "Please review the details and get in touch with the student.\n"
-                    . "Thank You.\n\n"
-                    . "*From*\n"
-                    . "*E World Education*";
+                $whatsAppNumber = format_whatsapp_number($data['whatsappNumber'] ?? $data['phoneNumber']);
+
+                $value1      = !empty($projectInternshipName) ? $projectInternshipName : '-';
+                $name        = !empty($data['name']) ? $data['name'] : '-';
+                $email       = !empty($data['email']) ? $data['email'] : '-';
+                $phoneno     = !empty($data['phoneNumber']) ? $data['phoneNumber'] : '-';
+                $domain      = !empty($data['domain']) ? $data['domain'] : '-';
+                $course_type = !empty($data['courseType']) ? $data['courseType'] : '-';
+
+                // $collegeid = $data['collegeId'] ?? '';
+
+                $response = send_whatsapp_template(
+                    $whatsAppNumber,
+                    $value1,
+                    $name,
+                    $email,
+                    $phoneno,
+                    $domain,
+                    $course_type
+
+                );
                 $mou_phone_number = get_phone_number_by_type('internship');
+                if ($mou_phone_number) {
+                    $mou_phone_number = format_whatsapp_number($mou_phone_number);
+                    $response = send_whatsapp_template(
+                        $mou_phone_number,
+                        $value1,
+                        $name,
+                        $email,
+                        $phoneno,
+                        $domain,
+                        $course_type
 
-                // ================================
-                // ✅ INSERT INTO wp_messages
-                // ================================
-                $wpMessageData = [
-                    'message_id'   => $this->uuid_v4(),
-                    'phone_number' => $data['whatsappNumber'],
-                    'mou_phone_number' => $mou_phone_number,
-                    'message_text' => $messageText,
-                    'message_type' => 'text',
-                    'status'       => 'queued',
-                    'created_at'   => date('Y-m-d H:i:s'),
-                    'updated_at'   => date('Y-m-d H:i:s'),
-                ];
-
-                $this->wp_db->insert('wp_messages', $wpMessageData);
+                    );
+                }
+                // print_r($response);
+                // exit;
             }
+
 
             $response = [
                 'code' => REST_Controller::HTTP_OK,

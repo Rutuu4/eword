@@ -13,6 +13,8 @@ class Education_control extends REST_Controller
         include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
         $this->wp_db = $this->load->database('wp_db', TRUE);
         $this->load->helper('common_helper');
+        $this->load->helper('education_whatsapp');
+        $this->load->helper('whatsapp_number');
 
         foreach (globalVars() as $key => $value) {
             if (is_array(${$value})) {
@@ -447,7 +449,7 @@ class Education_control extends REST_Controller
         $insert_id = $this->General_model->insert('f_student_application', $insertData);
 
         if ($insert_id) {
-            $foreignEducationName = 'Generated'; // fallback
+            $foreignEducationName = ''; // fallback
 
             if (!empty($data['foreignEducationId'])) {
                 $fe = $this->db
@@ -458,7 +460,7 @@ class Education_control extends REST_Controller
                     ->row();
 
                 if ($fe && !empty($fe->consultancy_name)) {
-                    $foreignEducationName = "To " . $fe->consultancy_name;
+                    $foreignEducationName =  $fe->consultancy_name;
                 }
             }
             // ✅ Send WhatsApp/SMS if phone number exists
@@ -486,9 +488,47 @@ class Education_control extends REST_Controller
 
                     $messageText .= "{$label}: {$value}\n";
                 }
+                $whatsAppNumber = format_whatsapp_number($data['whatsAppNumber'] ?? $data['phoneNumber']);
+
+                $value1      = !empty($foreignEducationName) ? $foreignEducationName : '-';
+                $name        = !empty($data['name']) ? $data['name'] : '-';
+                $email       = !empty($data['email']) ? $data['email'] : '-';
+                $phoneno     = !empty($data['phoneNumber']) ? $data['phoneNumber'] : '-';
+                $country      = !empty($data['preferredCountry']) ? $data['preferredCountry'] : '-';
+                $exam = !empty($data['examPreference']) ? $data['examPreference'] : '-';
+                $visa = !empty($data['visaType']) ? $data['visaType'] : '-';
+                $course = !empty($data['courseType']) ? $data['courseType'] : '-';
+
+                $response = send_whatsapp_template(
+                    $whatsAppNumber,
+                    $value1,
+                    $name,
+                    $email,
+                    $phoneno,
+                    $country,
+                    $exam,
+                    $visa,
+                    $course
+
+                );
+
 
                 // Get WhatsApp number dynamically based on type
                 $mou_phone_number = get_phone_number_by_type('foreign');
+                if ($mou_phone_number) {
+                    $response = send_whatsapp_template(
+                        format_whatsapp_number($mou_phone_number),
+                        $value1,
+                        $name,
+                        $email,
+                        $phoneno,
+                        $country,
+                        $exam,
+                        $visa,
+                        $course
+
+                    );
+                }
 
                 $messageText .= "Please review the details and get in touch with the student.\n"
                     . "Thank You.\n\n"

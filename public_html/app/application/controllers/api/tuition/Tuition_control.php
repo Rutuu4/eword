@@ -13,6 +13,8 @@ class Tuition_control extends REST_Controller
         include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
         $this->wp_db = $this->load->database('wp_db', TRUE);
         $this->load->helper('common_helper');
+        $this->load->helper('tuition_whatsapp');
+        $this->load->helper('whatsapp_number');
         foreach (globalVars() as $key => $value) {
             if (is_array(${$value})) {
                 for ($i = 1; $i <= count(${$value}); $i++) {
@@ -335,7 +337,7 @@ class Tuition_control extends REST_Controller
         $insert_id = $this->General_model->insert('t_student_application', $insertData);
 
         if ($insert_id) {
-            $tuitionTrainingName = 'Generated'; // fallback
+            $tuitionTrainingName = ''; // fallback
 
             if (!empty($data['tuitionTrainingId'])) {
                 $fe = $this->db
@@ -346,7 +348,7 @@ class Tuition_control extends REST_Controller
                     ->row();
 
                 if ($fe && !empty($fe->consultancy_name)) {
-                    $tuitionTrainingName = "To " . $fe->consultancy_name;
+                    $tuitionTrainingName = $fe->consultancy_name;
                 }
             }
 
@@ -375,26 +377,58 @@ class Tuition_control extends REST_Controller
 
                     $messageText .= "{$label}: {$value}\n";
                 }
+                $whatsAppNumber = format_whatsapp_number($data['whatsAppNumber'] ?? $data['phoneNumber']);
+                $value1 = $tuitionTrainingName ?? '-';
+                $name = $data['name'] ?? '-';
+                $email = $data['email'] ?? '-';
+                $phoneno = $data['phoneNumber'] ?? '-';
+                $course_applying = $data['courseForApplying'] ?? '-';
+                $class_type = $data['preferredClassType'] ?? '-';
 
-                $messageText .= "Please review the details and get in touch with the student.\n"
-                    . "Thank You.\n\n"
-                    . "*From*\n"
-                    . "*E World Education*";
+                $response = send_whatsapp_template(
+                    $whatsAppNumber,
+                    $value1,
+                    $name,
+                    $email,
+                    $phoneno,
+                    $course_applying,
+                    $class_type
+                );
                 $mou_phone_number = get_phone_number_by_type('tuition');
+                if ($mou_phone_number) {
+                    $mou_phone_number = format_whatsapp_number($mou_phone_number);
+
+                    $response = send_whatsapp_template(
+                        $mou_phone_number,
+                        $value1,
+                        $name,
+                        $email,
+                        $phoneno,
+                        $course_applying,
+                        $class_type
+                    );
+                }
+
+
+                // $messageText .= "Please review the details and get in touch with the student.\n"
+                //     . "Thank You.\n\n"
+                //     . "*From*\n"
+                //     . "*E World Education*";
+
 
                 // ✅ Insert into wp_messages
-                $wpMessageData = [
-                    'message_id'   => $this->uuid_v4(),
-                    'phone_number' => $data['whatsAppNumber'],
-                    'mou_phone_number' => $mou_phone_number,
-                    'message_text' => $messageText,
-                    'message_type' => 'text',
-                    'status'       => 'queued',
-                    'created_at'   => date('Y-m-d H:i:s'),
-                    'updated_at'   => date('Y-m-d H:i:s'),
-                ];
+                // $wpMessageData = [
+                //     'message_id'   => $this->uuid_v4(),
+                //     'phone_number' => $data['whatsAppNumber'],
+                //     'mou_phone_number' => $mou_phone_number,
+                //     'message_text' => $messageText,
+                //     'message_type' => 'text',
+                //     'status'       => 'queued',
+                //     'created_at'   => date('Y-m-d H:i:s'),
+                //     'updated_at'   => date('Y-m-d H:i:s'),
+                // ];
 
-                $this->wp_db->insert('wp_messages', $wpMessageData);
+                // $this->wp_db->insert('wp_messages', $wpMessageData);
             }
 
             $response = [
