@@ -13,6 +13,8 @@ class College_control extends REST_Controller
         include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
         $this->wp_db = $this->load->database('wp_db', TRUE);
         $this->load->helper('common_helper');
+        $this->load->helper('college_whatsapp');
+        $this->load->helper('whatsapp_number');
         foreach (globalVars() as $key => $value) {
             if (is_array(${$value})) {
                 for ($i = 1; $i <= count(${$value}); $i++) {
@@ -295,7 +297,7 @@ class College_control extends REST_Controller
         $insert_id = $this->General_model->insert('college_application_form', $insertData);
 
         if ($insert_id) {
-            $collegeName = 'Generated'; // fallback
+            $collegeName = ''; // fallback
 
             if (!empty($data['collegeId'])) {
                 $fe = $this->db
@@ -306,7 +308,7 @@ class College_control extends REST_Controller
                     ->row();
 
                 if ($fe && !empty($fe->name)) {
-                    $collegeName = "To " . $fe->name;
+                    $collegeName = $fe->name;
                 }
             }
             // ================================
@@ -315,49 +317,55 @@ class College_control extends REST_Controller
             if (!empty($data['contact_number'])) {
 
                 $excludeKeys = ['whatsAppNumber', 'id'];
-
                 $messageData = array_diff_key($data, array_flip($excludeKeys));
 
-                $messageText = "*Student Lead {$collegeName} From E World Education*\n\n"
-                    . "Hello,\n\n"
-                    . "A new student inquiry has been submitted to you through  *E World Education*\n\n"
-                    . "*Student Details:*\n\n";
+                $studentData = "";
 
-                foreach ($messageData as $key => $value) {
+                foreach ($data as $key => $value) {
 
                     if (is_array($value)) {
                         $value = implode(', ', $value);
                     }
 
-                    $label = ucwords(str_replace(
-                        ['_', '-'],
-                        ' ',
-                        preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)
-                    ));
+                    $label = ucwords(str_replace('_', ' ', $key));
 
-                    $messageText .= "{$label}: {$value}\n";
+                    $studentData .= "{$label}: {$value}, ";
                 }
 
-                $messageText .= "Please review the details and get in touch with the student.\n"
-                    . "Thank You.\n\n"
-                    . "*From*\n"
-                    . "*E World Education*";
-                $mou_phone_number = get_phone_number_by_type('college');
-                // ================================
-                // ✅ INSERT INTO wp_messages
-                // ================================
-                $wpMessageData = [
-                    'message_id'   => $this->uuid_v4(),
-                    'phone_number' => $whatsAppNumber,
-                    'mou_phone_number' => $mou_phone_number,
-                    'message_text' => $messageText,
-                    'message_type' => 'text',
-                    'status'       => 'queued',
-                    'created_at'   => date('Y-m-d H:i:s'),
-                    'updated_at'   => date('Y-m-d H:i:s'),
-                ];
+                $studentData = rtrim($studentData, ", ");
+                $whatsAppNumber = format_whatsapp_number($whatsAppNumber);
+                $value1    = $collegeName;
+                $name      = $data['name'] ?? '-';
+                $email     = $data['email'] ?? '-';
+                $phoneno   = $data['contact_number'] ?? '-';
+                $course_type   = $data['course_type'] ?? '-';
+                $sub_course_type   = $data['sub_course_type'] ?? '-';
+                $results_type   = $data['results_type'] ?? '-';
+                // $collegeid = $data['collegeId'] ?? '';
 
-                $this->wp_db->insert('wp_messages', $wpMessageData);
+                send_whatsapp_template(
+                    $whatsAppNumber,
+                    $value1,
+                    $name,
+                    $email,
+                    $phoneno,
+                    $course_type,
+                    $sub_course_type,
+                    $results_type
+                );
+                $mou_phone_number = get_phone_number_by_type('college');
+                if ($mou_phone_number) {
+                    send_whatsapp_template(
+                        format_whatsapp_number($mou_phone_number),
+                        $value1,
+                        $name,
+                        $email,
+                        $phoneno,
+                        $course_type,
+                        $sub_course_type,
+                        $results_type
+                    );
+                }
             }
 
             $response = [
