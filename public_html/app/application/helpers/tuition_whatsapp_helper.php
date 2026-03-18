@@ -15,19 +15,19 @@ function send_whatsapp_template($to, $value1, $name, $email, $phoneno, $course_a
                         ],
                         [
                             "type" => "text",
-                            "text" => $name
-                        ],
-                        [
-                            "type" => "text",
-                            "text" => $email
-                        ],
-                        [
-                            "type" => "text",
                             "text" => $phoneno
                         ],
                         [
                             "type" => "text",
                             "text" => $course_applying
+                        ],
+                        [
+                            "type" => "text",
+                            "text" => $name
+                        ],
+                        [
+                            "type" => "text",
+                            "text" =>  $email
                         ],
                         [
                             "type" => "text",
