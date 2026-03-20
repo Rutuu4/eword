@@ -81,18 +81,18 @@ class College_control extends REST_Controller
         }
 
         if (!empty($data['course_id'])) {
-            $wherestring .= " AND CONCAT(',', college_university_details.course_ids, ',') like '%," . $data['course_id'] . ",%'";
+            $wherestring .= " AND ccm.course_id = '" . $data['course_id'] . "'";
         }
 
-        $wherestring .= " GROUP BY college_university_details.id";
+        // $wherestring .= " GROUP BY college_university_details.id";
 
         if ($data['college_university_type_id'] == 1 || $data['college_university_type_id'] == 2) {
-            $wherestring .= " ORDER BY
-                                CASE
-                                WHEN college_university_details.name REGEXP '^[A-Za-z]' THEN 0
-                                ELSE 1
-                                END,
-                                college_university_details.name ASC";
+            // $wherestring .= " ORDER BY
+            //                     CASE
+            //                     WHEN college_university_details.name REGEXP '^[A-Za-z]' THEN 0
+            //                     ELSE 1
+            //                     END,
+            //                     college_university_details.name ASC";
         }
 
         // ✅ Main fields + GROUP_CONCAT for course/sub-main course info
@@ -105,30 +105,39 @@ class College_control extends REST_Controller
             'm_city.name AS city_name',
             'college_university_details.remark AS courese_list_name',
 
-            // ✅ Course info (via join)
+            // ✅ EXACT SAME FORMAT AS YOUR OUTPUT
             'GROUP_CONCAT(DISTINCT courses_details.id) AS course_ids',
             'GROUP_CONCAT(DISTINCT courses_details.name) AS course_names',
 
-            // ✅ Sub-main course info (via join)
             'GROUP_CONCAT(DISTINCT m_exrta_course.id) AS sub_main_course_ids',
             'GROUP_CONCAT(DISTINCT m_exrta_course.name) AS sub_main_course_names'
         ];
 
         $params = array(
-            'table'         => TBL_COLLEGE_UNIVERSITY_DETAILS . ' AS college_university_details',
-            'fields'        => $fields,
-            'wherestring'   => !empty($wherestring) ? $wherestring : '',
-            "num"           => PRODUCT_PAGINATION_SIZE,
-            "offset"        => $per_page,
-            'join_type'     => 'left',
-            'join_tables'   => array(
-                // ✅ Join city
+            'table' => TBL_COLLEGE_UNIVERSITY_DETAILS . ' AS college_university_details',
+            'fields' => $fields,
+            'wherestring' => $wherestring,
+            'num' => PRODUCT_PAGINATION_SIZE,
+            'offset' => $per_page,
+            'join_type' => 'left',
+
+            // ✅ IMPORTANT
+            'group_by' => 'college_university_details.id',
+
+            'order_by' => "CASE
+        WHEN college_university_details.name REGEXP '^[A-Za-z]' THEN 0
+        ELSE 1
+    END,
+    college_university_details.name ASC",
+
+            'join_tables' => array(
                 TBL_CITY . ' AS m_city' => 'm_city.id = college_university_details.city_id',
 
-                // ✅ Join course details (using FIND_IN_SET for multi-course relation)
-                TBL_COURSES_DETAILS . ' AS courses_details' => "FIND_IN_SET(courses_details.id, college_university_details.course_ids) > 0",
+                // ✅ CORRECT JOIN (ONLY ONCE)
+                TBL_COLLEGE_COURSE_MAP . ' AS ccm' => 'ccm.college_id = college_university_details.id',
 
-                // ✅ Join sub-main course table
+                TBL_COURSES_DETAILS . ' AS courses_details' => 'courses_details.id = ccm.course_id',
+
                 TBL_EXRTA_COURSE . ' AS m_exrta_course' => 'm_exrta_course.id = courses_details.extra_course_id',
             ),
         );
@@ -136,22 +145,21 @@ class College_control extends REST_Controller
         $porductList = $this->General_model->get_query_data($params);
         //prd($porductList);
         $cntParams = array(
-            'table'         => TBL_COLLEGE_UNIVERSITY_DETAILS . ' as college_university_details',
-            'fields'        => $fields,
-            'wherestring'   => !empty($wherestring) ? $wherestring : '',
-            'compare_type'  => '=',
-            "totalrow"      => '1',
-            'join_type'     => 'left',
-            'join_tables'   => array(
-                TBL_CITY . ' as m_city' => 'm_city.id = college_university_details.city_id',
-                TBL_COURSES_DETAILS . ' as courses_details'  => "FIND_IN_SET(courses_details.id, college_university_details.course_ids) > 0",
-                TBL_EXRTA_COURSE . ' AS m_exrta_course' => 'm_exrta_course.id = courses_details.extra_course_id',
+            'table' => TBL_COLLEGE_UNIVERSITY_DETAILS . ' as college_university_details',
+            'fields' => 'COUNT(DISTINCT college_university_details.id) as total',
+            'wherestring' => $wherestring,
+            'join_type' => 'left',
 
+            'join_tables' => array(
+                TBL_COLLEGE_COURSE_MAP . ' AS ccm' => 'ccm.college_id = college_university_details.id',
+                TBL_COURSES_DETAILS . ' AS courses_details' => 'courses_details.id = ccm.course_id',
             ),
         );
         $totalProduct = $this->General_model->get_query_data($cntParams);
+
         if (!empty($totalProduct)) {
-            $total_page = ceil($totalProduct / PRODUCT_PAGINATION_SIZE);
+            $total_count = $totalProduct[0]['total'];   // 🔥 important
+            $total_page = ceil($total_count / PRODUCT_PAGINATION_SIZE);
         }
         if (!empty($porductList)) {
             $response['message']    = $this->lang->line('success');
@@ -176,51 +184,65 @@ class College_control extends REST_Controller
         $college_university_type_id = $data['college_university_type_id'];
 
 
-        $wherestring    = "college_university_details.status=1";
-        $wherestring    .= " and college_university_details.college_university_type_id='$college_university_type_id'";
+        $wherestring = "college_university_details.status=1";
+        $wherestring .= " AND college_university_details.college_university_type_id='$college_university_type_id'";
 
         if (!empty($data['city_id'])) {
-            $city_id = $data['city_id'];
-            $wherestring    .= " and college_university_details.city_id='$city_id'";
+            $wherestring .= " AND college_university_details.city_id='" . $data['city_id'] . "'";
         }
 
         if (!empty($data['main_courses_id'])) {
-            $main_courses_id = $data['main_courses_id'];
-            $wherestring    .= " and courses_details.main_courses_id='$main_courses_id'";
+            $wherestring .= " AND courses_details.main_courses_id='" . $data['main_courses_id'] . "'";
         }
 
-
         if (!empty($data['extra_course_id'])) {
-            $extra_course_id = $data['extra_course_id'];
-            $wherestring    .= " and courses_details.extra_course_id='$extra_course_id'";
+            $wherestring .= " AND courses_details.extra_course_id='" . $data['extra_course_id'] . "'";
         }
 
         if (!empty($data['course_id'])) {
-            $wherestring    .= " AND CONCAT(',', college_university_details.course_ids, ',') like '%," . $data['course_id'] . ",%'";
+            $wherestring .= " AND FIND_IN_SET('" . $data['course_id'] . "', college_university_details.course_ids)";
         }
 
 
 
-        $wherestring    .= " GROUP BY college_university_details.id";
+        // $wherestring    .= " GROUP BY college_university_details.id";
 
-        $wherestring     .= " ORDER BY
-                                            CASE
-                                                WHEN college_university_details.name REGEXP '^[઀-૿]' THEN 0
-                                                ELSE 1
-                                            END,
-                                            CONVERT(college_university_details.name USING utf8mb4) ASC";
+        // $wherestring     .= " ORDER BY
+        //                                     CASE
+        //                                         WHEN college_university_details.name REGEXP '^[઀-૿]' THEN 0
+        //                                         ELSE 1
+        //                                     END,
+        //                                     CONVERT(college_university_details.name USING utf8mb4) ASC";
 
         $fields         = ['college_university_details.name,college_university_details.website_link,m_city.name AS city_name,college_university_details.course_ids'];
 
         $params = array(
             'table'         => TBL_COLLEGE_UNIVERSITY_DETAILS . ' as college_university_details',
-            'fields'        => $fields,
-            'wherestring'   => !empty($wherestring) ? $wherestring : '',
+            'fields'        => [
+                'college_university_details.name',
+                'college_university_details.website_link',
+                'm_city.name AS city_name',
+                'college_university_details.course_ids'
+            ],
+            'wherestring'   => $wherestring,
             'join_type'     => 'left',
+
+            // ✅ CORRECT PLACE
+            'group_by'      => 'college_university_details.id',
+
+            // ✅ CORRECT PLACE
+            'order_by'      => "CASE
+        WHEN college_university_details.name REGEXP '^[઀-૿]' THEN 0
+        ELSE 1
+    END,
+    CONVERT(college_university_details.name USING utf8mb4) ASC",
+
             'join_tables'   => array(
                 TBL_CITY . ' as m_city' => 'm_city.id = college_university_details.city_id',
-                TBL_COURSES_DETAILS . ' as courses_details'  => "FIND_IN_SET(courses_details.id, college_university_details.course_ids) > 0",
 
+                // ✅ optimized join
+                TBL_COLLEGE_COURSE_MAP . ' AS ccm' => 'ccm.college_id = college_university_details.id',
+                TBL_COURSES_DETAILS . ' AS courses_details' => 'courses_details.id = ccm.course_id',
             ),
         );
         $porductList = $this->General_model->get_query_data($params);

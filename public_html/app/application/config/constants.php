@@ -126,6 +126,7 @@ define('TBL_ORDER_PRODUCT', 'orderr_product');
 
 define('TBL_DATA_STATUS', 'data_status');
 define('TBL_CITY', 'm_city');
+define('TBL_COLLEGE_COURSE_MAP', 'college_course_map');
 define('TBL_DATA_RESOURCE', 'data_resource');
 define('TBL_CUSTOMER_TASK_MANAGER', 'customer_task_manager');
 define('TBL_CUSTOMER_TASK_STATUS', 'customer_task_status');
@@ -272,5 +273,3 @@ define('CHAT_GROUP_MEMBER_PAGINATION_SIZE', 50);
 define('CHAT_MESSAGE_PAGINATION_SIZE', 20);
 define('TBL_NOTIFICATION', 'mobile_notification');
 define('TBL_VIEW_NOTIFICATION_TXN', 'view_notification_txn');
-
-
