@@ -490,10 +490,10 @@ class Login_control extends REST_Controller
 
                 do {
                     $insert_refer_code = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'), 0, 10);
-                    $wherestring = "register.refer_code='" . $insert_refer_code . "'";
-                    $fields         = ['register.id'];
+                    $wherestring = "registration.refer_code='" . $insert_refer_code . "'";
+                    $fields         = ['registration.id'];
                     $cntParams = array(
-                        'table'         => TBL_REGISTRATION . ' as register',
+                        'table'         => TBL_REGISTRATION . ' as registration',
                         'fields'        => $fields,
                         'wherestring'   => !empty($wherestring) ? $wherestring : '',
                         "totalrow"      => '1',
@@ -522,10 +522,10 @@ class Login_control extends REST_Controller
                 if (!empty($data['refer_code'])) {
                     $refer_code = $data['refer_code'];
 
-                    $wherestring = "register.username='" . $refer_code . "'";
+                    $wherestring = "registration.username='" . $refer_code . "'";
                     $fields         = ['id', 'username'];
                     $cntParams = array(
-                        'table'         => TBL_REGISTRATION . ' as register',
+                        'table'         => TBL_REGISTRATION . ' as registration',
                         'fields'        => $fields,
                         'wherestring'   => !empty($wherestring) ? $wherestring : '',
                     );
@@ -727,6 +727,15 @@ class Login_control extends REST_Controller
 
             $referCheck = $this->General_model->get_query_data($referParams);
 
+            if (!empty($referCheck)) {
+
+                $iData['refer_username']             = !empty($referCode) ? $referCode : '';
+                $this->General_model->update(TBL_REGISTRATION, $iData, ['id' => $referCheck[0]['id']]);
+            }
+
+
+
+
             if (empty($referCheck)) {
                 $response['message'] = "Invalid refer code";
                 $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
@@ -766,7 +775,7 @@ class Login_control extends REST_Controller
 
             // Save refer code only if provided
             if (!empty($referCode)) {
-                $udata['refer_code'] = $referCode; // optional column
+                $udata['refer_username'] = $referCode; // optional column
             }
 
             $this->General_model->update(TBL_REGISTRATION, $udata, ['id' => $userId]);
