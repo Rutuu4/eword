@@ -84,15 +84,15 @@ class College_control extends REST_Controller
             $wherestring .= " AND ccm.course_id = '" . $data['course_id'] . "'";
         }
 
-        // $wherestring .= " GROUP BY college_university_details.id";
+        $wherestring .= " GROUP BY college_university_details.id";
 
         if ($data['college_university_type_id'] == 1 || $data['college_university_type_id'] == 2) {
-            // $wherestring .= " ORDER BY
-            //                     CASE
-            //                     WHEN college_university_details.name REGEXP '^[A-Za-z]' THEN 0
-            //                     ELSE 1
-            //                     END,
-            //                     college_university_details.name ASC";
+            $wherestring .= " ORDER BY
+                                CASE
+                                WHEN college_university_details.name REGEXP '^[A-Za-z]' THEN 0
+                                ELSE 1
+                                END,
+                                college_university_details.name ASC";
         }
 
         // ✅ Main fields + GROUP_CONCAT for course/sub-main course info
@@ -122,13 +122,9 @@ class College_control extends REST_Controller
             'join_type' => 'left',
 
             // ✅ IMPORTANT
-            'group_by' => 'college_university_details.id',
+            // 'group_by' => 'college_university_details.id',
 
-            'order_by' => "CASE
-        WHEN college_university_details.name REGEXP '^[A-Za-z]' THEN 0
-        ELSE 1
-    END,
-    college_university_details.name ASC",
+            // 'order_by' => 'MIN(college_university_details.name) ASC',
 
             'join_tables' => array(
                 TBL_CITY . ' AS m_city' => 'm_city.id = college_university_details.city_id',
@@ -205,14 +201,15 @@ class College_control extends REST_Controller
 
 
 
-        // $wherestring    .= " GROUP BY college_university_details.id";
+        $wherestring .= " GROUP BY college_university_details.id";
 
-        // $wherestring     .= " ORDER BY
-        //                                     CASE
-        //                                         WHEN college_university_details.name REGEXP '^[઀-૿]' THEN 0
-        //                                         ELSE 1
-        //                                     END,
-        //                                     CONVERT(college_university_details.name USING utf8mb4) ASC";
+        $wherestring .= " ORDER BY 
+    CASE
+        WHEN college_university_details.name REGEXP '^[A-Za-z]' THEN 0
+        WHEN college_university_details.name REGEXP '^[઀-૿]' THEN 1
+        ELSE 2
+    END,
+    college_university_details.name COLLATE utf8mb4_unicode_ci ASC";
 
         $fields         = ['college_university_details.name,college_university_details.website_link,m_city.name AS city_name,college_university_details.course_ids'];
 
@@ -228,14 +225,17 @@ class College_control extends REST_Controller
             'join_type'     => 'left',
 
             // ✅ CORRECT PLACE
-            'group_by'      => 'college_university_details.id',
+            // 'group_by'      => 'college_university_details.id',
 
             // ✅ CORRECT PLACE
-            'order_by'      => "CASE
-        WHEN college_university_details.name REGEXP '^[઀-૿]' THEN 0
-        ELSE 1
-    END,
-    CONVERT(college_university_details.name USING utf8mb4) ASC",
+            //             'order_by' => "
+            // CASE 
+            //     WHEN college_university_details.name REGEXP '^[A-Za-z]' THEN 0
+            //     WHEN college_university_details.name REGEXP '^[઀-૿]' THEN 1
+            //     ELSE 2
+            // END,
+            // college_university_details.name COLLATE utf8mb4_unicode_ci ASC
+            // ",
 
             'join_tables'   => array(
                 TBL_CITY . ' as m_city' => 'm_city.id = college_university_details.city_id',
