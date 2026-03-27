@@ -30,7 +30,8 @@
 						<li><a href="admin-user.php"><i class="fa fa-circle-o"></i> Admin Users</a></li>
 						<li><a href="application-admin-user.php"><i class="fa fa-circle-o"></i> Application Admin</a></li>
 						<li><a href="register-user.php"><i class="fa fa-circle-o"></i> Register Users</a></li>
-						<li><a href="refer-report.php"><i class="fa fa-circle-o"></i>Refer Report </a></li>
+						<!-- <li><a href="refer-report.php"><i class="fa fa-circle-o"></i>Refer Report </a></li> -->
+						<li><a href="refer-report-new.php"><i class="fa fa-circle-o"></i>Refer Report </a></li>
 					</ul>
 				</li>
 				<!-- <li class="treeview">
