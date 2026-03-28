@@ -13,6 +13,7 @@ if ($_POST['h1'] == 1) {
 
   $main_courses_id = mysqli_real_escape_string($conn, $_POST['main_courses_id']);
   $extra_course_id = mysqli_real_escape_string($conn, $_POST['extra_course_id']);
+  $name = mysqli_real_escape_string($conn, $_POST['name']);
   $details = mysqli_real_escape_string($conn, $_POST['details']);
   $status = mysqli_real_escape_string($conn, $_POST['status']);
 
@@ -196,6 +197,14 @@ if ($_POST['h1'] == 1) {
               </div>
               <div id="showextra">
 
+              </div>
+              <div class="form-group">
+                <label for="name" class="col-sm-2">Name :</label>
+                <div class="col-sm-8">
+                  <!-- <label>Name :</label> -->
+                  <input type="text" class="form-control" name="name" placeholder="Enter Name">
+
+                </div>
               </div>
 
               <div class="form-group">

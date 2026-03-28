@@ -10,6 +10,7 @@ if ($_POST['h1'] == 1) {
   $main_courses_id = mysqli_real_escape_string($conn, $_POST['main_courses_id']);
   $extra_course_id = mysqli_real_escape_string($conn, $_POST['extra_course_id']);
   $details = mysqli_real_escape_string($conn, $_POST['details']);
+  // $name = mysqli_real_escape_string($conn, $_POST['name']);
 
   $alias = preg_replace('!\s+!', '-', preg_replace("/[^A-Za-z0-9 \s+]/", ' ', trim(mysqli_real_escape_string($conn, $_POST['name']), " ")));
   $alias = substr(strip_tags($alias), 0, 50);
@@ -41,6 +42,7 @@ if ($_POST['h1'] == 1) {
   $qury1 = "UPDATE courses_details 
           SET main_courses_id='$main_courses_id',
               extra_course_id='$extra_course_id',
+              name='$name',
               details='$details',
               pdf_file='$pdf_file',
               status='$status'
@@ -212,6 +214,14 @@ if ($_POST['h1'] == 1) {
                     </div>
                   </div>
                 <?php } ?>
+              </div>
+              <div class="form-group">
+                <label for="name" class="col-sm-2">Name :</label>
+                <div class="col-sm-8">
+                  <!-- <label>Name :</label> -->
+                  <input type="text" class="form-control" name="name" placeholder="Enter Name" value="<?= $row['name']; ?>">
+
+                </div>
               </div>
 
 
