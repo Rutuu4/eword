@@ -49,6 +49,7 @@ include("../database.php");
                       <th style="width:20%">Main Coures</th>
                       <th style="width:20%">Sub Coures</th>
                       <th>Name </th>
+                      <th>Video Name </th>
                       <th>Video Links</th>
                       <th>Status</th>
                       <th>Action</th>
@@ -59,6 +60,7 @@ include("../database.php");
                     $i = 0;
                     $qry = "SELECT 
     cd.id,
+    cd.name,
     cd.status,
     cd.main_courses_id,
     cd.extra_course_id,
@@ -92,6 +94,7 @@ ORDER BY mmc.name ASC";
                         <td><?= $i; ?></td>
                         <td><?= $row['main_course_name']; ?></td>
                         <td><?= $row['extra_course_name']; ?></td>
+                        <td><?= $row['name']; ?></td>
                         <td><?= $row['video_name']; ?></td>
                         <td><?= $row['video_links']; ?></td>
                         <td><?= $statuss; ?></td>
