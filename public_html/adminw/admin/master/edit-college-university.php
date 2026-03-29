@@ -39,6 +39,20 @@ if ($_POST['h1'] == 1) {
 
     $qury1 = "UPDATE college_university_details SET user_id='$login_id',college_university_type_id='$college_university_type_id',name='$name',city_id='$city_id',website_link='$website_link',course_ids='$course_ids',status='$status',course_name_list='$course_name_list',is_mou='$is_mou',whatsapp_number='$whatsapp_number' where id='$id'";
     $sq1 = $conn->query($qury1);
+    // Delete old mappings
+    $conn->query("DELETE FROM college_course_map WHERE college_id = $id");
+
+    // Insert new mappings
+    if (!empty($_POST['course_ids'])) {
+        foreach ($_POST['course_ids'] as $course_id) {
+            $course_id = (int)$course_id;
+
+            $conn->query("
+            INSERT INTO college_course_map (college_id, course_id)
+            VALUES ($id, $course_id)
+        ");
+        }
+    }
 
     if (mysqli_affected_rows($conn) >= 1) {
         header("location:../manage-college-university.php?page=" . $currentPage);

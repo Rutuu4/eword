@@ -44,7 +44,18 @@ if ($_POST['h1'] == 1) {
 
 
     $qury1 = "INSERT INTO college_university_details(user_id, create_datetime, college_university_type_id, name, city_id, website_link, course_ids, status,course_name_list,is_mou,whatsapp_number) VALUES ('$login_id','$create_datetime','$college_university_type_id','$name','$city_id','$website_link','$course_ids','$status','$course_name_list','$is_mou','$whatsapp_number')";
+    $conn->query($qury1);
+    $college_id = $conn->insert_id;
+    if (!empty($_POST['course_ids'])) {
+        foreach ($_POST['course_ids'] as $course_id) {
+            $course_id = (int)$course_id;
 
+            $conn->query("
+            INSERT INTO college_course_map (college_id, course_id)
+            VALUES ($college_id, $course_id)
+        ");
+        }
+    }
     $sq1 = $conn->query($qury1);
 
     if (mysqli_affected_rows($conn) >= 1) {
