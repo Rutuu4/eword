@@ -9,22 +9,59 @@ class College_control extends REST_Controller
 
     function __construct()
     {
+
         parent::__construct();
-        include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
+
+        // ✅ Load DB only once
         $this->wp_db = $this->load->database('wp_db', TRUE);
-        $this->load->helper('common_helper');
-        $this->load->helper('college_whatsapp');
-        $this->load->helper('whatsapp_number');
+
+        // ✅ Load helpers efficiently
+        $this->load->helper([
+            'common_helper',
+            'college_whatsapp',
+            'whatsapp_number'
+        ]);
+
+        // ✅ Prepare global variables safely
+        $this->globalVars = $this->prepareGlobalVars();
+
+        // parent::__construct();
+
+        // include(substr($this->config->item('base_path'), 0, FOLDER_LENGHT) . '/include/database.php');
+
+        // $this->wp_db = $this->load->database('wp_db', TRUE);
+        // $this->load->helper('common_helper');
+        // $this->load->helper('college_whatsapp');
+        // $this->load->helper('whatsapp_number');
+        // foreach (globalVars() as $key => $value) {
+        //     if (is_array(${$value})) {
+        //         for ($i = 1; $i <= count(${$value}); $i++) {
+        //             $final[$value][$i] = ${$value}[$i];
+        //         }
+        //     } else {
+        //         $final[$value] = ${$value};
+        //     }
+        // }
+        // $this->globalVars         = $final;
+    }
+
+    private function prepareGlobalVars()
+    {
+        $final = [];
+
         foreach (globalVars() as $key => $value) {
-            if (is_array(${$value})) {
-                for ($i = 1; $i <= count(${$value}); $i++) {
-                    $final[$value][$i] = ${$value}[$i];
+
+            if (isset($GLOBALS[$value]) && is_array($GLOBALS[$value])) {
+
+                foreach ($GLOBALS[$value] as $i => $val) {
+                    $final[$value][$i] = $val;
                 }
-            } else {
-                $final[$value] = ${$value};
+            } else if (isset($GLOBALS[$value])) {
+                $final[$value] = $GLOBALS[$value];
             }
         }
-        $this->globalVars         = $final;
+
+        return $final;
     }
 
 
@@ -55,36 +92,10 @@ class College_control extends REST_Controller
     public function college_university_list_post()
     {
         $data = $this->post();
-        $course_id = $data['course_id'] ?? '';
-        $main_courses_id = $data['main_courses_id'] ?? '';
-        $user_id = $data['user_id'] ?? '';
-        $extra_course_id = $data['extra_course_id'] ?? '';
-        $college_university_type_id = $data['college_university_type_id'] ?? '';
-        $city_id = $data['city_id'] ?? '';
-
-        // 👉 SAME LOGIC YOU PROVIDED
-        if (
-            !empty($course_id) &&
-            !empty($main_courses_id) &&
-            !empty($user_id) &&
-            !empty($extra_course_id) &&
-            !empty($college_university_type_id)
-        ) {
-            $applyPagination = false; // ❌ NO pagination
-        } else {
-            $applyPagination = true;  // ✅ APPLY pagination
-        }
         $user_id = $data['user_id'];
 
-        if ($applyPagination) {
-            $page = !empty($data['page_no']) ? (int)$data['page_no'] : 1;
-            $offset = ($page - 1) * PRODUCT_PAGINATION_SIZE;
-            $limit  = PRODUCT_PAGINATION_SIZE;
-        } else {
-            $page = null;
-            $offset = null;
-            $limit = null;
-        }
+        $page       = !empty($data['page_no']) ? $data['page_no'] - 1 : '1';
+        $per_page   = $page * PRODUCT_PAGINATION_SIZE;
 
         $college_university_type_id = $data['college_university_type_id'];
 
@@ -143,59 +154,53 @@ class College_control extends REST_Controller
             'table' => TBL_COLLEGE_UNIVERSITY_DETAILS . ' AS college_university_details',
             'fields' => $fields,
             'wherestring' => $wherestring,
+            'num' => PRODUCT_PAGINATION_SIZE,
+            'offset' => $per_page,
             'join_type' => 'left',
+
+            // ✅ IMPORTANT
+            // 'group_by' => 'college_university_details.id',
+
+            // 'order_by' => 'MIN(college_university_details.name) ASC',
+
             'join_tables' => array(
                 TBL_CITY . ' AS m_city' => 'm_city.id = college_university_details.city_id',
+
+                // ✅ CORRECT JOIN (ONLY ONCE)
                 TBL_COLLEGE_COURSE_MAP . ' AS ccm' => 'ccm.college_id = college_university_details.id',
+
                 TBL_COURSES_DETAILS . ' AS courses_details' => 'courses_details.id = ccm.course_id',
+
                 TBL_EXRTA_COURSE . ' AS m_exrta_course' => 'm_exrta_course.id = courses_details.extra_course_id',
             ),
         );
 
-        // ✅ APPLY ONLY IF TRUE
-        if ($applyPagination && !empty($limit)) {
-            $params['num'] = $limit;
-            $params['offset'] = $offset;
-        }
-
         $porductList = $this->General_model->get_query_data($params);
         //prd($porductList);
-        $total_page = 1;
+        $cntParams = array(
+            'table' => TBL_COLLEGE_UNIVERSITY_DETAILS . ' as college_university_details',
+            'fields' => 'COUNT(DISTINCT college_university_details.id) as total',
+            'wherestring' => $wherestring,
+            'join_type' => 'left',
 
-        if ($applyPagination) {
-            $cntParams = array(
-                'table' => TBL_COLLEGE_UNIVERSITY_DETAILS . ' as college_university_details',
-                'fields' => 'COUNT(DISTINCT college_university_details.id) as total',
-                'wherestring' => $wherestring,
-                'join_type' => 'left',
-                'join_tables' => array(
-                    TBL_COLLEGE_COURSE_MAP . ' AS ccm' => 'ccm.college_id = college_university_details.id',
-                    TBL_COURSES_DETAILS . ' AS courses_details' => 'courses_details.id = ccm.course_id',
-                ),
-            );
+            'join_tables' => array(
+                TBL_COLLEGE_COURSE_MAP . ' AS ccm' => 'ccm.college_id = college_university_details.id',
+                TBL_COURSES_DETAILS . ' AS courses_details' => 'courses_details.id = ccm.course_id',
+            ),
+        );
+        $totalProduct = $this->General_model->get_query_data($cntParams);
 
-            $totalProduct = $this->General_model->get_query_data($cntParams);
-
-            if (!empty($totalProduct)) {
-                $total_count = $totalProduct[0]['total'];
-                $total_page = ceil($total_count / PRODUCT_PAGINATION_SIZE);
-            }
+        if (!empty($totalProduct)) {
+            $total_count = $totalProduct[0]['total'];   // 🔥 important
+            $total_page = ceil($total_count / PRODUCT_PAGINATION_SIZE);
         }
-
-
         if (!empty($porductList)) {
-            $response['message'] = $this->lang->line('success');
-            $response['code'] = REST_Controller::HTTP_OK;
-
-            // ✅ Only include pagination data if applied
-            if ($applyPagination) {
-                $response['total_page'] = $total_page;
-                $response['current_page'] = $page;
-            }
-
-            $response['data'] = $porductList;
+            $response['message']    = $this->lang->line('success');
+            $response['code']       = REST_Controller::HTTP_OK;
+            $response['total_page']     = isset($total_page) ? $total_page : '1';
+            $response['data']       = $porductList;
         } else {
-            $response['code'] = REST_Controller::HTTP_BAD_REQUEST;
+            $response['code']    = REST_Controller::HTTP_BAD_REQUEST;
             $response['message'] = $this->lang->line('no_record_found');
         }
 
