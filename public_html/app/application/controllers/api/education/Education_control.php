@@ -230,6 +230,7 @@ class Education_control extends REST_Controller
         }
 
         $wherestring = implode(" AND ", $wheres);
+        $wherestring .= " GROUP BY foreign_education.id";
 
         // ================================
         // ✅ JOINS
@@ -277,7 +278,7 @@ class Education_control extends REST_Controller
             'fields'      => $fields,
             'wherestring' => $wherestring,
             'join_tables' => $join_tables,
-            'groupby'     => 'foreign_education.id',
+            // 'groupby'     => 'foreign_education.id',
             'orderby'     => 'foreign_education.consultancy_name',
             'order'       => 'ASC'
         ];
